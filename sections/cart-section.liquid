@@ -72,8 +72,8 @@
                                       </span>
                                       {%- else -%}
                                       <span>{{ item.original_price | money }}</span>
-                                      {%- if item.product.compare_at_price_max > item.product.price -%}
-                                      <span class="old-price" id="ComparePrice">{{ item.product.selected_or_first_available_variant.compare_at_price | money }}</span>
+                                      {%- if item.variant.compare_at_price > item.variant.price -%}
+                                      <span class="old-price" id="ComparePrice-{{ forloop.index }}">{{ item.variant.compare_at_price | money }}</span>
                                       {%- endif -%}
                                     {%- endif -%}
                                     </div>
@@ -245,14 +245,17 @@
                       }
                       if(comp.length>=MAX) break;
                     }
-                    if(!comp.length) return;
+                    if(!comp.length) {
+                      /* Tamamlayıcı yok — trending göster */
+                      var np=document.querySelector('.new-product');
+                      if(np) np.classList.add('trending-visible');
+                      return;
+                    }
                     var h='';
                     for(var k=0;k<comp.length;k++) h+=bCard(comp[k]);
                     grid.innerHTML=h;
                     sec.style.display='';
-                    /* Trending gizle */
-                    var np=document.querySelector('.new-product');
-                    if(np){var w=np.closest('.shopify-section'); if(w) w.style.display='none';}
+                    /* Trending gizli kalıyor (CSS zaten display:none yapıyor) */
                     grid.querySelectorAll('.cart-comp-card__add').forEach(function(b){b.addEventListener('click',hAdd);});
                   });
                 });
@@ -279,8 +282,34 @@
                   if(typeof Shopify!=='undefined'&&Shopify.formatMoney) return Shopify.formatMoney(c,window.money_format||'{{amount_with_comma_separator}}TL');
                   return (c/100).toLocaleString('tr-TR',{minimumFractionDigits:2})+'TL';
                 }
+                function showTrending(){
+                  var np=document.querySelector('.new-product');
+                  if(np) np.classList.add('trending-visible');
+                  if(sec) sec.style.display='none';
+                }
+
+                /* AJAX ile sepet boşaltılırsa trending göster */
+                /* Hem class değişikliği hem de DOM güncellenmesi izleniyor */
+                var cartBody=document.querySelector('.cart-body');
+                if(cartBody){
+                  new MutationObserver(function(){
+                    var isEmpty = cartBody.classList.contains('is-empty')
+                      || cartBody.querySelectorAll('table tbody tr').length === 0;
+                    if(isEmpty) showTrending();
+                  }).observe(cartBody,{attributes:true,attributeFilter:['class'],childList:true,subtree:true});
+                }
+
               });
             })();
+            </script>
+            {%- endif -%}
+            {%- if cart == empty -%}
+            <script>
+            /* Sayfa zaten bos yuklendiyse trending goster */
+            document.addEventListener('DOMContentLoaded', function(){
+              var np = document.querySelector('.new-product');
+              if(np) np.classList.add('trending-visible');
+            });
             </script>
             {%- endif -%}
           </div>
@@ -625,7 +654,6 @@
   .cart-page {
     padding-top: {{ section.settings.section_padding_top }}px;
     padding-bottom: {{ section.settings.section_padding_bottom }}px;
-    min-height: 60vh;
   }
   @media(max-width: 1199px) {
     .cart-page {
@@ -680,7 +708,6 @@
   .cart-comp-section {
     margin-top: 25px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
   }
   .cart-comp-section__title {
     font-size: 18px;

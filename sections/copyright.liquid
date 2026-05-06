@@ -2,14 +2,35 @@
   <div class="container">
     <div class="row">
       <div class="col">
+        {% if template == 'cart' and section.settings.cart_footer_menu != blank %}
+        {%- assign cart_menu = linklists[section.settings.cart_footer_menu] -%}
+        <div class="cart-footer-bar">
+          <nav class="cart-footer-links" aria-label="Alt menü">
+            {%- for link in cart_menu.links -%}
+            <a href="{{ link.url }}" class="cart-footer-link">{{ link.title }}</a>
+            {%- unless forloop.last -%}<span class="cart-footer-sep" aria-hidden="true">|</span>{%- endunless -%}
+            {%- endfor -%}
+          </nav>
+          <div class="cart-footer-trust">
+            {% if section.settings.security_text != blank %}
+            <p class="cart-security-text">{{ section.settings.security_text }}</p>
+            {% endif %}
+            {% include 'payment-icon' %}
+          </div>
+        </div>
+        {% else %}
         <ul class="ft-bottom">
-            <li class="copy-right">
-                <p>{{ section.settings.copy_right_text }}</p>
-            </li>
-            <li class="payment-img">
-                {% include 'payment-icon' %}
-            </li>
+          <li class="copy-right">
+            <p>{{ section.settings.copy_right_text }}</p>
+          </li>
+          <li class="payment-img">
+            {% if section.settings.security_text != blank %}
+            <p class="cart-security-text">{{ section.settings.security_text }}</p>
+            {% endif %}
+            {% include 'payment-icon' %}
+          </li>
         </ul>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -66,6 +87,22 @@
   "id": "copy_right_text",
   "label": "Copyright text",
   "default": "Copyright © 2023 by spacingtech"
+},
+{
+  "type": "header",
+  "content": "Cart Page Footer"
+},
+{
+  "type": "link_list",
+  "id": "cart_footer_menu",
+  "label": "Cart footer menu (kurumsal)",
+  "info": "Sepet sayfasinda alt barda gosterilecek menu"
+},
+{
+  "type": "text",
+  "id": "security_text",
+  "label": "Security text (near payment icons)",
+  "default": "Guvenli Odeme - 256-bit SSL"
 }
 ],
 "presets":[
@@ -77,12 +114,14 @@
 {% endschema %}
 
 <style>
+/* ── Ortak footer-bottom stiller ── */
 .footer-bottom-area {
     padding-top:{{ section.settings.foot_bt_padding_top }}px;
     padding-bottom:{{ section.settings.foot_bt_padding_bottom }}px;
     background-color: {{ section.settings.foot_bgcolor }};
     color: {{ section.settings.text_color }};
 }
+/* Standart sayfalar */
 .footer-bottom-area ul.ft-bottom{
     display: flex;
     align-items: center;
@@ -97,8 +136,21 @@
 }
 .footer-bottom-area p {
     color: {{ section.settings.text_color }};
+    margin: 0;
+}
+.cart-security-text {
+    font-size: 10px;
+    opacity: 0.65;
+    margin-bottom: 5px;
+    text-align: end;
+    color: {{ section.settings.text_color }};
+    letter-spacing: 0.02em;
 }
 @media (max-width : 991px){
+    .cart-security-text {
+        text-align: center;
+        margin-bottom: 4px;
+    }
     .footer-bottom-area ul.ft-bottom li.payment-img,
     .footer-bottom-area ul.ft-bottom li.copy-right{
         width: 100%;
@@ -106,6 +158,62 @@
     }
     .footer-bottom-area .payment-img{
         margin-top: 5px;
+    }
+}
+
+/* ── Sepet sayfası — tek bar layout ── */
+.cart-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.cart-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+}
+.cart-footer-link {
+    color: {{ section.settings.text_color }};
+    font-size: 12px;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+.cart-footer-link:hover {
+    opacity: 1;
+    color: {{ section.settings.text_color }};
+    text-decoration: underline;
+}
+.cart-footer-sep {
+    color: {{ section.settings.text_color }};
+    opacity: 0.3;
+    font-size: 12px;
+    margin: 0 8px;
+    user-select: none;
+}
+.cart-footer-trust {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+@media (max-width: 767px) {
+    .cart-footer-bar {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .cart-footer-links {
+        justify-content: center;
+    }
+    .cart-footer-trust {
+        align-items: center;
+    }
+    .cart-security-text {
+        text-align: center !important;
     }
 }
 </style>
