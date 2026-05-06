@@ -21,8 +21,9 @@
       padding: 0 !important;
     }
 
-    /* Mobilde üst duyuru/bildirim barını gizle */
-    #shopify-section-sections--20682889035821__top-nocification-bar {
+    /* Mobilde üst duyuru/bildirim barını gizle (ID + class ile çift güvence) */
+    #shopify-section-sections--20682889035821__top-nocification-bar,
+    .top-notification-bar {
       display: none !important;
     }
 
@@ -32,7 +33,67 @@
       transition: opacity 0.2s ease;
     }
 
+    /* Yıldız alanı ile varyant seçimi arasındaki boşluğu azalt */
+    .product-grid-rating {
+      margin-bottom: 6px !important;
+    }
+    .pro-detail-action {
+      margin-top: 6px !important;
+    }
+
   }
+
+  /* ═══════════════════════════════════════════════════════
+     SEPET SAYFASI — MİNİMALİST CHECKOUT LAYOUT
+     Tetikleyici: body.template-cart  (Shopify otomatik ekler)
+     Bu style <head> içinde olduğundan FOUC (kırpışma) OLMAZ.
+  ═══════════════════════════════════════════════════════ */
+
+  /* 1. Üst bilgi barı (duyuru/promotion bar) gizle */
+  body.template-cart .top-notification-bar { display: none !important; }
+
+  /* 2. Ana navigasyon menüsü (kırmızı bar) gizle */
+  body.template-cart .main-menu-area { display: none !important; }
+
+  /* 3. Header ikonları: hamburger, arama (masaüstü+mobil), kullanıcı, wishlist gizle — sepet kalır */
+  body.template-cart .header-main .toggle-wrap,
+  body.template-cart .header-main .search-wrap,
+  body.template-cart .header-main .user-wrap,
+  body.template-cart .header-main .wishlist-wrap { display: none !important; }
+
+  /* 4. Logo tam ortala — right-block-box (sepet ikonu) sağda kalır */
+  body.template-cart .header-main {
+    position: relative;
+    justify-content: flex-end;
+  }
+  body.template-cart .header-main .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* 5. Mobil alt sticky navigasyon gizle */
+  body.template-cart .mobile-sticky-menu { display: none !important; }
+
+  /* 6. Scroll-to-top butonu gizle */
+  body.template-cart a#top.scroll { display: none !important; }
+
+  /* 7. Footer üst blok tamamen gizle — linkler copyright barına taşındı */
+  body.template-cart .footer-top-area { display: none !important; }
+
+  /* 8. Sayfa minimum ekran yüksekliği — içerik az olsa bile footer hep alta yapışık */
+  body.template-cart {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  body.template-cart main[role="main"] {
+    flex: 1 0 auto;
+  }
+  /* En Çok Tercih Edilenler — sepet sayfasında başlangıçta gizli, JS tamamlayıcı yoksa açar */
+  body.template-cart .shopify-section .new-product { display: none; }
+  body.template-cart .shopify-section .new-product.trending-visible { display: block; }
+
 </style>
 
 
