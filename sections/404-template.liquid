@@ -1,0 +1,130 @@
+<section class="page-not-found section-ptb">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="search-error-wrapper">
+          <h1>
+            <span>{{ section.settings.heading_4041 }}</span>
+            <span>{{ section.settings.heading_4042 }}</span>
+            <span>{{ section.settings.heading_4043 }}</span>
+          </h1>
+
+          <h2>
+            <span>{{ section.settings.sub_text_4041 }}</span>
+            <span>{{ section.settings.sub_text_4042 }}</span>
+            <span>{{ section.settings.sub_text_4043 }}</span>
+            <span>{{ section.settings.sub_text_4044 }}</span>
+          </h2>
+          
+          {% if section.settings.desc_text_404 !='' %}
+          <p class="home-link">{{ section.settings.desc_text_404 }}</p>
+          {% endif %}
+
+		      {% if section.settings.button_title !='' %}
+          <a class="btn btn-style1" href="{{ section.settings.button_url }}" data-text="{{ section.settings.button_title }}" >{{ section.settings.button_title }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Page Not Found",
+  "settings": [
+      {
+        "type": "text",
+        "id": "heading_4041",
+        "label": "Heading1",
+        "default": "4"
+      },
+      {
+        "type": "text",
+        "id": "heading_4042",
+        "label": "Heading2",
+        "default": "0"
+      },
+      {
+        "type": "text",
+        "id": "heading_4043",
+        "label": "Heading3",
+        "default": "4"
+      },
+      {
+        "type": "text",
+        "id": "sub_text_4041",
+        "label": "Sub Text1",
+        "default": "Page"
+      },
+      {
+        "type": "text",
+        "id": "sub_text_4042",
+        "label": "Sub Text2",
+        "default": "Not"
+      },
+      {
+        "type": "text",
+        "id": "sub_text_4043",
+        "label": "Sub Text3",
+        "default": "Be"
+      },
+      {
+        "type": "text",
+        "id": "sub_text_4044",
+        "label": "Sub Text4",
+        "default": "Found"
+      },
+      {
+        "type": "text",
+        "id": "desc_text_404",
+        "label": "Description Text 404",
+        "default": "Sorry but the page you are looking for does not exist, have been removed, name changed or is temporarity unavailable."
+      },
+      {
+        "type": "text",
+        "id": "button_title",
+        "label": "Button Title",
+        "default": "Go to home page"
+      },
+      {
+        "type": "url",
+        "id": "button_url",
+        "label": "Button URL",
+        "default": "\/"
+      }    
+  ]
+}
+{% endschema %}
+<style>
+.page-not-found .search-error-wrapper{
+  text-align: center;
+}
+.page-not-found .search-error-wrapper h1{
+  font-size: 30px;
+  font-weight: 600;
+}
+.page-not-found .search-error-wrapper h1 span:nth-child(odd),
+.page-not-found .search-error-wrapper h2 span:nth-child(even){
+  color: var(--color-primary);
+}
+.page-not-found .search-error-wrapper h2{
+  font-size: 50px;
+  font-weight: 600;
+}
+.page-not-found .search-error-wrapper p{
+  margin-top: 15px;
+}
+.page-not-found .search-error-wrapper a{
+  margin-top: 15px;
+}
+@media (max-width : 991px){
+  .page-not-found .search-error-wrapper h2{
+    font-size: 40px;
+  }
+}
+@media (max-width : 767px){
+  .page-not-found .search-error-wrapper h2{
+    font-size: 30px;
+  }
+}
+</style>

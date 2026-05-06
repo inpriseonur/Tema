@@ -1,0 +1,99 @@
+{% comment %}
+  Renders a standard dropdown style menu for the header.
+
+  Usage:
+  {% render 'header-dropdown-menu' %}
+{% endcomment %}
+<div class="menu-content">
+  <div class="menu-drawer-close">
+    <button type="button" aria-label="close"><i class="ti-close"></i></button>
+  </div>
+  <nav class="mainwrap">
+    <ul class="list-unstyled main-menu" role="list">
+      {%- for link in section.settings.menu.links -%}
+        <li class="menu-link">
+          {%- if link.links != blank -%}
+            <div id="HeaderMenu-{{ link.handle }}" class="link-title">
+              <a href="{{- link.url -}}" class="sp-link-title {% if link.child_active %} active{% endif %}">
+                {{- link.title -}}
+              </a>
+              <button class="menu-arrow dropdown-btn"><i class="fa fa-angle-right"></i></button>
+            </div>
+            <div class="menu-dropdown">
+              <ul
+                id="HeaderMenu-MenuList-{{ forloop.index }}"
+                class="list-unstyled ul-menu-dropdown"
+                role="list"
+                tabindex="-1"
+              >
+                <button class="back-menu" type="button">
+                  <i class=" fa fa-angle-left"></i>
+                  {{- link.title -}}
+                </button>
+                {%- for childlink in link.links -%}
+                  <li class="singlemenu-li">
+                    {%- if childlink.links == blank -%}
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        href="{{ childlink.url }}"
+                        class="singlelink-title {% if childlink.current %} active{% endif %}"
+                        {% if childlink.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        <span class="sp-link-title">{{ childlink.title }}</span>
+                      </a>
+                    {%- else -%}
+                      <div id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}" class="singlelink-title">
+                        <a href="{{ childlink.url }}" class="sp-link-title">{{ childlink.title }}</a>
+                        <button class="menu-arrow-sub dropdown-btn"><i class="fa fa-angle-right"></i></button>
+                      </div>
+                      <div class="supmenu-dropdown">
+                        <ul
+                          id="HeaderMenu-SubMenuList-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                          class="list-unstyled ul-supmenu-dropdown"
+                        >
+                          <button class="back-menu-sub" type="button">
+                            <i class=" fa fa-angle-left"></i>
+                            {{- childlink.title -}}
+                          </button>
+                          {%- for grandchildlink in childlink.links -%}
+                            <li class="supmenu-li">
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="suplink-title {% if grandchildlink.current %} active{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                <span class="sp-link-title">{{ grandchildlink.title }}</span>
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- else -%}
+            <a
+              id="HeaderMenu-{{ link.handle }}"
+              href="{{ link.url }}"
+              class="link-title"
+              {% if link.current %}
+                aria-current="page"
+              {% endif %}
+            >
+              <span class="sp-link-title {%- if link.current %} active{% endif %}">
+                {{- link.title -}}
+              </span>
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+</div>

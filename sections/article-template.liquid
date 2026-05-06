@@ -1,0 +1,714 @@
+<section class="article-area section-ptb">
+  <div class="container">
+    <div class="row {% if section.settings.sidebar_handle == 'left_sidebar_handle' %}left-wrap{% elsif section.settings.sidebar_handle == 'right_sidebar_handle' %}right-wrap{% endif %}">
+      <div class="{% if section.settings.sidebar_handle == 'without_sidebar' %}col{% else %}col-xl-9 col-lg-8 col-md-8 col-12 blog-article-wrap{% endif %}">
+        <div class="single-blog-area">
+          <div class="blog-image">
+            <a href="{{ article.url }}">
+              {%- if article.image -%}
+              <img srcset="
+              {%- if article.image.width >= 375 -%}{{ article.image | image_url: width: 375 }} 375w,{%- endif -%}
+              {%- if article.image.width >= 550 -%}{{ article.image | image_url: width: 550 }} 550w,{%- endif -%}
+              {%- if article.image.width >= 750 -%}{{ article.image | image_url: width: 750 }} 750w,{%- endif -%}
+              {%- if article.image.width >= 1100 -%}{{ article.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+              {%- if article.image.width >= 1500 -%}{{ article.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+              {%- if article.image.width >= 1780 -%}{{ article.image | image_url: width: 1780 }} 1780w,{%- endif -%}
+              {%- if article.image.width >= 2000 -%}{{ article.image | image_url: width: 2000 }} 2000w,{%- endif -%}
+              {{ article.image | image_url }} {{ article.image.width }}w
+              "
+              src="{{ article.image | image_url: width: 2000 }}"
+              data-src="{{ article.image | image_url: width: 2000 }}"
+              alt="{{ article.image.alt | escape }}"
+              class="img-fluid lazyload desk-img lazyload"
+              width="{{ article.image.width }}"
+              height="{{ article.image.width | divided_by: article.image.aspect_ratio }}"
+              decoding="async"
+              loading="lazy"
+              sizes="100vw">
+              {%- else -%}
+              {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+              {{ placeholder | placeholder_svg_tag: 'placeholder-svg desk-img' }}
+              {%- endif -%}
+            </a>
+          </div>
+          <div class="blog-revert">
+            <h2 class="post-title">{{ article.title }}</h2>
+            <ul class="blogger-info">
+              <li>
+                <span class="blog-off date-time">
+                  <i class="icon-clock"></i>
+                  <span>{{ article.published_at | date: '%b %d, %Y' }}</span>
+                </span>
+              </li>
+              <li>
+                <span class="blog-off blog-author">
+                  <i class="icon-user"></i>
+                  <span>{{ section.settings.article_through }}</span>
+                  <span>{{ article.author | truncatewords: 2 | remove: "." }}</span>
+                </span>
+              </li>
+              <li>
+                <span class="blog-off blog-comment">
+                  <i class="icon-bubble"></i>
+                  <span>{{ article.comments_count }}</span>
+                  <span>{{ section.settings.article_cmt }}</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="blog-content">
+            {{ article.content }}
+          </div>
+          <div class="post-info">
+            <blockquote>
+              <i class="fa fa-quote-left"></i>
+              <h2 class="post-title">{{ article.title }}</h2>
+              <span class="post-author">{{ article.author | truncatewords: 2 | remove: "." }}</span>
+            </blockquote>
+          </div>
+          <div class="post-info-tag">
+            <ul class="post-tag">
+              {% for tag in article.tags %}
+              <li>{{ tag | link_to_tag: tag }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="blog-share">
+            {% include 'social-share-blog' %}
+          </div>
+          {% if article.comments_enabled? %}
+          {% assign comment_post_limit = section.settings.comment_post_limit_handle %}
+          {% paginate article.comments by comment_post_limit %}
+          <div id="comments" class="blog-comments">
+            {% if article.comments.size > 0 %}
+            {% include 'blog-comments' %}
+            {% endif %}
+            {% if paginate.pages > 1 %}
+            <div class="paginatoin-area">
+              {%- include 'pagination' -%}
+            </div>
+            {% endif %}
+            {% endpaginate %}
+            <div class="blog-comment-form">
+              {% include 'blog-comment-form' %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% unless section.settings.sidebar_handle == 'without_sidebar' %}
+      <div class="col-xl-3 col-lg-4 col-md-4 col-12 blog-article-wrap">
+        {% include 'blog-sidebar' %}
+      </div>
+      {% endunless %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Article Page",
+  "settings": [
+  {
+    "type": "text",
+    "id": "article_through",
+    "label": "Through",
+    "default": "By"
+  },
+  {
+    "type": "text",
+    "id": "article_cmt",
+    "label": "Comment",
+    "default": "Comment"
+  },
+  {
+    "type" : "header",
+    "content" : "Submit button"
+  },
+  {
+    "type": "text",
+    "id": "article_cmt_send",
+    "label": "title",
+    "default": "Sending"
+  },
+  {
+    "type": "text",
+    "id": "article_cmt_done",
+    "label": "title",
+    "default": "Done!"
+  },
+  {
+    "type" : "header",
+    "content" : "Avtar option"
+  },
+  {
+    "type": "checkbox",
+    "id": "article_avtar_enable",
+    "label": "Show Avtar",
+    "default": false
+  },
+  {
+    "type": "header",
+    "content": "Comment Box"
+  },
+  {
+    "type": "text",
+    "id": "comment_post_limit_handle",
+    "label": "How Many Comment Post Show",
+    "default": "5"
+  },
+  {
+    "type": "header",
+    "content": "Article Sidebar"
+  },
+  {
+    "type": "radio",
+    "id": "blog_sidebar_position_handle",
+    "label": "Sidebar Position",
+    "options": [
+    {
+      "label": "Sticky",
+      "value": "sticky_sidebar"
+    },
+    {
+      "label": "Simple",
+      "value": "simple_sidebar"
+    }
+    ],
+    "default": "sticky_sidebar"
+  },
+  {
+    "type": "header",
+    "content": "Article Sidebar Option"
+  },
+  {
+    "type": "radio",
+    "id": "sidebar_handle",
+    "label": "Sidebar Option",
+    "options": [
+    {
+      "label": "Left Sidebar",
+      "value": "left_sidebar_handle"
+    },
+    {
+      "label": "Right Sidebar",
+      "value": "right_sidebar_handle"
+    },
+    {
+      "label": "Without Sidebar",
+      "value": "without_sidebar"
+    }
+    ],
+    "default": "left_sidebar_handle"
+  },
+  {
+    "type": "header",
+    "content": "Sidebar search"
+  },
+  {
+    "type": "checkbox",
+    "id": "blog_search_bar_enable",
+    "label": "Show searchbar",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "blog_search_placeholder",
+    "label": "Searchbar placeholder",
+    "default": "Search"
+  },
+  {
+    "type": "header",
+    "content": "Recent posts"
+  },
+  {
+    "type": "checkbox",
+    "id": "recent_post_enable",
+    "label": "Show recent posts",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "recent_title",
+    "label": "Title",
+    "default": "Recent posts"
+  },
+  {
+    "type": "number",
+    "id": "recent_post_limit_handle",
+    "label": "How many post show",
+    "default": 3
+  },
+  {
+    "type": "header",
+    "content": "Select category"
+  },
+  {
+    "type": "text",
+    "id": "blog_cat_title",
+    "label": "Category title",
+    "default": "Categories"
+  },
+  {
+    "type": "link_list",
+    "id": "blog_cat_handle",
+    "label": "Select category"
+  },
+  {
+    "type": "header",
+    "content": "Tag"
+  },
+  {
+    "type": "checkbox",
+    "id": "tags_enable",
+    "label": "Show tags",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "blog_tags_title",
+    "label": "Title",
+    "default": "Tags"
+  },
+  {
+    "type": "number",
+    "id": "blog_tags_list_limit_handle",
+    "label": "How many tags show",
+    "default": 15
+  },
+  {
+    "type": "header",
+    "content": "Newsletter"
+  },
+  {
+    "type": "checkbox",
+    "id": "blog_new_enable",
+    "label": "Newsletter enable",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "blog_new_title",
+    "label": "Newsletter",
+    "default": "Newsletter"
+  },
+  {
+    "type": "header",
+    "content": "Instagram"
+  },
+  {
+    "type": "checkbox",
+    "id": "blog_insta_enable",
+    "label": "Instagram enable",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "blog_insta_title",
+    "label": "Instagram title",
+    "default": "Instagram"
+  },
+  {
+    "type": "url",
+    "id": "insta_url1",
+    "label": "Instagram image url"
+  },
+  {
+    "type": "image_picker",
+    "id": "insta_img1",
+    "label": "Instagram image",
+    "info": "Recommended Size: 500x500px"
+  },
+  {
+    "type": "url",
+    "id": "insta_url2",
+    "label": "Instagram image url"
+  },
+  {
+    "type": "image_picker",
+    "id": "insta_img2",
+    "label": "Instagram image",
+    "info": "Recommended Size: 500x500px"
+  },
+  {
+    "type": "url",
+    "id": "insta_url3",
+    "label": "Instagram image url"
+  },
+  {
+    "type": "image_picker",
+    "id": "insta_img3",
+    "label": "Instagram image",
+    "info": "Recommended Size: 500x500px"
+  },
+  {
+    "type": "url",
+    "id": "insta_url4",
+    "label": "Instagram image url"
+  },
+  {
+    "type": "image_picker",
+    "id": "insta_img4",
+    "label": "Instagram image",
+    "info": "Recommended Size: 500x500px"
+  },
+  {
+    "type": "url",
+    "id": "insta_url5",
+    "label": "Instagram image url"
+  },
+  {
+    "type": "image_picker",
+    "id": "insta_img5",
+    "label": "Instagram image",
+    "info": "Recommended Size: 500x500px"
+  },
+  {
+    "type": "url",
+    "id": "insta_url6",
+    "label": "Instagram image url"
+  },
+  {
+    "type": "image_picker",
+    "id": "insta_img6",
+    "label": "Instagram image",
+    "info": "Recommended Size: 500x500px"
+  }
+  ]
+}
+{% endschema %}
+<style type="text/css">
+  .article-area .left-wrap {
+    flex-direction: row-reverse;
+  }
+  .single-blog-area .blog-revert {
+    margin-top: 23px;
+  }
+  .single-blog-area .blog-revert h2.post-title{
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .single-blog-area .blog-revert ul.blogger-info {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .single-blog-area .blog-revert ul.blogger-info li {
+    {% if settings.enable_rtl %}
+    margin-left: 30px;
+    {% else %}
+    margin-right: 30px;
+    {% endif %}
+  }
+  .single-blog-area .blog-revert ul.blogger-info li:last-child {
+    {% if settings.enable_rtl %}
+    margin-left: 0;
+    {% else %}
+    margin-right: 0;
+    {% endif %}
+  }
+  .single-blog-area .blog-revert ul.blogger-info li span.blog-off {
+    display: flex;
+    align-items: center;
+  }
+  .single-blog-area .blog-revert ul.blogger-info li span.blog-off i {
+    {% if settings.enable_rtl %}
+    margin-left: 5px;
+    {% else %}
+    margin-right: 5px;
+    {% endif %}
+
+    line-height: normal;
+  }
+  .single-blog-area .blog-revert ul.blogger-info li span.blog-author span:last-child,
+  .single-blog-area .blog-revert ul.blogger-info li span.blog-comment span:last-child {
+    color: var(--color-primary);
+    {% if settings.enable_rtl %}
+    margin-right: 5px;
+    {% else %}
+    margin-left: 5px;
+    {% endif %}
+  }
+  .single-blog-area .blog-content{
+    margin-top: 20px;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc p.blog-desc {
+    margin-top: 3px;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc p:first-of-type{
+    margin-top: 0px;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc .blog-desc-pic {
+    margin-top: 8px;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc .blog-desc-pic img {
+    {% if settings.enable_rtl %}
+    margin-left: 15px;
+    float: right;
+    {% else %}
+    float: left;
+    margin-right: 15px;
+    {% endif %}
+  }
+  .single-blog-area .blog-content .blog-wrap-desc .blog-desc-pic p{
+    margin-top: 1px;    
+  }
+  .single-blog-area .blog-content .blog-wrap-desc .blog-desc-pic p:first-child{
+    margin-top: 0px;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc blockquote {
+    color: var(--color-primary);
+    margin: 9px 0;
+  }
+
+  .single-blog-area .post-info{
+    margin-top: 22px;
+  }
+  .single-blog-area .post-info blockquote {
+    padding: 15px;
+    margin-bottom: 0;
+    background-color: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .single-blog-area .post-info blockquote i {
+    font-size: 30px;
+  }
+  .single-blog-area .post-info blockquote h2 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .single-blog-area .post-info blockquote span {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+  .single-blog-area .post-info-tag {
+    margin-top: 32px;
+  }
+  .single-blog-area .post-info-tag ul {
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+  .single-blog-area .post-info-tag ul li {
+    margin: 5px 5px 0 0px;
+  }
+  .single-blog-area .post-info-tag ul li a{
+    padding: 5px 10px;
+    color: #fff;
+    border-radius: 3px;
+    background-color: var(--color-primary);
+  }
+  .single-blog-area .post-info-tag ul li a:hover{
+    color: #fff;
+    background-color: var(--color-secondary);
+  }
+  .single-blog-area .blog-share {
+    margin-top: 30px;
+  }
+  .single-blog-area .blog-share ul {
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+  .single-blog-area .blog-share ul li {
+    margin: 0 5px 0 0;
+  }
+  .single-blog-area .blog-share ul li:last-child {
+    {% if settings.enable_rtl %}
+    margin-left: 0px;
+    {% else %}
+    margin-right: 0px;
+    {% endif %}
+  }
+  .single-blog-area .blog-share ul li a {
+    fill: #fff;
+    color: #fff;
+    font-size: 16px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+  }
+  .single-blog-area .blog-share ul li a svg {
+    width: 16px;
+  }
+  .single-blog-area .blog-share ul li a:hover{
+    opacity: .5;
+  }
+/*blog comments css*/
+.single-blog-area .blog-comments{
+  margin-top: 22px;
+}
+.single-blog-area .cmt-tit-count h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.single-blog-area .cmt-tit-count h2 span.cmt-count{
+  color: var(--color-primary);
+}
+.single-blog-area .cmt-info-wrap .comment-info {
+  margin-top: 7px;
+  padding-top: 16px;
+  border-top: 1px solid #eeeeee;
+  display: flex;
+}
+.single-blog-area .cmt-info-wrap .comment-info:first-child{
+  margin-top: 15px;
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-avtar .avtar-cmt i,
+.single-blog-area .cmt-info-wrap .comment-info .comment-avtar .avtar-cmt .cmt-auth {
+  height: 45px;
+  width: 45px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-avtar .avtar-cmt i {
+  font-size: 20px;
+  color: #565d64;
+  background-color: #e6e6e6;
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-avtar .avtar-cmt .cmt-auth {
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-content {
+  {% if settings.enable_rtl %}
+  margin-right: 15px;
+  {% else %}
+  margin-left: 15px;
+  {% endif %}
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-content .review_info span {
+  font-style: italic;
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-content .review_info p span.cmt-authr {
+  font-weight: 600;
+}
+.single-blog-area .cmt-info-wrap .comment-info .comment-content .review_info p.time {
+  font-weight: 600;
+}
+.single-blog-area .blog-comment-form {
+  margin-top: 15px;
+}
+.single-blog-area .blog-comment-form .comments-reply-area h2.comment-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap{
+  margin-top: 10px;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed {
+  margin-top: 11px;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed:first-child{
+  margin-top: 0px;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed label {
+  display: block;
+  margin-bottom: 5px;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed input,
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed textarea {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #eeeeee;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed textarea {
+  resize: none;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed input:focus,
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed textarea:focus {
+  color: #bbb;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed textarea:focus {
+  outline: none;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed input.error,
+.single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed textarea.error {
+  border: 1px solid #d02e2e;
+}
+.single-blog-area .blog-comment-form .comments-reply-area .comment-form-submit {
+  margin-top: 10px;
+}
+@media (max-width: 1199px) {
+
+}
+@media (max-width: 991px) {
+  .single-blog-area .blog-content .blog-wrap-desc blockquote {
+
+  }
+  .single-blog-area .cmt-tit-count h2,
+  .single-blog-area .blog-comment-form .comments-reply-area h2.comment-title {
+    font-size: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .article-area .left-wrap,
+  .article-area .right-wrap {
+    flex-direction: column-reverse;
+  }
+  .article-area .blog-article-wrap {
+    margin-top: 20px;
+  }
+  .article-area .blog-article-wrap:last-child {
+    margin-top: 0px;
+  }
+  .single-blog-area .blog-revert {
+    margin-top: 23px;
+  }
+  .single-blog-area .blog-revert ul.blogger-info {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .single-blog-area .blog-revert ul.blogger-info li {
+    {% if settings.enable_rtl %}
+    margin-left: 0;
+    {% else %}
+    margin-right: 0;
+    {% endif %}
+    margin-top: 10px;
+  }
+  .single-blog-area .blog-revert ul.blogger-info li:first-child {
+    margin-top: 0px;
+  }
+  .single-blog-area .blog-content{
+    margin-top: 17px;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc .blog-desc-pic img {
+    width: 50%;
+  }
+  .single-blog-area .blog-content .blog-wrap-desc blockquote {
+    padding: 10px 15px;
+  }
+  .single-blog-area .cmt-info-wrap .comment-info,
+  .single-blog-area .blog-comment-form .comments-reply-area .form-wrap .form-filed {
+    margin-top: 10px;
+  }
+  .single-blog-area .post-info{
+    margin-top: 22px;
+  }
+  .single-blog-area .post-info-tag {
+    margin-top: 25px;
+  }
+  .single-blog-area .blog-share {
+    margin-top: 30px;
+  }
+  .single-blog-area .blog-comments {
+    margin-top: 22px;
+  }
+  .single-blog-area .blog-comment-form {
+    margin-top: 15px;
+  }
+}
+</style>

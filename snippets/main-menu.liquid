@@ -1,0 +1,93 @@
+{% comment %}
+  Renders a standard dropdown style menu for the header.
+
+  Usage:
+  {% render 'header-dropdown-menu' %}
+{% endcomment %}
+
+<nav class="mainwrap">
+  <ul class="list-unstyled main-menu" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li class="menu-link">
+        {%- if link.links != blank -%}
+          <div id="Details-HeaderMenu-{{ forloop.index }}" class="sub-menu">
+            <a href="{{ link.url }}"
+              id="HeaderMenu-{{ link.handle }}"
+              class="link-title"
+            >
+              <span class="sp-link-title {% if link.child_active %} active{% endif %}">
+                {{- link.title -}}
+              </span>
+              <span class="menu-arrow"><i class="fa fa-angle-down"></i></span>
+            </a>
+            <ul
+              id="HeaderMenu-MenuList-{{ forloop.index }}"
+              class="list-unstyled menu-dropdown dropdown-content"
+              role="list"
+              tabindex="-1"
+            >
+              {%- for childlink in link.links -%}
+                <li class="singlemenu-li">
+                  {%- if childlink.links == blank -%}
+                    <a
+                      id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                      href="{{ childlink.url }}"
+                      class="singlelink-title {% if childlink.current %} active{% endif %}"
+                      {% if childlink.current %}
+                        aria-current="page"
+                      {% endif %}
+                    >
+                      <span class="sp-link-title">{{ childlink.title }}</span>
+                    </a>
+                  {%- else -%}
+                    <div id="Details-HeaderSubMenu-{{ link.handle }}-{{ childlink.handle }}">
+                      <a href="{{ childlink.url }}" 
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        class="singlelink-title"
+                      >
+                        <span class="sp-link-title">{{ childlink.title }}</span>
+                        <span class="menu-arrow"><i class="fa fa-angle-right"></i></span>
+                      </a>
+                      <ul
+                        id="HeaderMenu-SubMenuList-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                        class="list-unstyled supmenu-dropdown dropdown-content"
+                      >
+                        {%- for grandchildlink in childlink.links -%}
+                          <li class="supmenu-li">
+                            <a
+                              id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                              href="{{ grandchildlink.url }}"
+                              class="suplink-title {% if grandchildlink.current %} active{% endif %}"
+                              {% if grandchildlink.current %}
+                                aria-current="page"
+                              {% endif %}
+                            >
+                              <span class="sp-link-title">{{ grandchildlink.title }}</span>
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- else -%}
+          <a
+            id="HeaderMenu-{{ link.handle }}"
+            href="{{ link.url }}"
+            class="link-title"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span class="sp-link-title {%- if link.current %} active{% endif %}">
+              {{- link.title -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>

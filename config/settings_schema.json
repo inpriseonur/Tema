@@ -1,0 +1,1074 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Vegist",
+    "theme_version": "2.4",
+    "theme_author": "Spacingtech",
+    "theme_documentation_url": "https:\/\/help.shopify.com\/manual\/online-store\/themes",
+    "theme_support_url": "https:\/\/spacingtech.authordesk.app\/"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary",
+        "default": "#34bf4a",
+        "info": "Used for text links, and primary buttons"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary",
+        "default": "#232323"
+      },
+      {
+        "type": "header",
+        "content": "Body Color"
+      },
+      {
+        "type": "color",
+        "id": "body_text_color",
+        "label": "Text Color",
+        "default": "#6F6F6F"
+      },
+      {
+        "type": "color",
+        "id": "color_body_bg",
+        "label": "Body Background color",
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "Heading Color"
+      },
+      {
+        "type": "color",
+        "id": "heading_text_color",
+        "label": "Text Color",
+        "default": "#333333"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Body Font Family"
+      },
+      {
+        "type": "font_picker",
+        "id": "body_font_handle",
+        "label": "Font Family",
+        "default": "open_sans_n4"
+      },
+      {
+        "type": "header",
+        "content": "Body Custom Font Family"
+      },
+      {
+        "type": "checkbox",
+        "id": "body_custom_font_handle_enable",
+        "label": "Use Custom Font",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "body_custom_font_handle",
+        "label": "Custom Font",
+        "info": "[Find more Google fonts](https:\/\/fonts.google.com)",
+        "default": "Open Sans"
+      },
+      {
+        "type": "range",
+        "id": "body_custom_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 400
+      },
+      {
+        "type": "select",
+        "id": "body_custom_font_style",
+        "label": "Font Style",
+        "options": [
+          {
+            "label": "Italic",
+            "value": "italic"
+          },
+          {
+            "label": "Normal",
+            "value": "normal"
+          },
+          {
+            "label": "Oblique",
+            "value": "oblique"
+          },
+          {
+            "label": "Unset",
+            "value": "unset"
+          }
+        ],
+        "default": "normal"
+      },
+      {
+        "type": "header",
+        "content": "Body Common Propoerty"
+      },
+      {
+        "type": "range",
+        "id": "body_font_size",
+        "label": "Font Size",
+        "min": 13,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      },
+      {
+        "type": "range",
+        "id": "body_letter_spacing",
+        "label": "Letter Spacing",
+        "min": 0.0,
+        "max": 1.0,
+        "step": 0.1,
+        "unit": "px",
+        "default": 0.5
+      },
+      {
+        "type": "header",
+        "content": "Heading Font Family"
+      },
+      {
+        "type": "font_picker",
+        "id": "header_font_handle",
+        "label": "Font Family",
+        "default": "open_sans_n6"
+      },
+      {
+        "type": "header",
+        "content": "Heading Custom Font Family"
+      },
+      {
+        "type": "checkbox",
+        "id": "header_custom_font_handle_enable",
+        "label": "Use Custom Font",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "header_custom_font_handle",
+        "label": "Custom Font",
+        "info": "[Find more Google fonts](https:\/\/fonts.google.com)",
+        "default": "Open Sans"
+      },
+      {
+        "type": "range",
+        "id": "header_custom_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 600
+      },
+      {
+        "type": "select",
+        "id": "header_custom_font_style",
+        "label": "Font Style",
+        "options": [
+          {
+            "label": "Italic",
+            "value": "italic"
+          },
+          {
+            "label": "Normal",
+            "value": "normal"
+          },
+          {
+            "label": "Oblique",
+            "value": "oblique"
+          },
+          {
+            "label": "Unset",
+            "value": "unset"
+          }
+        ],
+        "default": "normal"
+      },
+      {
+        "type": "header",
+        "content": "Paragraph Font Family"
+      },
+      {
+        "type": "font_picker",
+        "id": "paragraph_font_handle",
+        "label": "Font Family",
+        "default": "open_sans_n4"
+      },
+      {
+        "type": "header",
+        "content": "Paragraph Custom Font Family"
+      },
+      {
+        "type": "checkbox",
+        "id": "paragraph_custom_font_handle_enable",
+        "label": "Use Custom Font",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "paragraph_custom_font_handle",
+        "label": "Custom Font",
+        "info": "[Find more Google fonts](https:\/\/fonts.google.com)",
+        "default": "Open Sans"
+      },
+      {
+        "type": "range",
+        "id": "paragraph_custom_font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 400
+      },
+      {
+        "type": "select",
+        "id": "paragraph_custom_font_style",
+        "label": "Font Style",
+        "options": [
+          {
+            "label": "Italic",
+            "value": "italic"
+          },
+          {
+            "label": "Normal",
+            "value": "normal"
+          },
+          {
+            "label": "Oblique",
+            "value": "oblique"
+          },
+          {
+            "label": "Unset",
+            "value": "unset"
+          }
+        ],
+        "default": "normal"
+      },
+      {
+        "type": "header",
+        "content": "Paragraph Common Propoerty"
+      },
+      {
+        "type": "range",
+        "id": "paragraph_font_line_height",
+        "label": "Font Line Height",
+        "min": 20,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "default": 26
+      }
+    ]
+  },
+  {
+    "name": "RTL Version",
+    "settings": [
+      {
+        "type": "header",
+        "content": "RTL Version Enable"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_rtl",
+        "label": "RTL Enable",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Box Layout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "BOX Enable"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_box",
+        "label": "BOX Enable",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "body_bgcolor_enable",
+        "label": "Show Box Background Color",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "body_bgcolor",
+        "label": "Body Background Color",
+        "default": "#fff"
+      },
+      {
+        "type": "image_picker",
+        "id": "body_bgimg",
+        "label": "Banner BG Image",
+        "info": "Recommended Size: 1920px x 4000px"
+      },
+      {
+        "type": "checkbox",
+        "id": "body_bgimg_enable",
+        "label": "Show Box Background Iamage",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "body_boxshadow_enable",
+        "label": "Show Boxshadow",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Company Logo",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_header_max_width",
+        "min": 10,
+        "max": 300,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo Width",
+        "default": 120
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_header",
+        "label": "Logo Image"
+      },
+      {
+        "type": "header",
+        "content": "Footer Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_footer_max_width",
+        "min": 10,
+        "max": 300,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo Width",
+        "default": 120
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_footer",
+        "label": "Logo Image"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon Image",
+        "info": "Will be scaled down to 32 x 32px"
+      }
+    ]
+  },
+  {
+    "name": "Newsletter",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Newsletter Popup"
+      },
+      {
+        "type": "checkbox",
+        "id": "newsletter_popup_enable",
+        "label": "Newsletter Popup Enable",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "newsletter_bg_img",
+        "label": "Newsletter BG Image"
+      },
+      {
+        "type": "text",
+        "id": "newletter_popup_title",
+        "label": "Newsletter Popup Title",
+        "default": "Newsletter"
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_text",
+        "label": "Newsletter Description",
+        "default": "Subscribe to get the notification of latest posts"
+      },
+      {
+        "type": "text",
+        "id": "email_placeholder",
+        "label": "Email Placeholer",
+        "default": "Your email address"
+      },
+      {
+        "type": "text",
+        "id": "newsletter_button_name",
+        "label": "Newsletter Popup Button Name",
+        "default": "Subscribe"
+      },
+      {
+        "type": "text",
+        "id": "dont_show_text",
+        "label": "Dont show text",
+        "default": "Don’t show this popup again"
+      },
+      {
+        "type": "number",
+        "id": "modal_timeout",
+        "label": "How many seconds to show when the website is opened",
+        "default": 3000,
+        "info": "NOTE: 1000 count euqal to (1 second)"
+      }
+    ]
+  },
+  {
+    "name": "Payment Icon",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Payment Providers"
+      },
+      {
+        "type": "textarea",
+        "id": "payment_picker",
+        "label": "Payment Providers Name",
+        "default": "visa, paypal, master, american_express",
+        "info": "Ex: afterpay, american_express, apple_pay, bitcoin, dankort, diners_club, discover, dogecoin, dwolla, forbrugsforeningen, google_pay, ideal, jcb, klarna, klarna-pay-later, litecoin, maestro, master, paypal, shopify_pay, sofort, visa, paytm"
+      },
+      {
+        "type": "header",
+        "content": "Payment Providers Icon"
+      },
+      {
+        "type": "range",
+        "id": "payment_svg_width",
+        "label": "Icon Width",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 38,
+        "info": "Set 'SVG' icon 'Width' from here"
+      }
+    ]
+  },
+  {
+    "name": "Product Timer",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Countdown Timer"
+      },
+      {
+        "type": "text",
+        "id": "day_title",
+        "label": "Day Title",
+        "default": "Day"
+      },
+      {
+        "type": "text",
+        "id": "hour_title",
+        "label": "Hour Title",
+        "default": "Hrs"
+      },
+      {
+        "type": "text",
+        "id": "minute_title",
+        "label": "Minute Title",
+        "default": "Min"
+      },
+      {
+        "type": "text",
+        "id": "second_title",
+        "label": "Second Title",
+        "default": "sec"
+      }
+    ]
+  },
+  {
+    "name": "Product grid image",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Image ratio"
+      },
+      {
+        "type": "select",
+        "id": "image_ratio",
+        "options": [
+          {
+            "value": "adapt",
+            "label": "Adapt to image"
+          },
+          {
+            "value": "portrait",
+            "label": "Portrait"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          }
+        ],
+        "default": "adapt",
+        "label": "Image shape"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_hover_product",
+        "label": "Enable Hover Two Product",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rating",
+        "default": true,
+        "label": "Show product rating",
+        "info": "To display a rating, add a product rating app."
+      }
+    ]
+  },
+  {
+    "name": "Cart drawer",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Drawer"
+          },
+          {
+            "value": "page",
+            "label": "Page redirect"
+          }
+        ],
+        "default": "drawer",
+        "label": "Cart type"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cart_note",
+        "label": "Enable cart note",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Free shipping bar"
+      },
+      {
+        "type": "checkbox",
+        "label": "Enable Free Shipping Progress Bar",
+        "id": "is_free_shipping_bar",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "promote_free_shipping_txt",
+        "label": "Free Shipping Promotion Text",
+        "default": "Spend [value] more and get free shipping!",
+        "info": "Spend [value] more and get free shipping!"
+      },
+      {
+        "type": "text",
+        "id": "unlocked_free_shipping_txt",
+        "label": "Free Shipping Success Message",
+        "default": "Congratulations , you've got free shipping!"
+      },
+      {
+        "type": "range",
+        "id": "free_shipping_threshold",
+        "label": "Free Shipping Success Threshold",
+        "min": 0,
+        "max": 9000,
+        "step": 100,
+        "unit": "£",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Quickview",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "quickview_enable",
+        "label": "Quickview enable",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "quickview_title",
+        "label": "Quickview title",
+        "default": "Quickview"
+      }
+    ]
+  },
+  {
+    "name": "Breadcrumb banner",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "breadcrumb_banner_enable",
+        "label": "Breadcrumb banner",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "breadcrumb_banner_image",
+        "label": "Breadcrumb banner image",
+        "info": "Default Image Size: 1920px"
+      },
+      {
+        "type": "range",
+        "id": "breadcrumb_padding",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Padding top bottom",
+        "default": 15,
+        "info": "Defined in pixels. Do not add the 'px' unit."
+      },
+      {
+        "type": "range",
+        "id": "breadcrumb_padding_xs",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "label": "Padding top bottom",
+        "default": 15,
+        "info": "Defined in pixels. Do not add the 'px' unit."
+      },
+      {
+        "type": "color",
+        "id": "breadcrumb_banner_bg",
+        "label": "Background color",
+        "default": "#f6f6f6"
+      },
+      {
+        "type": "color",
+        "id": "breadcrumb_banner_overlay_color",
+        "label": "Banner overlay color",
+        "default": "#f6f6f6"
+      },
+      {
+        "type": "range",
+        "id": "breadcrumb_banner_opacity",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Banner overlay color opacity",
+        "default": 0.6
+      },
+      {
+        "type": "color",
+        "id": "breadcurmb_page_title_color",
+        "label": "Text color",
+        "default": "#666666"
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_1_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_1_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_2_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_2_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_3_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_3_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_4_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_4_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_5_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_5_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_6_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_6_link",
+        "label": "Link"
+      },
+      {
+        "type": "header",
+        "content": "Icon With Link"
+      },
+      {
+        "type": "textarea",
+        "id": "social_icon_7_name",
+        "label": "Social Icon Name",
+        "info": "[See Icon Name](https:\/\/fontawesome.com\/icons)"
+      },
+      {
+        "type": "url",
+        "id": "social_icon_7_link",
+        "label": "Link"
+      }
+    ]
+  },
+  {
+    "name": "Search behavior",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "search_enable",
+        "default": true,
+        "label": "Header search enable"
+      },
+      {
+        "type": "header",
+        "content": "Search suggestions"
+      },
+      {
+        "type": "checkbox",
+        "id": "ajax_search_enabled",
+        "default": true,
+        "label": "Enable search suggestions"
+      },
+      {
+        "type": "text",
+        "id": "search_modal_title",
+        "default": "What are you looking for?",
+        "label": "Search modal title"
+      }
+    ]
+  },
+  {
+    "name": "Wishlist",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Wishlist"
+      },
+      {
+        "type": "url",
+        "id": "wishlist_page_url",
+        "label": "Header wishlist page url"
+      },
+      {
+        "type": "checkbox",
+        "id": "wishlist_enable",
+        "label": "Show Wishlist",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "wishlist_title",
+        "label": "Header Wishlist title",
+        "default": "Wishlist"
+      }
+    ]
+  },
+  {
+    "name": "Blog grid option",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Read More Button"
+      },
+      {
+        "type": "text",
+        "id": "blog_read_btn",
+        "label": "Button Text",
+        "default": "Read More"
+      },
+      {
+        "type": "header",
+        "content": "Image ratio"
+      },
+      {
+        "type": "select",
+        "id": "blog_image_ratio",
+        "options": [
+          {
+            "value": "adapt",
+            "label": "Adapt to image"
+          },
+          {
+            "value": "portrait",
+            "label": "Portrait"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          }
+        ],
+        "default": "adapt",
+        "label": "Image shape"
+      }
+    ]
+  },
+  {
+    "name": "Customer Page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Login"
+      },
+      {
+        "type": "text",
+        "id": "login_sub_text",
+        "label": "Instruction Text",
+        "default": "Please login below account detail"
+      },
+      {
+        "type": "header",
+        "content": "Create An Account"
+      },
+      {
+        "type": "text",
+        "id": "dnt_acc_title",
+        "label": "Create Account Title",
+        "default": "Don't have an account?"
+      },
+      {
+        "type": "range",
+        "id": "acc_opacity",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Hover Opacity",
+        "default": 0.1
+      },
+      {
+        "type": "header",
+        "content": "Terms & Condition"
+      },
+      {
+        "type": "text",
+        "id": "log_term_con_syn",
+        "label": "Syntax",
+        "default": "*"
+      },
+      {
+        "type": "text",
+        "id": "log_term_con_text",
+        "label": "Button Text",
+        "default": "Terms & Conditions."
+      },
+      {
+        "type": "url",
+        "id": "log_term_con_url",
+        "label": "Button URL"
+      },
+      {
+        "type": "header",
+        "content": "Privacy Policy"
+      },
+      {
+        "type": "text",
+        "id": "log_pri_pol_desc",
+        "label": "Privacy Text",
+        "default": "Your privacy and security are important to us. For more information on how we use your data read our"
+      },
+      {
+        "type": "text",
+        "id": "log_pri_pol_text",
+        "label": "Button Text",
+        "default": "privacy policy"
+      },
+      {
+        "type": "url",
+        "id": "log_pri_pol_url",
+        "label": "Button URL"
+      },
+      {
+        "type": "header",
+        "content": "Register"
+      },
+      {
+        "type": "text",
+        "id": "register_sub_text",
+        "label": "Instruction Text",
+        "default": "Please Register using account detail bellow."
+      },
+      {
+        "type": "text",
+        "id": "alredy_acc_title",
+        "label": "Create Account Title",
+        "default": "Already an account holder?"
+      },
+      {
+        "type": "header",
+        "content": "My Account \/ Order"
+      },
+      {
+        "type": "text",
+        "id": "customer_register_title",
+        "label": "Register Title",
+        "default": "Register"
+      },
+      {
+        "type": "text",
+        "id": "customer_account_title",
+        "label": "Account Title",
+        "default": "Account"
+      },
+      {
+        "type": "text",
+        "id": "customer_login_title",
+        "label": "Login Title",
+        "default": "Login"
+      },
+      {
+        "type": "text",
+        "id": "customer_logout_title",
+        "label": "Logout Title",
+        "default": "Logout"
+      }
+    ]
+  },
+  {
+    "name": "Custom, Default and Customer Page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Section Padding"
+      },
+      {
+        "type": "range",
+        "id": "section_padding_top",
+        "label": "Padding Top",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 80
+      },
+      {
+        "type": "range",
+        "id": "section_padding_bottom",
+        "label": "Padding Bottom",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 80
+      },
+      {
+        "type": "paragraph",
+        "content": "Mobile"
+      },
+      {
+        "type": "range",
+        "id": "section_padding_top_xs",
+        "label": "Padding Top",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 50
+      },
+      {
+        "type": "range",
+        "id": "section_padding_bottom_xs",
+        "label": "Padding Bottom",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 50
+      }
+    ]
+  }
+]

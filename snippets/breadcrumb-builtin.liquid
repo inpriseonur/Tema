@@ -1,0 +1,62 @@
+{% unless template == 'index' %}
+<ul class="breadcrumb-list">
+  <li class="br-item">
+    <a href="/" title="{{ 'general.breadcrumbs.home_link_title' | t }}">{{ 'general.breadcrumbs.home' | t }}</a>
+  </li>
+  {% if template contains 'product' %}
+  {% if collection %}
+  {% if collection.handle %}
+  {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+  <li class="br-item">
+    {{ collection.title | link_to: url }}
+  </li>
+  {% endif %}
+  {% endif %}
+  <li class="br-item">
+    <span>{{ product.title | truncatewords: 3 }}</span>
+  </li>
+  {% elsif template contains 'collection' and collection.handle %}
+  {% if current_tags %}
+  {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+  <li class="br-item">
+    {{ collection.title | link_to: url }}
+  </li>
+  <li class="br-item">
+    <span>{{ current_tags | join: " + " | replace: "tags_", "#" }}</span>
+  </li>
+  {% else %}
+  <li class="br-item">
+    <span>{{ collection.title }}</span>
+  </li>
+  {% endif %}
+  {% elsif template == 'blog' %}
+  {% if current_tags %}
+  <li class="br-item">
+    {{ blog.title | link_to: blog.url }}
+  </li>
+  <li class="br-item">
+    <span>{{ current_tags | join: " + " }}</span>
+  </li>
+  {% else %}
+  <li class="br-item">
+    <span>{{ blog.title }}</span>
+  </li>
+  {% endif %}
+  {% elsif template == 'article' %}
+  <li class="br-item">
+    {{ blog.title | link_to: blog.url }}
+  </li>
+  <li class="br-item">
+    <span>{{ article.title | truncatewords: 3 }}</span>
+  </li>
+  {% elsif template contains 'page' %}
+  <li class="br-item">
+    <span>{{ page.title }}</span>
+  </li>
+  {% else %}
+  <li class="br-item">
+    <span>{{ page_title }}</span>
+  </li>
+  {% endif %}
+</ul>
+{% endunless %}

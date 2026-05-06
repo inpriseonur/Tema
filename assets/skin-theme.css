@@ -1,0 +1,100 @@
+/* body box layout */
+
+
+
+.grid__item h1{
+  color: ;
+}
+
+/* Breadcurmb Banner */
+.breadcrumb-area {
+  position: relative;
+  padding: 15px 0;
+}
+.breadcrumb-area {
+  background: rgba(0,0,0,0) ;
+}
+.breadcrumb-area::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #000000;
+  opacity: 0.2;
+}
+@media (max-width: 767px) {
+  .breadcrumb-area {
+    padding: 15px 0;
+  }
+}
+.breadcrumb-list > li > span,
+.breadcrumb-list > li > a {
+  color: #ffffff;
+}
+.breadcrumb-list .br-item::before {
+  color: #ffffff;
+}
+
+/* Custom Page */
+.section-ptb {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+@media (max-width: 1199px) {
+  .section-ptb {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+
+/* Custom Page */
+.section-ptb {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+@media (max-width: 1199px) {
+  .section-ptb {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+
+
+/* scrollbar css */
+.scroll-bar,
+.search-results,
+.mini-cart ul.cart-item-loop,
+.shop-sidebar ul.scrollbar,
+.productmodal .modal-dialog .modal-body .quick-view-content{
+  scrollbar-width: thin;
+  -webkit-scrollbar-width: thin;
+}
+.scroll-bar::-webkit-scrollbar,
+.search-results::-webkit-scrollbar,
+.mini-cart ul.cart-item-loop::-webkit-scrollbar,
+.shop-sidebar ul.scrollbar::-webkit-scrollbar,
+.productmodal .modal-dialog .modal-body .quick-view-content::-webkit-scrollbar{
+  width: 4px;
+}
+.scroll-bar::-webkit-scrollbar-track,
+.search-results::-webkit-scrollbar-track,
+.mini-cart ul.cart-item-loop::-webkit-scrollbar-track,
+.shop-sidebar ul.scrollbar::-webkit-scrollbar-track,
+.productmodal .modal-dialog .modal-body .quick-view-content::-webkit-scrollbar-track{
+  background-color: #eeeeee;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb,
+.search-results::-webkit-scrollbar-thumb,
+.mini-cart ul.cart-item-loop::-webkit-scrollbar-thumb,
+.shop-sidebar ul.scrollbar::-webkit-scrollbar-thumb,
+.productmodal .modal-dialog .modal-body .quick-view-content::-webkit-scrollbar-thumb{
+  background-color: #c1c1c1;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb:hover,
+.search-results::-webkit-scrollbar-thumb:hover,
+.mini-cart ul.cart-item-loop::-webkit-scrollbar-thumb:hover,
+.shop-sidebar ul.scrollbar::-webkit-scrollbar-thumb:hover,
+.productmodal .modal-dialog .modal-body .quick-view-content::-webkit-scrollbar-thumb:hover{
+  background-color: var(--color-primary);
+}

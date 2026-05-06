@@ -1,0 +1,71 @@
+{% assign respond_js_secret_key = shop.domain | md5 %}
+{% unless search.terms == respond_js_secret_key %}
+{% paginate search.results by 24 %}
+<section class="section-ptb search-page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="section-capture">
+          <div class="section-title">
+            {% if search.performed %}
+              {% if search.results_count == 0 %}
+              <h2>{{ 'general.search.no_results_html' | t: terms: search.terms }}</h2>
+              {% else %}
+              <h2>{{ 'general.search.results_for_html' | t: terms: search.terms }}</h2>
+              {% endif %}
+            {% else %}
+              <h2>{{ 'templates.search.title' | t }}</h2>
+            {% endif %}
+          </div>
+        </div>
+        <div class="page-search-bar">
+           <form action="{{ routes.search_url }}" method="get" role="search" class="search">
+            <div class="form-search">
+              <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'templates.search.placeholder' | t }}" aria-label="{{ 'templates.search.placeholder' | t }}" required>
+              <button type="submit" class="page-search-button">
+                <i class="fa fa-search"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+        {% if search.performed %}
+          <div class="search-list">
+            {% for item in search.results %}
+              <div class="search-item">
+                {%- case item.object_type -%}
+                {%- when 'product' -%}
+                {% render 'product-grid-item', product: item %}
+                {%- when 'article' -%}
+                {% render 'blog-grid-item', article: item %}
+                {%- when 'page' -%}
+                <div class="page-wrapper">
+                  <a href="{{ item.url }}">
+                    {{ item.title | truncate: 50 | escape }}
+                  </a>
+                  <span class="label">
+                    {{- 'templates.search.page' | t -}}
+                  </span>
+                </div>
+                {%- endcase -%}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if paginate.pages > 1 %}
+          <div class="paginatoin-area">
+            <ul class="paginate">
+              <li class="page-numerous">
+                {%- render 'pagination', paginate: paginate -%}
+              </li>
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endpaginate %}
+{% else %}
+{% render 'respond' %}
+{% layout none %}
+{% endunless %}

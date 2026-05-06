@@ -1,0 +1,115 @@
+<section class="related-product">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="product-related">
+          <div class="section-title">
+            {% if section.settings.related_title !='' %}
+            <h2 class="heading-home">{{ section.settings.related_title }}</h2>
+            {% endif %}
+          </div>
+          <relative-pro class="related-slider isolate" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}">
+            {% if recommendations.performed and recommendations.products_count > 0 %}
+            <div class="product-related-slider swiper" id="related-slider" data-slides-per-view="{{ section.settings.product_view }}"slide-view="5">
+              <div class="swiper-wrapper">
+                {% for recommendation in recommendations.products %}
+                <div class="swiper-slide">
+                  {% render 'product-grid-item', product: recommendation %}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </relative-pro>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Related Product",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+    "type": "text",
+    "id": "related_title",
+    "label": "Section Title",
+    "default": "Related Product"
+  },
+  {
+    "type": "header",
+    "content": "Product Options"
+  },
+  {
+    "type": "text",
+    "id": "products_to_show",
+    "label": "Product Limit",
+    "default": "8"
+  }
+  ]
+}
+{% endschema %}
+<style>
+  .related-product {
+    padding-top: {{ section.settings.section_padding_top }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  }
+  @media(max-width: 1199px){
+    .related-product {
+      padding-top: {{ section.settings.section_padding_top_xs }}px;
+      padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+    }
+  }
+</style>
+
+
+
+

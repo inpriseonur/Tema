@@ -1,0 +1,130 @@
+<section class="about-area section-ptb">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="about-content">
+          <div class="content-main-title">
+            {% if section.settings.about_product_title != '' %}
+            <h2>{{ section.settings.about_product_title }}</h2>
+            {% endif %}
+
+            {% if section.settings.about_des != '' %}
+            <p>{{ section.settings.about_des }}</p>
+            {% endif %}
+          </div>
+          <div class="abt-banner-area">
+            <div class="single-banner">
+              <a href="{{ section.settings.banner_url }}">
+                {%- if section.settings.about_banner_img -%}
+                <img srcset="
+                {%- if section.settings.about_banner_img.width >= 375 -%}{{ section.settings.about_banner_img | image_url: width: 375 }} 375w,{%- endif -%}
+                {%- if section.settings.about_banner_img.width >= 550 -%}{{ section.settings.about_banner_img | image_url: width: 550 }} 550w,{%- endif -%}
+                {%- if section.settings.about_banner_img.width >= 750 -%}{{ section.settings.about_banner_img | image_url: width: 750 }} 750w,{%- endif -%}
+                {%- if section.settings.about_banner_img.width >= 1100 -%}{{ section.settings.about_banner_img | image_url: width: 1100 }} 1100w,{%- endif -%}
+                {%- if section.settings.about_banner_img.width >= 1500 -%}{{ section.settings.about_banner_img | image_url: width: 1500 }} 1500w,{%- endif -%}
+                {%- if section.settings.about_banner_img.width >= 1780 -%}{{ section.settings.about_banner_img | image_url: width: 1780 }} 1780w,{%- endif -%}
+                {%- if section.settings.about_banner_img.width >= 2000 -%}{{ section.settings.about_banner_img | image_url: width: 2000 }} 2000w,{%- endif -%}
+                {{ section.settings.about_banner_img | image_url }} {{ section.settings.about_banner_img.width }}w
+                "
+                src="{{ section.settings.about_banner_img | image_url: width: 2000 }}"
+                data-src="{{ section.settings.about_banner_img | image_url: width: 2000 }}"
+                alt="{{ section.settings.about_banner_img.alt | escape }}"
+                class="img-fluid lazyload"
+                width="{{ section.settings.about_banner_img.width }}"
+                height="{{ section.settings.about_banner_img.width | divided_by: section.settings.about_banner_img.aspect_ratio }}"
+                decoding="async"
+                loading="lazy"
+                sizes="100vw">
+                {%- else -%}
+                {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+                {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </a>
+            </div>
+
+            {% if block.settings.about_des != '' %}
+            <div class="abt-banner-desc">
+              {% for block in section.blocks %}
+              <p>{{ block.settings.about_banner_des }}</p>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Product",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Content"
+  },
+  {
+    "type": "text",
+    "id": "about_product_title",
+    "label": "Title",
+    "default": "What We Do?"
+  },
+  {
+    "type": "textarea",
+    "id": "about_des",
+    "label": "About Description",
+    "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed libero vel ex maximus vulputate nec eu ligula. Vestibulum elementum nisi ut fermentum lobortis. Sed quis iaculis felis."
+  },
+  {
+    "type": "image_picker",
+    "id": "about_banner_img",
+    "label": "Image",
+    "info": "Recommended Size: 1920 x 1024px"
+  },
+  {
+    "type": "url",
+    "id": "banner_url",
+    "label": "Image url"
+  }
+  ],
+  "blocks":[
+  {
+    "type": "about-description",
+    "name": "About Description",
+    "settings": [
+    {
+      "type": "textarea",
+      "id": "about_banner_des",
+      "label": "Description",
+      "default": "There is something about the saree that makes a woman look dignified, glorifying and every bit stylish. a was set up in the year 2017 with a motive to offer its designer collection at competitive price and merchantable quality to its whole seller and worldwide online customer."
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "About us"
+  }
+  ]
+}
+{% endschema %}
+<style type="text/css">
+  .about-content .single-banner{
+    text-align: center;
+  }
+  .about-content .abt-banner-desc p{
+    margin-top: 22px;
+  }
+  .about-content .abt-banner-desc p:first-child{
+    margin-top: 30px;
+  }
+  @media (max-width : 767px){
+    .about-content .abt-banner-desc p{
+      margin-top: 7px;
+    }
+    .about-content .abt-banner-desc p:first-child{
+      margin-top: 15px;
+    }
+  }
+</style>

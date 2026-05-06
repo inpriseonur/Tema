@@ -1,0 +1,204 @@
+<div class="service-area">
+  <ul class="ser-wrap">
+    {% for block in section.blocks %}
+    <li class="ser-wrapper" style="background-color: {{ block.settings.service_bg }};">
+      <a href="{{ block.settings.service_url }}">
+        <div class="service-text">
+          {%if block.settings.service_title != '' %}
+          <h6 style="color: {{ block.settings.text_color }};">{{ block.settings.service_title }}</h6>
+          {% endif %}
+          {%if block.settings.service_des != '' %}
+          <p style="color: {{ block.settings.text_color }};">{{ block.settings.service_des }}</p>
+          {% endif %}
+        </div>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% schema %}
+{
+  "name": "Service",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+    "type" : "header",
+    "content" : "Background Color"
+  },
+  {
+    "type" : "color",
+    "id" : "our_ser_bgcolor",
+    "label" : "Background Color",
+    "default" : "#fff"
+  }
+  ],
+  "blocks":[
+  {
+    "type": "services",
+    "name": "Services",
+    "settings": [
+    {
+      "type": "color",
+      "id": "service_bg",
+      "label": "Service background color",
+      "default": "#d8e9d3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Service text color",
+      "default": "#f9deaa"
+    },
+    {
+      "type": "text",
+      "id": "service_title",
+      "label": "Service title",
+      "default": "Save 20%"
+    },
+    {
+      "type": "text",
+      "id": "service_des",
+      "label": "Service Description",
+      "default": "This cleanse has an extra signature blend made with almonds to provide additional healthy fats & protein that keep you feeling satiated. Cleanse 1 also includes some of our most popular, delicious juices to make it easy-peasy."
+    },
+    {
+      "type": "url",
+      "id": "service_url",
+      "label": "Service url"
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Service"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.service-area {
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  background-color: {{ section.settings.our_ser_bgcolor }};
+}
+@media(max-width: 1199px) {
+  .service-area {
+      padding-top: {{ section.settings.section_padding_top_xs }}px;
+      padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+  }
+}
+.service-area ul.ser-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  {%- if settings.enable_rtl -%}
+  margin: -1px -1px 0 0;
+  {%- else -%}
+  margin: -1px 0 0 -1px;
+  {%- endif -%}
+}
+.service-area ul.ser-wrap li.ser-wrapper{
+  width: calc(33.33% - 1px);
+  {%- if settings.enable_rtl -%}
+  margin: 1px 1px 0 0;
+  {%- else -%}
+  margin: 1px 0 0 1px;
+  {%- endif -%}
+  padding: 60px;
+}
+.service-area ul.ser-wrap li.ser-wrapper .service-text {
+  text-align: center;
+}
+.service-area ul.ser-wrap li.ser-wrapper .service-text h6 {
+  font-size: 24px;
+  font-family: Fredoka,sans-serif;
+}
+.service-area ul.ser-wrap li.ser-wrapper .service-text p {
+  margin-top: 20px;
+}
+
+@media (max-width: 1399px) {
+  .service-area ul.ser-wrap li.ser-wrapper {
+    padding: 40px;
+  }
+}
+@media (max-width: 1199px) {
+  .service-area ul.ser-wrap li.ser-wrapper {
+    padding: 30px;
+  }
+  .service-area ul.ser-wrap li.ser-wrapper .service-text h6 {
+    font-size: 20px;
+  }
+  .service-area ul.ser-wrap li.ser-wrapper .service-text p {
+    font-size: 13px;
+    margin-top: 15px;
+  }
+}
+@media (max-width: 991px) {
+  .service-area ul.ser-wrap li.ser-wrapper {
+    width: calc(50% - 1px);
+  }
+}
+@media (max-width: 767px) {
+  .service-area ul.ser-wrap li.ser-wrapper {
+    width: calc(100% - 1px);
+  }
+}
+@media (max-width: 479px) {
+  .service-area ul.ser-wrap li.ser-wrapper {
+    padding: 20px;
+  }
+  .service-area ul.ser-wrap li.ser-wrapper .service-text p {
+    line-height: 25px;
+  }
+}
+</style>

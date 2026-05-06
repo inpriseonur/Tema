@@ -1,0 +1,335 @@
+<section class="main-content-wrap section-ptb contact-us-page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="content-main-title">
+          {% if section.settings.contact_us_title != '' %}
+          <h2>{{ section.settings.contact_us_title }}</h2>
+          {% endif %}
+
+          {% if section.settings.contact_us_des != '' %}
+          <p>{{ section.settings.contact_us_des }}</p>
+          {% endif %}
+        </div>
+
+        {% if section.settings.contact_us_map_enable %}
+        <div class="contact-map">
+          {{ section.settings.contact_map }}
+        </div>
+        {% endif %}
+
+        <div class="contact-content">
+          <div class="contact-form-warp">
+            <div class="form-title">
+              {% if section.settings.contact_drop_title != '' %}
+              <h6>{{ section.settings.contact_drop_title }}</h6>
+              {% endif %}
+            </div>
+            {% include 'contact-form' %}
+          </div>
+
+          <div class="contact-info">
+            <div class="form-title">
+            {% if section.settings.contact_form_title != '' %}
+            <h6>{{ section.settings.contact_form_title }}</h6>
+            {% endif %}
+            
+            {% if section.settings.contact_form_desc != '' %}
+            <p>{{ section.settings.contact_form_desc }}</p>
+            {% endif %}
+            </div>
+
+            <ul class="contact-info-list">
+              {% for block in section.blocks %}
+              <li>
+                {% if block.settings.info_icon != '' %}
+                <span>
+                  <i class="{{ block.settings.info_icon }}"></i>
+                </span>
+                {% endif %}
+                <span>
+                  <label>{{ block.settings.info_title }}</label>
+                  <p>{{ block.settings.info_des }}</p>
+                </span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact Template",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Page Title"
+  },
+  {
+    "type": "text",
+    "id": "contact_us_title",
+    "label": "Contact Page Title",
+    "default": "Contact Us"
+  },
+  {
+    "type": "text",
+    "id": "contact_us_des",
+    "label": "Contact Description",
+    "default": "Got a question? We had love to hear from you. Send us a message and we will respond as soon as possible."
+  },
+  {
+    "type": "header",
+    "content": "Map Setting"
+  },
+  {
+    "type": "checkbox",
+    "id": "contact_us_map_enable",
+    "label": "Show Map",
+    "default": true
+  },
+  {
+    "type": "textarea",
+    "id": "contact_map",
+    "label": "Map",
+    "info": "google map iframe here"
+  },
+  {
+    "type": "header",
+    "content": "Form Info"
+  },
+  {
+    "type": "text",
+    "id": "contact_drop_title",
+    "label": "Form Title",
+    "default": "Drop us message"
+  },
+  {
+    "type": "text",
+    "id": "name_placeholder",
+    "label": "Name Placeholder",
+    "default": "Enter your name"
+  },
+  {
+    "type": "text",
+    "id": "email_placeholder",
+    "label": "Email Placeholder",
+    "default": "Enter your emai address*"
+  },
+  {
+    "type": "text",
+    "id": "message_placeholder",
+    "label": "Message Placeholder",
+    "default": "Your message here..."
+  },
+  {
+    "type": "text",
+    "id": "form_button_name",
+    "label": "Button Name",
+    "default": "Submit"
+  },
+  {
+    "type": "text",
+    "id": "form_btn_icon",
+    "label": "Icon Class",
+    "default": "fa fa-arrow-right"
+  },
+  {
+    "type": "header",
+    "content": "Get Touch"
+  },
+  {
+    "type": "text",
+    "id": "contact_form_title",
+    "label": "Contact Form Title",
+    "default": "Get in Touch"
+  },
+  {
+    "type": "text",
+    "id": "contact_form_desc",
+    "label": "Contact Form Description",
+    "default": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum earum eveniet dolorum suscipit nesciunt incidunt animi repudiandae ab at, tenetur distinctio voluptate vel illo similique."
+  }
+  ],
+  "blocks": [
+  {
+    "type":"contact_info",
+    "name":"Contact Info",
+    "settings":[
+    {
+      "type": "text",
+      "id": "info_icon",
+      "label": "Icon Class",
+      "default": "fa fa-street-view"
+    },
+    {
+      "type": "text",
+      "id": "info_title",
+      "label": "Info Title",
+      "default": "Address"
+    },
+    {
+      "type": "textarea",
+      "id": "info_des",
+      "label": "Info Description",
+      "default": "Type here"
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Contact Us",
+    "category": "contact us",
+    "blocks":[
+    {
+      "type": "contact_info"
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}
+<style type="text/css">
+.contact-us-page .contact-map {
+  margin-bottom: 30px;
+}
+.contact-us-page .contact-map .map {
+  height: 680px;
+  width: 100%;
+}
+.contact-us-page .contact-content {
+  display: flex;
+}
+.contact-us-page .contact-content .contact-form-warp {
+  width: 50%;
+}
+.contact-us-page .contact-content .form-title h6 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.contact-us-page .contact-content .contact-form-warp .contact-form{
+  margin-top: 10px;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill {
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-left: -30px;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li {
+  width: calc(100% - 30px);
+  margin: 11px 0 0 30px;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li:first-child{
+  margin-top: 0px;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li label {
+  margin-bottom: 5px;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li input,
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li textarea {
+  width: 100%;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li textarea {
+  resize: none;
+}
+.contact-us-page .contact-content .contact-form-warp .contact-submit {
+  margin-top: 10px;
+}
+.contact-us-page .contact-content .contact-form-warp .contact-submit button i {
+  margin-left: 10px;
+}
+.contact-us-page .contact-content .contact-form-warp .contact-submit p {
+  margin-bottom: 0;
+  margin-top: 30px;
+}
+@media (max-width: 991px) {
+  .contact-us-page .contact-content .form-title h6 {
+    font-size: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .contact-us-page .contact-map {
+    margin-bottom: 20px;
+  }
+  .contact-us-page .contact-content {
+    flex-direction: column;
+  }
+  .contact-us-page .contact-content .contact-form-warp {
+    width: 100%;
+  }
+  .contact-us-page .contact-content .contact-form-warp ul.form-fill {
+    margin-left: -15px;
+  }
+  .contact-us-page .contact-content .contact-form-warp ul.form-fill li {
+    width: calc(100% - 15px);
+    margin: 11px 0 0 15px;
+  }
+  .contact-us-page .contact-content .contact-info ul{
+    margin-top: 18px;
+  }
+}
+/* contact form error message */
+.contact-us-page .contact-content .contact-form-warp .errors{
+  margin: 15px 0 0 0;
+}
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li input.error,
+.contact-us-page .contact-content .contact-form-warp ul.form-fill li textarea.error{
+  background-color: transparent;
+  border-bottom: 1px solid #d02e2e;
+}
+/* get in touch css */
+.contact-us-page .contact-content .contact-info {
+  width: 50%;
+  margin-left: 30px;
+}
+.contact-us-page .contact-content .form-title p {
+  margin-top: 8px;
+}
+.contact-us-page .contact-content .contact-info ul{
+  margin-top: 28px;
+}
+.contact-us-page .contact-content .contact-info ul li {
+  display: flex;
+  margin-top: 3px;
+}
+.contact-us-page .contact-content .contact-info ul li:first-child{
+  margin-top: 0px;
+}
+.contact-us-page .contact-content .contact-info ul li span:first-child {
+  width: 20px;
+  margin-right: 15px;
+}
+.contact-us-page .contact-content .contact-info ul li span i {
+  color: var(--font-color-header);
+  font-size: 20px;
+}
+.contact-us-page .contact-content .contact-info ul li span label {
+  color: var(--font-color-header);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+@media (max-width: 767px) {
+  .contact-us-page .contact-content .contact-info {
+    width: 100%;
+    margin-left: 0px;
+    margin-top: 20px;
+  }
+  .contact-us-page .contact-content .form-title p {
+    margin-top: 10px;
+  }
+  .contact-us-page .contact-content .contact-info ul li {
+    margin-top: 15px;
+  }
+  .contact-us-page .contact-content .contact-info ul li span:first-child {
+    margin-right: 5px;
+  }
+  .contact-us-page .contact-content .contact-info ul li span i {
+    font-size: 24px;
+  }
+}
+</style>

@@ -1,0 +1,373 @@
+<section class="deal-banner">
+  <div class="deal-bg" style="background-image: url('{% if section.settings.deal_bg_img %}{{ section.settings.deal_bg_img | img_url: 'master' }}{% else %}https://via.placeholder.com/1920x1024{% endif %}');">
+    <div class="container">
+      <div class="deal-products-content">
+        <div class="block-deal">
+          <div class="section-title">
+            {% if section.settings.section_ttsub !='' %}
+            <span style="color: {{ section.settings.text_color }};" class="deal-ttsub">{{ section.settings.section_ttsub }}</span>
+            {% endif %}
+            {% if section.settings.section_title !='' %}
+            <h2 style="color: {{ section.settings.text_color }};">{{ section.settings.section_title }}</h2>
+            {% endif %}
+          </div>
+          <ul class="contdown_row">
+            <li class="countdown_section">
+              <span style="color: {{ section.settings.text_color }};" id="days" class="countdown_timer"></span>
+              <span style="color: {{ section.settings.text_color }};" class="countdown_title">{{ settings.day_title }}</span>
+            </li>
+            <li class="countdown_section">
+              <span style="color: {{ section.settings.text_color }};" id="hours" class="countdown_timer"></span>
+              <span style="color: {{ section.settings.text_color }};" class="countdown_title">{{ settings.hour_title }}</span>
+            </li>
+            <li class="countdown_section">
+              <span style="color: {{ section.settings.text_color }};" id="minutes" class="countdown_timer"></span>
+              <span style="color: {{ section.settings.text_color }};" class="countdown_title">{{ settings.minute_title }}</span>
+            </li>
+            <li class="countdown_section">
+              <span style="color: {{ section.settings.text_color }};" id="seconds" class="countdown_timer"></span>
+              <span style="color: {{ section.settings.text_color }};" class="countdown_title">{{ settings.second_title }}</span>
+            </li>
+          </ul>
+          <div class="deal-offer-btn">
+            <a href="{{ section.settings.collection_url }}" class="btn btn-style1">{{ section.settings.shop_btn }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Deal banner",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section Padding"
+  },
+  {
+    "type": "range",
+    "id": "section_padding_top",
+    "label": "Section Padding Top",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "unit": "px",
+    "default": 80
+  },
+  {
+    "type": "range",
+    "id": "section_padding_bottom",
+    "label": "Section Padding Bottom",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "unit": "px",
+    "default": 80
+  },
+  {
+    "type" : "paragraph",
+    "content" : "Mobile"
+  },
+  {
+    "type": "range",
+    "id": "section_padding_top_xs",
+    "label": "Section Padding Top",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "unit": "px",
+    "default": 50
+  },
+  {
+    "type": "range",
+    "id": "section_padding_bottom_xs",
+    "label": "Section Padding Bottom",
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "unit": "px",
+    "default": 50
+  },
+  {
+    "type": "header",
+    "content": "Section Heading"
+  },
+  {
+    "type" : "color",
+    "id" : "text_color",
+    "label" : "Text Color",
+    "default" : "#fff"
+  },
+  {
+    "type": "text",
+    "id": "section_ttsub",
+    "label": "Section Title",
+    "default": "We offer a hot deal offer every festival"
+  },
+  {
+    "type": "text",
+    "id": "section_title",
+    "label": "Section Title",
+    "default": "Deal of the day!"
+  },
+  {
+    "type": "image_picker",
+    "id": "deal_bg_img",
+    "label": "Deal images",
+    "info": "Recommended Size: 1920 x 450px"
+  },
+  {
+    "type": "header",
+    "content": "Product Countdown"
+  },
+  {
+    "type": "select",
+    "id": "product_mont",
+    "label": "Countdown month",
+    "options": [
+    {
+      "label": "January",
+      "value": "January"
+    },
+    {
+      "label": "February",
+      "value": "February"
+    },
+    {
+      "label": "March",
+      "value": "March"
+    },
+    {
+      "label": "April",
+      "value": "April"
+    },
+    {
+      "label": "May",
+      "value": "May"
+    },
+    {
+      "label": "June",
+      "value": "June"
+    },
+    {
+      "label": "July",
+      "value": "July"
+    },
+    {
+      "label": "August",
+      "value": "August"
+    },
+    {
+      "label": "September",
+      "value": "September"
+    },
+    {
+      "label": "October",
+      "value": "October"
+    },
+    {
+      "label": "November",
+      "value": "November"
+    },
+    {
+      "label": "December",
+      "value": "December"
+    }
+    ]
+  },
+  {
+    "type": "text",
+    "id": "product_year",
+    "label": "Countdown year",
+    "default": "2020"
+  },
+  {
+    "type": "text",
+    "id": "product_date",
+    "label": "Countdown date",
+    "default": "30"
+  },
+  {
+    "type": "text",
+    "id": "shop_btn",
+    "label": "Shop Button",
+    "default": "Shop collection"
+  },
+  {
+    "type": "url",
+    "id": "collection_url",
+    "label": "show collection url"
+  }
+  ],
+  "presets": [
+  {
+    "name": "Deal banner"
+  }
+  ]
+}
+{% endschema %}
+<style>
+  .deal-banner {
+    padding-top: {{ section.settings.section_padding_top }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  }
+  @media(max-width: 1199px) {
+    .deal-banner {
+      padding-top: {{ section.settings.section_padding_top_xs }}px;
+      padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+    }
+  }
+  .deal-banner .block-deal{
+    text-align: center;
+  }
+  .deal-banner .deal-bg{
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 450px;
+    display: flex;
+    align-items: center;
+    background-attachment: fixed;
+  }
+  .deal-banner .deal-products-content{
+    max-width: 427px;
+  }
+  .deal-banner .deal-products-content .section-title .deal-ttsub{
+    font-size: 16px;
+    font-weight: 400;
+    display: block;
+  }
+  .deal-banner .deal-products-content .section-title h2{
+    margin-top: 9px;
+    margin-bottom: 0;
+  }
+  .deal-banner .deal-products-content .contdown_row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 22px;
+  }
+  .deal-banner .deal-products-content .contdown_row .countdown_section{
+    position: relative;
+    width: 70px;
+    height: 70px;
+    {% if settings.enable_rtl %}
+    margin-left: 5px;
+    {% else %}
+    margin-right: 5px;
+    {% endif %}
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--color-primary);
+  }
+  .deal-banner .deal-products-content .contdown_row .countdown_section::after{
+    content: ":";
+    position: absolute;
+    bottom: 50%;
+    transform: translateY(50%);
+    {% if settings.enable_rtl %}
+    left: -5px;
+    {% else %}
+    right: -5px;
+    {% endif %}
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .deal-banner .deal-products-content .contdown_row .countdown_section:last-child::after{
+    display: none;
+  }
+  .deal-banner .deal-products-content .contdown_row .countdown_section .countdown_title{
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+  .deal-banner .deal-products-content .contdown_row .countdown_section .countdown_timer{
+    color: var(--color-secondary);
+    font-size: 28px;
+    font-weight: 600;
+  }
+  .deal-banner .deal-products-content .deal-offer-btn{
+    margin-top: 34px;
+  }
+  @media (max-width : 1199px){
+    .deal-banner .deal-products-content .contdown_row .countdown_section .countdown_timer{
+      font-size: 22px;
+    }
+    .deal-banner .deal-bg {
+      height: 350px;
+    }
+    .deal-banner .deal-products-content .section-title h2{
+      margin-top: 14px;
+    }
+    .deal-banner .deal-products-content .deal-offer-btn{
+      margin-top: 30px;
+    }
+  }
+  @media (max-width : 991px){
+    .deal-banner .deal-products-content .section-title .deal-ttsub {
+      font-size: 14px;
+    }
+    .deal-banner .deal-products-content .contdown_row {
+      margin-top: 20px;
+    }
+    .deal-banner .deal-products-content .contdown_row .countdown_section .countdown_timer {
+      font-size: 24px;
+    }
+    .deal-banner .deal-products-content .contdown_row .countdown_section .countdown_title {
+      margin-top: 5px;
+    }
+    .deal-banner .deal-products-content .deal-offer-btn {
+      margin-top: 28px;
+    }
+    .deal-banner .deal-products-content .section-title h2{
+      margin-top: 14px;
+    }
+  }
+  @media (max-width : 767px){
+    .deal-banner .deal-products-content .contdown_row {
+      margin-top: 11px;
+    }
+    .deal-banner .deal-products-content .section-title h2{
+      margin-top: 5px;
+    }
+    .deal-banner .deal-products-content .contdown_row .countdown_section .countdown_timer {
+      font-size: 20px;
+    }
+    .deal-banner .deal-products-content .contdown_row .countdown_section::after {
+      font-size: 20px;
+    }
+    .deal-banner .deal-products-content .deal-offer-btn {
+      margin-top: 18px;
+    }
+    .deal-banner .deal-products-content .contdown_row .countdown_section {
+      width: 60px;
+      height: 60px;
+    }
+  }
+</style>
+<script>
+addEventListener('DOMContentLoaded', (event) => {
+  const second = 1000,
+  minute = second * 60,
+  hour = minute * 60,
+  day = hour * 24;
+  let countDown = new Date('{{ section.settings.product_mont }} {{ section.settings.product_date }}, {{ section.settings.product_year }} 00:00:00').getTime(),
+  x = setInterval(function() {
+    let now = new Date().getTime(),
+    distance = countDown - now;
+    document.getElementById('days').innerText = Math.floor(distance / (day)),
+    document.getElementById('hours').innerText = Math.floor((distance % (day)) / (hour)),
+    document.getElementById('minutes').innerText = Math.floor((distance % (hour)) / (minute)),
+    document.getElementById('seconds').innerText = Math.floor((distance % (minute)) / second);
+  }, second)
+});
+</script>

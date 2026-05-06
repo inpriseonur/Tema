@@ -1,0 +1,332 @@
+{%- if settings.cart_type == "drawer" -%}
+{%- if template.name != "cart" -%}
+<script src="{{ 'ajax-cart.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+{%- endif -%}
+<header class="header header-area {% if section.settings.sitcky_switch %}header-sticky{% endif %}">
+  <div class="header-main-area">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div class="header-main">
+            <div class="logo header-element">
+              {%- render 'company-logo' -%}
+            </div>
+            <div class="right-block-box header-element">
+              <ul class="shop-element">
+                <li class="toggle-wrap ele-wrap">
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarContent">
+                    <i class="icon-menu"></i>
+                  </button>
+                </li>
+                {% if section.settings.searchbar_checkbox %}
+                <li class="search-wrap ele-wrap search-desk">
+                  {%- if settings.ajax_search_enabled -%}
+                  <search-ajax class="search-form">
+                    {%- else -%}
+                    <search-form class="search-form">
+                      {%- endif -%}
+                      <form action="{{ routes.search_url }}" method="get" role="search" class="search">
+                        <div class="field">
+                          <input id="{{ input_id }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'templates.search.placeholder' | t }}"
+                          {%- if settings.ajax_search_enabled -%}
+                          role="combobox"
+                          aria-expanded="false"
+                          aria-owns="search-ajax-results"
+                          aria-controls="search-ajax-results"
+                          aria-haspopup="listbox"
+                          aria-autocomplete="list"
+                          autocorrect="off"
+                          autocomplete="off"
+                          autocapitalize="off"
+                          spellcheck="false"
+                          {%- endif -%}
+                          required
+                          >
+                          <input type="hidden" name="options[prefix]" value="last">
+                          <button type="reset" class="reset-input hidden"></button>
+                          <button class="search-btn">
+                            <i class="fa fa-search"></i>
+                          </button>
+                        </div>
+                        {%- if settings.ajax_search_enabled -%}
+                        <div class="search-ajax" tabindex="-1" data-search-ajax></div>
+                        <span class="search-ajax-status visually-hidden" role="status" aria-hidden="true"></span>
+                        {%- endif -%}
+                      </form>
+                      {%- if settings.ajax_search_enabled -%}
+                    </search-ajax>
+                    {%- else -%}
+                  </search-form>
+                  {%- endif -%}
+                </li>
+                <li class="search-wrap ele-wrap search-mobile">
+                  <button type="button" class="search-mobile-btn" data-bs-toggle="modal" data-bs-target="#searchmodal"><i class="ti-search"></i></button>
+                </li>
+                {% endif %}
+                {% if section.settings.user_checkbox %}
+                <li class="user-wrap ele-wrap">
+                  <div class="acc-desk">
+                    <a href="/account" class="acc-ti">
+                      <i class="icon-user"></i>
+                    </a>
+                  </div>
+                </li>
+                {% endif %}
+                {% if section.settings.wishlist_checkbox %}
+                <li class="wishlist-wrap ele-wrap">
+                  {% include 'wishlist-button-2' %}
+                </li>
+                {% endif %}
+                <li class="cart-wrap ele-wrap">
+                  <div class="shopping-widget">
+                    <div class="shopping-cart">
+                      <a href="{{ routes.cart_url }}" class="cart-count" id="ajax-cart-icon">
+                        <i class="icon-handbag"></i>
+                        <div class="cart-count-bubble">
+                          {%- if cart.item_count < 100 -%}
+                          <span aria-hidden="true">{{ cart.item_count }}</span>
+                          {%- endif -%}
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="main-menu-area">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="main-navigation">
+        {% comment %}
+          <div class="vegamenu-content">
+            {% render 'vega-menu' %}
+          </div>
+          {% endcomment %}
+          {%- liquid
+            if section.settings.menu_type_desktop == 'dropdown'
+              render 'main-menu'
+            else
+              render 'mega-menu'
+            endif
+          %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- if section.settings.menu != blank -%}
+<div class="menu-drawer">
+  {%- render 'menu-drawer' -%}
+</div>
+{%- endif -%}
+
+{% render 'search-popup' %}
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+  {
+    "type" : "checkbox",
+    "id" : "sitcky_switch",
+    "label" : "Sticky header enable",
+    "default" : true
+  },
+  {
+    "type" : "header",
+    "content" : "Background Color"
+  },
+  {
+    "type" : "color",
+    "id" : "header_icon_color",
+    "label" : "Header icon color",
+    "default" : "#fff"
+  },
+  {
+    "type" : "color",
+    "id" : "header_bgcolor",
+    "label" : "Header Background Color",
+    "default" : "#000"
+  },
+  {
+    "type" : "color",
+    "id" : "header_bottom_bgcolor",
+    "label" : "Header Bottom Background Color",
+    "default" : "#D53030"
+  },
+  {
+    "type" : "color",
+    "id" : "header_text_color",
+    "label" : "Header Bottom Text Color",
+    "default" : "#fff"
+  },
+  {
+    "type": "link_list",
+    "id": "menu",
+    "label": "Menu",
+    "default": "main-menu"
+  },
+  {
+    "type": "select",
+    "id": "menu_type_desktop",
+    "options": [
+      {
+        "value": "dropdown",
+        "label": "Dropdown"
+      },
+      {
+        "value": "mega",
+        "label": "Mega menu"
+      }
+    ],
+    "default": "dropdown",
+    "label": "Desktop menu type",
+    "info": "Menu type is automatically optimized for mobile."
+  },
+  {
+    "type" : "header",
+    "content" : "Header Right Box"
+  },
+  {
+    "type": "header",
+    "content": "Category menu"
+  },
+  {
+    "type": "link_list",
+    "id": "vega_menu_selected",
+    "label": "Vega Menu",
+    "default": "main-menu"
+  },
+  {
+    "type" : "text",
+    "id" : "browse_cat_title",
+    "label" : "Browse Cat Title",
+    "default" : "Browse Category"
+  },
+  {
+    "type" : "checkbox",
+    "id" : "searchbar_checkbox",
+    "label" : "Enable Searchbar",
+    "default" : true
+  },
+  {
+    "type" : "checkbox",
+    "id" : "user_checkbox",
+    "label" : "Enable User",
+    "default" : true
+  },
+  {
+    "type" : "checkbox",
+    "id" : "wishlist_checkbox",
+    "label" : "Enable Wishlist",
+    "default" : true
+  }
+  ],
+  "blocks": [
+    {
+      "type": "mega_menu",
+      "name": "Mega menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Menu item",
+          "info": "Enter menu item to apply a mega menu dropdown."
+        },
+        {
+          "type": "header",
+          "content": "Banner"
+        },
+        {
+          "type": "checkbox",
+          "id": "banner_enable",
+          "label": "Show banner",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_img",
+          "label": "Image",
+          "info": "Recommended size: 1000x675px"
+        },
+        {
+          "type": "url",
+          "id": "banner_url",
+          "label": "Button"
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_img2",
+          "label": "Image",
+          "info": "Recommended size: 1000x675px"
+        },
+        {
+          "type": "url",
+          "id": "banner_url2",
+          "label": "Button"
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_img3",
+          "label": "Image",
+          "info": "Recommended size: 1000x675px"
+        },
+        {
+          "type": "url",
+          "id": "banner_url3",
+          "label": "Button"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  .header-area .header-main-area {
+    background-color: {{ section.settings.header_bgcolor }};
+  }
+  {%- if template == 'index' or template == 'product' or template == 'collection' -%}
+  .header-area.is-sticky{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 8;
+    width: 100%;
+    box-shadow: 0 0 15px rgb(0 0 0 / 15%);
+    -webkit-box-shadow: 0 0 15px rgb(0 0 0 / 15%);
+    -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+    -ms-box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+    animation: smoothScroll 1s forwards;
+    background-color: #fff;
+  }
+  @keyframes smoothScroll {
+    0% {
+      transform: translateY(-150px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  {%- endif -%}
+  ul.shop-element .user-wrap .acc-desk a.acc-ti,
+  ul.shop-element .wishlist-wrap .wishlist a,
+  ul.shop-element .cart-wrap .shopping-cart a.cart-count {
+    color: {{ section.settings.header_icon_color }};
+  }
+  .main-menu-area {
+    background-color: {{ section.settings.header_bottom_bgcolor }};
+  }
+  .main-menu-area ul.main-menu li.menu-link a.link-title {
+    color: {{ section.settings.header_text_color }};
+  }
+</style>

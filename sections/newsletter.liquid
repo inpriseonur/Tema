@@ -1,0 +1,220 @@
+<div class="news-letter" style="background-image: url('{% if section.settings.news_bg_img %}{{ section.settings.news_bg_img | img_url: 'master' }}{% else %}https://via.placeholder.com/1920x450{% endif %}');"> 
+  <div class="container">
+    <div class="newsletter-block">
+      <div class="section-title">
+        {% if section.settings.newsletter_title != '' %}
+        <h2 style="color: {{ section.settings.title_color }};">{{ section.settings.newsletter_title }}</h2>
+        {% endif %}
+        {% if section.settings.sub_title != '' %}
+        <p style="color: {{ section.settings.news_text_color }};">{{ section.settings.sub_title }}</p>
+        {% endif %}
+      </div>
+      <div class="subscribe-content">
+        {% form 'customer' %}
+        {{ form.errors | default_errors }}
+        {% if form.posted_successfully? %}
+        <p class="form--success text-success" style="color: {{ section.settings.news_text_color }};">{{ section.settings.thanks_title }}</p>
+        {% endif %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="subscribe-block">
+            <input type="email" name="contact[email]" class="email form-control mail text-medium" id="E-mail" value="{% if customer %}{{ customer.email }}{% endif %}" placeholder="{{ section.settings.email_placeholder }}" autocapitalize="off">
+          <button type="submit" class="btn btn-style1" name="commit" id="Subscribe">{{ section.settings.button_title }}</button>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Newsletter",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+     "type": "image_picker",
+      "id": "news_bg_img",
+      "label": "Deal images",
+      "info": "Recommended Size: 1920 x 450px"
+  },
+  {
+    "type": "text",
+    "id": "newsletter_title",
+    "label": "Newsletter Title",
+    "default": "Get The Latest Deals"
+  },
+  {
+    "type" : "color",
+    "id" : "title_color",
+    "label" : "Title Color",
+    "default" : "#fff"
+  },
+  {
+    "type": "text",
+    "id": "sub_title",
+    "label": "Sub Title",
+    "default": "and receive $20 coupon for first shopping"
+  },
+  {
+    "type" : "color",
+    "id" : "news_text_color",
+    "label" : "All Text Color",
+    "default" : "#fff"
+  },
+  {
+    "type": "text",
+    "id": "thanks_title",
+    "label": "Thanks Title",
+    "default": "THANK YOU FOR SUBSCRIBING!"
+  },
+    {
+    "type": "text",
+    "id": "email_placeholder",
+    "label": "Email Placeholder",
+    "default": "Enter Your Email Address"
+  },
+  {
+    "type": "text",
+    "id": "button_title",
+    "label": "Button Title",
+    "default": "Subscribe"
+  }
+  ],
+  "presets": [
+  {
+    "name": "Newsletter"
+  }
+  ]
+}
+{% endschema %}
+<style>
+
+.news-letter {
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+}
+@media(max-width: 1199px) {
+  .news-letter {
+      padding-top: {{ section.settings.section_padding_top_xs }}px;
+      padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+  }
+}
+
+.news-letter .newsletter-block{
+    width: 50%;
+    margin-left: auto;
+}
+.news-letter .section-title h2{
+    margin-bottom: 0px;
+    font-size: 24px;
+}
+.news-letter .section-title p{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.news-letter .subscribe-content{
+    margin-top: 10px;
+}
+.news-letter .subscribe-content .contact-form{
+    text-align: center;
+}
+.news-letter .subscribe-content .subscribe-block,
+.news-letter .subscribe-content input.email{
+    position: relative;
+}
+.news-letter .subscribe-content button{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    {% if settings.enable_rtl %}
+    left: 0;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  {% else %}
+    right: 0;
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  {% endif %}
+}
+.news-letter .subscribe-content input:focus{
+    outline: none;
+    border: none;
+    box-shadow: none; 
+}
+.news-letter .subscribe-content input{
+    border-radius: 50px;
+    height: 45px;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+}
+@media (max-width: 1199px){
+    .news-letter .section-title h2{
+        font-size: 20px;
+    }
+}
+@media (max-width: 991px){
+    .news-letter .newsletter-block{
+        width: 100%;
+    }
+}
+@media(max-width: 767px){
+    .news-letter .subscribe-content button{
+        position: relative;
+        right: 0;
+        margin-top: 16px;
+        border-radius: 20px;
+    }
+}
+
+</style>

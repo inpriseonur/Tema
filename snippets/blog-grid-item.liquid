@@ -1,0 +1,39 @@
+{%- liquid
+  assign ratio = 1
+  if article.image and settings.blog_image_ratio == 'portrait'
+    assign ratio = 1.5
+  elsif article.image and settings.blog_image_ratio == 'adapt'
+    assign ratio = article.image.aspect_ratio
+  endif
+  if ratio == 0 or ratio == null
+    assign ratio = 1
+  endif
+-%}
+<div class="blog-post">
+  <a href="{{ article.url }}" class="blog-img ratio" style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;">
+    {%- if article.image -%}
+    <img
+      srcset="
+        {%- if article.image.width >= 375 -%}{{ article.image | image_url: width: 375 }} 375w,{%- endif -%}
+        {%- if article.image.width >= 550 -%}{{ article.image | image_url: width: 550 }} 550w,{%- endif -%}
+        {%- if article.image.width >= 750 -%}{{ article.image | image_url: width: 750 }} 750w,{%- endif -%}
+        {{ article.image | image_url }} {{ article.image.width }}w
+      "
+      src="{{ article.image | image_url: width: 750 }}"
+      data-src="{{ article.image | image_url: width: 750 }}"
+      alt="{{ article.image.alt | escape }}"
+      class="img-fluid lazyload"
+      width="{{ article.image.width }}"
+      height="{{ article.image.width | divided_by: article.image.aspect_ratio }}"
+      decoding="async"
+      loading="lazy">
+    {%- else -%}
+    {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+    {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </a>
+  <div class="blog-post-content">
+    <span class="date-time">{{ article.published_at | date: '%b %d, %Y' }}</span>
+    <a class="blog-title" href="{{ article.url }}">{{ article.title | truncate: 50 }}</a>
+  </div>
+</div>

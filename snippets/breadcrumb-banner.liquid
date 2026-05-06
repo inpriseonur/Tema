@@ -1,0 +1,32 @@
+{% if settings.breadcrumb_banner_enable %}
+<div class="breadcrumb-area overlay-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        {% render 'breadcrumb-builtin' %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<style type="text/css">
+.breadcrumb-list {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
+}
+.breadcrumb-list .br-item {
+  display: flex;
+  align-items: center;
+}
+.breadcrumb-list .br-item:before {
+  content: "/";
+  padding: 0 10px;
+}
+.breadcrumb-list .br-item:first-child:before {
+  display: none;
+}
+</style>

@@ -1,0 +1,142 @@
+{% comment %}
+  Renders a single complementary product recommendation.
+  Fetched via: /recommendations/products?section_id=cart-complementary&product_id=XXX&limit=1&intent=complementary
+{% endcomment %}
+
+{% if recommendations.performed and recommendations.products_count > 0 %}
+  {% assign rec_product = recommendations.products.first %}
+  {% assign rec_variant = rec_product.selected_or_first_available_variant %}
+
+  <div class="cart-complementary-product">
+    <h6 class="cart-complementary-product__heading">Bunu da ekleyin</h6>
+    <div class="cart-complementary-product__item">
+      {% if rec_product.featured_image %}
+      <a href="{{ rec_product.url }}" class="cart-complementary-product__img">
+        <img
+          src="{{ rec_product.featured_image | image_url: width: 150 }}"
+          alt="{{ rec_product.title | escape }}"
+          loading="lazy"
+          width="60"
+          height="60"
+          style="border-radius:8px; object-fit:cover;">
+      </a>
+      {% endif %}
+      <div class="cart-complementary-product__info">
+        <a href="{{ rec_product.url }}" class="cart-complementary-product__name">
+          {{ rec_product.title | truncate: 45 }}
+        </a>
+        <div class="cart-complementary-product__price">
+          <span class="new-price">{{ rec_variant.price | money }}</span>
+          {% if rec_product.compare_at_price_max > rec_product.price %}
+            <span class="old-price">{{ rec_variant.compare_at_price | money }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <button
+        type="button"
+        class="cart-complementary-product__add-btn"
+        data-variant-id="{{ rec_variant.id }}"
+        data-qty="{{ rec_variant.quantity_rule.min | default: 1 }}"
+        {% unless rec_variant.available %}disabled{% endunless %}
+        aria-label="{{ 'products.product.add_to_cart' | t }}: {{ rec_product.title | escape }}">
+        {% if rec_variant.available %}
+          <i class="fa fa-plus"></i>
+        {% else %}
+          <i class="fa fa-ban"></i>
+        {% endif %}
+      </button>
+    </div>
+  </div>
+
+  <style>
+    .cart-complementary-product {
+      padding: 12px 15px;
+      border-top: 1px dashed #e5e5e5;
+    }
+    .cart-complementary-product__heading {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cart-complementary-product__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .cart-complementary-product__img {
+      flex-shrink: 0;
+      width: 55px;
+      height: 55px;
+    }
+    .cart-complementary-product__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .cart-complementary-product__info {
+      flex: 1;
+      min-width: 0;
+    }
+    .cart-complementary-product__name {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      line-height: 1.3;
+      text-decoration: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .cart-complementary-product__name:hover {
+      color: var(--color-primary, #80bb01);
+    }
+    .cart-complementary-product__price {
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cart-complementary-product__price .new-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+    }
+    .cart-complementary-product__price .old-price {
+      font-size: 11px;
+      text-decoration: line-through;
+      color: #999;
+    }
+    .cart-complementary-product__add-btn {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-primary, #80bb01);
+      background: transparent;
+      color: var(--color-primary, #80bb01);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.25s ease;
+    }
+    .cart-complementary-product__add-btn:hover:not(:disabled) {
+      background: var(--color-primary, #80bb01);
+      color: #fff;
+    }
+    .cart-complementary-product__add-btn:disabled {
+      border-color: #ccc;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+{% endif %}

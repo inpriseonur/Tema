@@ -1,0 +1,231 @@
+<section class="top-notification-bar" {% if section.settings.bg_img_enable %}style="background-image: url('{% if section.settings.bg_img %}{{ section.settings.bg_img | img_url: 'master' }}{% else %}https://dummyimage.com/1920x50{% endif %}');"{% endif %}>
+  <div class="container">
+    <div class="announcement-bar">
+      <ul class="notification-entry">
+        <li class="notify-wrap">
+          <div class="custom-text">
+            <i class="fa fa-check"></i>
+            {{ section.settings.notification_text1 }}
+          </div>
+        </li>
+        <li class="notify-wrap center">
+          <div class="custom-text">
+            <i class="fa fa-check"></i>
+            {{ section.settings.notification_text2 }}
+          </div>
+        </li>
+        <li class="notify-wrap end">
+          <div class="custom-text">
+            <i class="fa fa-check"></i>
+            {{ section.settings.notification_text3 }}
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="announcement-bar-wrap">
+      <div class="announce-marquee1">
+        <ul class="notification-entry">
+          <li class="notify-wrap">
+            <div class="custom-text">
+              <i class="fa fa-check"></i>
+              {{ section.settings.notification_text1 }}
+            </div>
+          </li>
+          <li class="notify-wrap center">
+            <div class="custom-text">
+              <i class="fa fa-check"></i>
+              {{ section.settings.notification_text2 }}
+            </div>
+          </li>
+          <li class="notify-wrap end">
+            <div class="custom-text">
+              <i class="fa fa-check"></i>
+              {{ section.settings.notification_text3 }}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="announce-marquee2">
+        <ul class="notification-entry">
+          <li class="notify-wrap">
+            <div class="custom-text">
+              <i class="fa fa-check"></i>
+              {{ section.settings.notification_text1 }}
+            </div>
+          </li>
+          <li class="notify-wrap center">
+            <div class="custom-text">
+              <i class="fa fa-check"></i>
+              {{ section.settings.notification_text2 }}
+            </div>
+          </li>
+          <li class="notify-wrap end">
+            <div class="custom-text">
+              <i class="fa fa-check"></i>
+              {{ section.settings.notification_text3 }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  addEventListener('DOMContentLoaded', (event) => {
+  var nToggle = $('.notification-close-btn');
+  nToggle.on('click', function() {
+    $('.top-notification-bar').slideToggle();
+  });
+    $('#slider-text').owlCarousel({
+      {%- if settings.enable_rtl -%}
+      rtl: true,
+      {%- endif -%}
+      loop: true,
+      items: 1,
+      rewind: true,
+      margin: 0,
+      fade: true,
+      nav: true,
+      navText: ['<i class="ti-angle-left"></i>','<i class="ti-angle-right"></i>'],
+      dots: false,
+      autoplay:true,
+      autoplayTimeout:3000,
+      autoplayHoverPause:true
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Topbar notification",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Show topbar notification"
+  },
+  {
+      "type": "checkbox",
+      "id": "bg_img_enable",
+      "label": "Background Image enable",
+      "default": true
+  },
+  {
+      "type": "image_picker",
+      "id": "bg_img",
+      "label": "Background Image",
+      "info": "Recommended Size: 1920 x 50px"
+  },
+  {
+    "type": "header",
+    "content": "Section background color"
+  },
+  {
+    "type": "color",
+    "id": "topbar_notification_bg_color",
+    "label": "Section background color",
+    "default": "#fff"
+  },
+  {
+    "type": "color",
+    "id": "topbar_notification_txt_color",
+    "label": "Section text color",
+    "default": "#fff"
+  },
+  {
+    "type": "richtext",
+    "id": "notification_text1",
+    "label": "Notification Text"
+  },
+  {
+    "type": "richtext",
+    "id": "notification_text2",
+    "label": "Notification Text"
+  },
+  {
+    "type": "richtext",
+    "id": "notification_text3",
+    "label": "Notification Text"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.top-notification-bar {
+  position: relative;
+  background-color: {{ section.settings.topbar_notification_bg_color }};
+  z-index: 1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.top-notification-bar .announcement-bar-wrap {
+  display: none;
+}
+.top-notification-bar ul.notification-entry{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+.top-notification-bar ul.notification-entry li {
+  width: 33.33%;
+}
+.top-notification-bar .custom-text {
+  display: flex;
+  align-items: center;
+}
+.top-notification-bar .end .custom-text {
+  justify-content: flex-end;
+}
+.top-notification-bar .center .custom-text {
+  justify-content: center;
+}
+.top-notification-bar .custom-text p {
+  font-size: 13px;
+  font-weight: 400;
+}
+.top-notification-bar .custom-text p strong {
+  color: var(--color-secondary);
+}
+.top-notification-bar .custom-text p a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.top-notification-bar .custom-text i {
+  color: #95bf47;
+  font-size: 12px;
+  {%- if settings.enable_rtl -%}
+  padding-left: 5px;
+  {%- else -%}
+  padding-right: 5px;
+  {%- endif -%}
+}
+
+@media (max-width : 1199px){
+  .top-notification-bar ul.notification-entry li {
+    width: max-content;
+    padding: 0 15px;
+  }
+  .top-notification-bar .announcement-bar {
+    display: none;
+  }
+  .top-notification-bar .announcement-bar-wrap {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .announcement-bar-wrap .announce-marquee1 {
+    -webkit-animation: marquee1 50s linear infinite;
+    animation: marquee1 50s linear infinite;
+    -webkit-animation-delay: -50s;
+    animation-delay: -50s;
+  }
+  .announcement-bar-wrap .announce-marquee2 {
+    -webkit-animation: marquee2 50s linear infinite;
+    animation: marquee2 50s linear infinite;
+    -webkit-animation-delay: -25s;
+    animation-delay: -25s;
+  }
+}
+</style>

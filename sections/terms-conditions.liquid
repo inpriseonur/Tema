@@ -1,0 +1,55 @@
+<section class="section-ptb other-page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="content-main-title">
+          {% if section.settings.terms_condi_title != '' %}
+          <h2>{{ section.settings.terms_condi_title }}</h2>
+          {% endif %}
+        </div>
+        <div class="rule-wrap">
+          <ul>
+            {{ page.content }}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Terms And Conditions",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Page Title"
+  },
+  {
+    "type": "text",
+    "id": "terms_condi_title",
+    "label": "Title",
+    "default": "Terms & Conditions"
+  }
+  ]
+}
+{% endschema %}
+<style type="text/css">
+.other-page .rule-wrap ul{
+  list-style: disc;
+  padding-left: 25px;
+}
+.other-page .rule-wrap ul li{
+  margin-bottom: 15px;
+}
+.other-page .rule-wrap ul li:last-child{
+  margin-bottom: 0px;
+}
+@media (max-width : 767px){
+  .other-page .rule-wrap ul{
+    padding-left: 20px;
+  }
+  .other-page .rule-wrap ul li{
+    margin-bottom: 10px;
+  }
+}
+</style>

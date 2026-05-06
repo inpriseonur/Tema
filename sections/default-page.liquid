@@ -1,0 +1,66 @@
+<div class="section-ptb default-page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="section-capture">
+          <div class="section-title">
+            <h2>
+              {{ page.title | escape }}
+            </h2>
+          </div>
+        </div>
+        {{ page.content }}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Page",
+  "settings": [
+  ],
+  "presets": [
+  {
+    "name": "Page"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.default-page h1,
+.default-page h2,
+.default-page h3,
+.default-page h4,
+.default-page h5,
+.default-page h6 {
+  margin: 15px 0;
+}
+.default-page p {
+  margin: 15px 0;
+}
+.default-page blockquote {
+  font-style: italic;
+  border-inline-start: 2px solid rgba(0, 0, 0, 10%);
+  display: inline-block;
+  padding-inline-start: 15px;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.default-page ul {
+  padding-left: 2rem;
+  margin-bottom: 1rem;
+  list-style: circle;
+}
+.default-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.default-page table td,
+.default-page table th {
+  padding: 10px;
+  border: 1px solid rgba(0,0,0,10%);
+}
+.default-page table th {
+  color: var(--font-color-header);
+}
+</style>

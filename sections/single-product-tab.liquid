@@ -1,0 +1,374 @@
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+<section class="product-description-tab">
+  <div class="container">
+    <div class="tab">
+      <ul class="nav nav-tabs" role="tablist">
+        {%- for block in section.blocks -%}
+        {%- case block.type -%}
+        {%- when 'product_desc' -%}
+        <li role="presentation">
+          <a {% if forloop.first %}class="active"{% endif %} href="#pro-dec" data-bs-toggle="tab" role="tab" {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+            {{ block.settings.product_info_tab_title }}
+          </a>
+        </li>
+        {%- when 'additional_information' -%}
+        <li role="presentation">
+          <a {% if forloop.first %}class="active"{% endif %} href="#additional-information" data-bs-toggle="tab" role="tab" {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+            {{ block.settings.additional_information_title }}
+          </a>
+        </li>        
+        {%- when 'custom_text' -%}
+        <li role="presentation">
+          <a {% if forloop.first %}class="active"{% endif %} href="#custom-{{ block.id }}" data-bs-toggle="tab" role="tab" {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+            {{ block.settings.custom_title }}
+          </a>
+        </li>
+        {%- endcase -%}
+        {%- endfor -%}
+        {% if section.settings.product_review_tab_title != blank %}
+        <li role="presentation">
+          <a {% if forloop.first %}class="active"{% endif %} href="#pro-review" data-bs-toggle="tab" role="tab" {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+            {{ section.settings.product_review_tab_title }}
+          </a>
+        </li>
+        {%- endif -%}
+      </ul>
+    </div>
+    <div class="description-review-text tab-content">
+      {%- for block in section.blocks -%}
+      {%- case block.type -%}
+      {%- when 'product_desc' -%}
+      <div class="tab-pane {% if forloop.first %} active{% endif %}" id="pro-dec" role="tabpanel">
+        {{ product.description }}
+      </div>
+      {%- when 'additional_information' -%}
+      <div class="tab-pane {% if forloop.first %} active{% endif %}" id="additional-information" role="tabpanel">
+        <table>
+          <tbody>
+            {%- if product.vendor != blank -%}
+            <tr class="product-info">
+              <th class="head">{{ 'products.general.vendor' | t }}</th>
+              <td class="product-vendor">{{ product.vendor | link_to_vendor }}</td>
+            </tr>
+            {%- endif -%}
+            {%- if product.type != blank -%}
+            <tr class="product-info">
+              <th class="head">{{ 'products.general.type' | t }}</th>
+              <td class="product-vendor">{{ product.type | link_to_type }}</td>
+            </tr>
+            {%- endif -%}
+            {%- unless product.options.size == 1 and product.variants[0].title == 'Default Title'-%}
+            {%- for option in product.options_with_values-%}
+            <tr class="product-info">
+              <th class="head">{{ option.name }}:</th>
+              <td>
+                {%- for item_option in option.values -%}
+                {{item_option}}{%- unless forloop.last -%}{{', '}}{%- endunless -%}
+                {%- endfor -%}
+              </td>
+            </tr>
+            {%- endfor -%}
+            {%- endunless -%}
+            {%- if current_variant.sku != blank -%}
+            <tr class="product-info">
+              <th class="head">{{ 'products.general.sku' | t }}</th>
+              <td class="variant-sku">{{current_variant.sku}}</td>
+            </tr>
+            {%- endif -%}
+            {%- if current_variant.barcode != blank -%}
+            <tr class="product-info">
+              <th class="head">{{ 'products.general.barcode' | t }}</th>
+              <td>{{current_variant.barcode}}</td>
+            </tr>
+            {%- endif -%}
+            {% if product.variants.first.weight > 0%}
+            <tr class="product-info">
+              <th class="head">{{ 'products.general.weight' | t }}</th>
+              <td>{{ product.variants.first.weight | weight_with_unit }}</td>
+            </tr>
+            {%- endif -%}
+          </tbody>
+        </table>
+      </div>
+       {%- when '@app' -%}
+      <div class="tab-pane {% if forloop.first %} active{% endif %}" id="pro-review" role="tabpanel">
+        {%- render block -%}
+      </div>
+      {%- when 'custom_text' -%}
+      <div class="tab-pane {% if forloop.first %} active{% endif %}" id="custom-{{ block.id }}" role="tabpanel">
+        <div class="custom-text">
+          {{ block.settings.custom_text }}
+        </div>
+      </div>
+      {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Information Tab",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+          "type": "header",
+          "content": "Review Tab"
+        },
+        {
+          "type": "text",
+          "id": "product_review_tab_title",
+          "label": "Title",
+          
+          "default": "Reviews"
+        }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "product_desc",
+      "name": "Product Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Description Tab"
+        },
+        {
+          "type": "text",
+          "id": "product_info_tab_title",
+          "label": "Description Title",
+          "default": "Description"
+        }
+      ]
+    },
+    {
+      "type": "additional_information",
+      "name": "Additional information",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "additional information tab"
+        },
+        {
+          "type": "text",
+          "id": "additional_information_title",
+          "label": "Additional title",
+          "default": "Additional information"
+        }
+      ]
+    },
+    {
+      "type": "custom_text",
+      "name": "Custom text",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Custom tab title"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom tab title",
+          "default": "Custom text"
+        },
+        {
+          "type": "text",
+          "id": "custom_text",
+          "label": "Custom text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+<style>
+.product-description-tab {
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+}
+@media(max-width: 1199px){
+  .product-description-tab {
+    padding-top: {{ section.settings.section_padding_top_xs }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+  }
+}
+
+.product-description-tab .description-review-text {
+  margin-top: 30px;
+}
+/* product description css */
+.product-description-tab .description-review-text h1,
+.product-description-tab .description-review-text h2,
+.product-description-tab .description-review-text h3,
+.product-description-tab .description-review-text h4,
+.product-description-tab .description-review-text h5,
+.product-description-tab .description-review-text h6 {
+  margin: 15px 0;
+}
+.product-description-tab .description-review-text p {
+  margin: 15px 0;
+}
+.product-description-tab .description-review-text blockquote {
+  font-style: italic;
+  border-inline-start: 2px solid rgba(0, 0, 0, 10%);
+  display: inline-block;
+  padding-inline-start: 15px;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.product-description-tab .description-review-text ul {
+  padding-left: 2rem;
+  margin-bottom: 1rem;
+  list-style: circle;
+}
+.product-description-tab .description-review-text table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.product-description-tab .description-review-text table td,
+.product-description-tab .description-review-text table th {
+  padding: 10px;
+}
+.product-description-tab .description-review-text table th {
+  color: var(--font-color-header);
+}
+
+.product-description-tab .description-review-text .youtube-video iframe{
+  height: 100vh;
+  width: 100%;  
+}
+.description-review-text table {
+  border-spacing: 0;
+}
+.description-review-text table tbody tr{
+  border: 1px solid rgba(0,0,0,10%);
+}
+.description-review-text table tbody tr th{
+  padding: 10px;
+}
+.description-review-text table tbody tr td{
+  border: 1px solid rgba(0,0,0,10%);
+  padding: 10px;
+}
+
+#pro-review .jdgm-form {
+  padding: 0;
+}
+#pro-review .jdgm-form input,
+#pro-review .jdgm-form textarea {
+  border-radius: 3px;
+}
+
+
+#pro-review .jdgm-rev-widg.jdgm-rev-widg {
+  padding: 0;
+}
+#pro-review .jdgm-write-rev-link {
+  max-width: fit-content;
+}
+#pro-review .jdgm-btn {
+  -webkit-transition: all .3s ease-in-out 0s;
+  -o-transition: all .3s ease-in-out 0s;
+  transition: all .3s ease-in-out 0s;
+}
+#pro-review .jdgm-btn:hover {
+  opacity: 1;
+}
+#pro-review .jdgm-form__reviewer-name-format-container {
+  display: none;
+}
+#pro-review .jdgm-widget .jdgm-sort-dropdown-wrapper .jdgm-sort-dropdown {
+  border: none;
+  outline: none;
+}
+#pro-review .jdgm-widget .jdgm-sort-dropdown-wrapper .jdgm-sort-dropdown,
+#pro-review .jdgm-widget .jdgm-sort-dropdown-wrapper .jdgm-sort-dropdown-arrow {
+  color: var(--font-color-header);
+}
+
+#pro-review .jdgm-rev-widg__body .jdgm-rev-widg__reviews {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 30px;
+}
+#pro-review .jdgm-rev-widg__body .jdgm-rev-widg__reviews .jdgm-rev {
+  padding: 30px;
+  border: 1px solid rgba(0,0,0,10%);
+}
+#pro-review .jdgm-rev-widg__body .jdgm-paginate {
+  margin-top: 30px;
+  border-top: none;
+}
+#pro-review .jdgm-rev-widg__body .jdgm-rev-widg__reviews .jdgm-row-profile {
+  display: flex;
+  align-items: center;
+}
+#pro-review .jdgm-rev__title {
+  color: var(--font-color-header);
+}
+@media(max-width: 1199px){
+  #pro-review .jdgm-rev-widg__body .jdgm-rev-widg__reviews {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media(max-width: 991px){
+  #pro-review .jdgm-rev-widg__body .jdgm-rev-widg__reviews {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+@media(max-width: 479px){
+  #pro-review .jdgm-rev-widg__body .jdgm-rev-widg__reviews .jdgm-rev {
+    padding: 15px;
+  }
+} 
+</style>

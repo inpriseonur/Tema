@@ -1,0 +1,84 @@
+{%- liquid
+  
+  assign ratio = 1
+  if product.featured_media and settings.image_ratio == 'portrait'
+  assign ratio = 0.8
+  elsif product.featured_media and settings.image_ratio == 'adapt'
+  assign ratio = product.featured_media.aspect_ratio
+  endif
+  if ratio == 0 or ratio == null
+  assign ratio = 1
+  endif
+-%}
+<div class="single-product-wrap">
+  <div class="product-image">
+    <a class="pro-img ratio" href="{{ product.url | within: collection }}" style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;">
+      {%- if product.featured_media -%}
+        <div class="{%- if product.media[1] != blank -%} img1{%- endif -%}">
+          {% assign image_height = product.featured_media.width | divided_by: product.featured_media.aspect_ratio %}
+          {{
+            product.featured_media
+            | image_url: width: 720
+            | image_tag: width: product.featured_media.width, height: image_height, class: 'lazyload', loading: 'lazy'
+          }}
+        </div>
+        {%- if settings.enable_hover_product and product.media[1] != blank -%}
+          <div class="img2">
+            {% assign image_height = product.media[1].width | divided_by: product.media[1].aspect_ratio %}
+            {{
+              product.media[1]
+              | image_url: width: 720
+              | image_tag: width: product.media[1].width, height: image_height, class: 'lazyload', loading: 'lazy'
+            }}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        {%- capture placeholder -%}product-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+        {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </a>
+    <div class="product-label">
+       {% if settings.sale_percent_enable
+        and product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price
+        and product.available == true
+      %}
+          <span class="percent-count sale-title">
+            {{-
+              product.selected_or_first_available_variant.compare_at_price
+              | minus: product.selected_or_first_available_variant.price
+              | times: 100.0
+              | divided_by: product.selected_or_first_available_variant.compare_at_price
+              | round
+              | append: '%'
+            -}}
+          </span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="product-content">
+    <div class="product-title">
+      <a href="{{ product.url | within: collection }}" title="{{ product.title }}">{{ product.title | truncate: 30 }}</a>
+    </div>
+    <div class="price-box">
+      <span class="new-price">{{ product.variants.first.price | money }}</span>
+      {% if product.variants.first.compare_at_price > product.variants.first.price %}
+      <span class="old-price">{{ product.variants.first.compare_at_price | money }}</span>
+
+      {% endif %}
+    </div>
+    {%- if settings.show_rating -%}
+    <div class="product-grid-rating">
+      {% if product.metafields.judgeme.badge %}
+      <div class='jdgm-widget jdgm-preview-badge'>
+        {{ product.metafields.judgeme.badge }}
+      </div>
+      {% else %}
+      <div class="jdgm-prev-badge jdgm--js" data-average-rating="0.00" data-number-of-reviews="0">
+        <span class="jdgm-prev-badge__stars" data-score="0.00"><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span></span>
+        <span class="jdgm-prev-badge__text">No reviews</span>
+      </div>
+      {% endif %}
+    </div>
+    {%- endif -%}
+  </div>
+</div>

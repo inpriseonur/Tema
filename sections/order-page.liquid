@@ -1,0 +1,618 @@
+<section class="customer-page section-ptb my-account-page">
+  <div class="container">
+    <div class="return-acc-detail">
+      <a href="/account">{{ 'customer.account.return' | t }}</a>
+    </div>
+    <div class="order-info-overwrap">
+      <h2 class="m-0">
+        <span class="order-title">{{ 'customer.order.title' | t: name: order.name }}</span
+        ><span class="order-date">
+          {{- 'customer.order.date' | t: date: order.created_at | date: '%b %d, %Y %I:%M%p' -}}
+        </span>
+      </h2>
+    </div>
+    {% if order.cancelled %}
+      <div class="errors order-cancel">
+        {% assign cancelled_at = order.cancelled_at | date: '%B %d, %Y %I:%M%p' %}
+        <p class="m-0">{{ 'customer.order.cancelled' | t: date: cancelled_at }}</p>
+        <p class="m-0">{{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason }}</p>
+      </div>
+    {% endif %}
+    <div class="order-address">
+      <ul class="list-unstyled">
+        <li>
+          <h6 class="m-0">{{ 'customer.order.billing_address' | t }}</h6>
+          <div class="order-paymenr-status">
+            <div class="order-status">
+              <span class="payment-status-title">{{ 'customer.order.payment_status' | t }}:</span
+              ><span class="payment-status{% if order.financial_status == 'paid' %} text-success{% else %} text-danger{% endif %}">
+                {{- order.financial_status_label -}}
+              </span>
+            </div>
+            <div class="order-status">
+              <span class="payment-status-title">{{ 'customer.order.fulfillment_status' | t }}:</span
+              ><span class="payment-status">{{ order.fulfillment_status_label }}</span>
+            </div>
+          </div>
+          <p class="m-0 address">
+            {% if order.billing_address.name -%}
+              <span>{{ order.billing_address.name | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.company -%}
+              <span>{{ order.billing_address.company | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.address1 -%}
+              <span>{{ order.billing_address.address1 | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.address2 -%}
+              <span>{{ order.billing_address.address2 | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.city -%}
+              <span>{{ order.billing_address.city | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.province -%}
+              <span>{{ order.billing_address.province | upcase }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.zip -%}
+              <span>{{ order.billing_address.zip | upcase }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.country -%}
+              <span>{{ order.billing_address.country }}</span>
+            {%- endif -%}
+            {%- if order.billing_address.phone -%}
+              <span>{{ order.billing_address.phone }}</span>
+            {%- endif %}
+          </p>
+        </li>
+        <li>
+          <h6 class="m-0">{{ 'customer.order.shipping_address' | t }}</h6>
+          <div class="order-paymenr-status">
+            <div class="order-status">
+              <span class="payment-status-title">{{ 'customer.order.payment_status' | t }}:</span>
+              <span class="payment-status{% if order.financial_status == 'paid' %} text-success{% else %} text-danger{% endif %}">
+                {{- order.financial_status_label -}}
+              </span>
+            </div>
+            <div class="order-status">
+              <span class="payment-status-title">{{ 'customer.order.fulfillment_status' | t }}:</span>
+              <span class="payment-status">{{ order.fulfillment_status_label }}</span>
+            </div>
+          </div>
+          <p class="m-0 address">
+            {% if order.shipping_address.name -%}
+              <span>{{ order.shipping_address.name | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.company -%}
+              <span>{{ order.shipping_address.company | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.address1 -%}
+              <span>{{ order.shipping_address.address1 | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.address2 -%}
+              <span>{{ order.shipping_address.address2 | capitalize }}</span>
+            {%- endif %}
+            {% if order.shipping_address.city -%}
+              <span>{{ order.shipping_address.city | capitalize }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.province -%}
+              <span>{{ order.shipping_address.province | upcase }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.zip -%}
+              <span>{{ order.shipping_address.zip | upcase }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.country -%}
+              <span>{{ order.shipping_address.country }}</span>
+            {%- endif -%}
+            {%- if order.shipping_address.phone -%}
+              <span>{{ order.shipping_address.phone }}</span>
+            {%- endif %}
+          </p>
+        </li>
+      </ul>
+    </div>
+    <div class="order-overview">
+      <div class="over-view-summary">
+        <h6 class="m-0">Order Summary</h6>
+        <ul class="list-unstyled order-product">
+          {% for line_item in order.line_items %}
+            <li id="{{ line_item.key }}">
+              <div class="order-overview-wrap">
+                <div class="order-item">
+                  <span class="order-pro">{{ 'customer.order.product' | t }}</span>
+                  <span class="order-info">{{ line_item.title | link_to: line_item.product.url }}</span>
+                  {%- assign property_size = line_item.properties | size -%}
+                  {%- unless line_item.selling_plan_allocation == null and property_size == 0 -%}
+                    <div class="properties">
+                      {%- unless line_item.product.has_only_default_variant -%}
+                        <span>
+                          {{ line_item.variant.title | escape }}
+                        </span>
+                      {%- endunless -%}
+                      {%- unless line_item.selling_plan_allocation == null -%}
+                        <span>
+                          {{ line_item.selling_plan_allocation.selling_plan.name }}
+                        </span>
+                      {%- endunless -%}
+                      {%- if property_size != 0 -%}
+                        {%- for property in line_item.properties -%}
+                          {% assign property_first_char = property.first | slice: 0 %}
+                          {%- if property.last != blank and property_first_char != '_' -%}
+                            <span>{{ property.first }}:</span>
+                            <span>
+                              {%- if property.last contains '/uploads/' -%}
+                                <a href="{{ property.last }}">{{ property.last | split: '/' | last }}</a>
+                              {%- else -%}
+                                {{ property.last }}
+                              {%- endif -%}
+                            </span>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      {%- endif -%}
+                    </div>
+                  {%- endunless -%}
+
+                  {%- if line_item.line_level_discount_allocations != blank -%}
+                    <ul class="list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                      {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+                        <li>
+                          <svg aria-hidden="true" focusable="false" viewBox="0 0 12 12">
+                            <use href="#icon-discount" />
+                          </svg>
+                          {{- discount_allocation.discount_application.title | escape }} (-
+                          {{- discount_allocation.amount | money -}}
+                          )
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </div>
+                <div class="order-item">
+                  <span class="order-pro">{{ 'customer.order.sku' | t }}</span>
+                  <span class="order-info">{{ line_item.sku }}</span>
+                </div>
+                <div class="order-item">
+                  <span class="order-pro">{{ 'customer.order.price' | t }}</span>
+                  <span class="order-info">
+                    {%- if line_item.original_price != line_item.final_price or line_item.unit_price_measurement -%}
+                      <dl>
+                        {%- if line_item.original_price != line_item.final_price -%}
+                          <dd class="regular-price">
+                            <s>{{ line_item.original_price | money }}</s>
+                          </dd>
+                          <dd>
+                            <span>{{ line_item.final_price | money }}</span>
+                          </dd>
+                        {%- else -%}
+                          <dd>
+                            {{ line_item.original_price | money }}
+                          </dd>
+                        {%- endif -%}
+                        {%- if line_item.unit_price_measurement -%}
+                          <dd class="unit-price">
+                            <span>
+                              {%- capture unit_price_separator -%}
+                              <span aria-hidden="true">/</span>
+                            {%- endcapture -%}
+                              {%- capture unit_price_base_unit -%}
+                              {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                                {{- line_item.unit_price_measurement.reference_value -}}
+                              {%- endif -%}
+                              {{ line_item.unit_price_measurement.reference_unit }}
+                            {%- endcapture -%}
+                              <span data-unit-price>{{ line_item.unit_price | money }}</span>
+                              {{- unit_price_separator -}}
+                              {{- unit_price_base_unit -}}
+                            </span>
+                          </dd>
+                        {%- endif -%}
+                      </dl>
+                    {%- else -%}
+                      {{ line_item.price | money }}
+                    {%- endif -%}
+                  </span>
+                </div>
+                <div class="order-item">
+                  <span class="order-pro">{{ 'customer.order.quantity' | t }}</span>
+                  <span class="order-info">{{ line_item.quantity }}</span>
+                </div>
+                <div class="order-item">
+                  <span class="order-pro">{{ 'customer.order.total' | t }}</span>
+                  <span class="order-info">{{ line_item.quantity | times: line_item.price | money }}</span>
+                </div>
+              </div>
+              {% if line_item.fulfillment %}
+                <div class="note">
+                  {% assign created_at = line_item.fulfillment.created_at | date: format: 'month_day_year' %}
+                  {% if line_item.fulfillment.tracking_number %}
+                    <a href="{{ line_item.fulfillment.tracking_url }}" class="order-company-track"
+                      ><span class="track-company">{{ line_item.fulfillment.tracking_company }}</span
+                      ><span class="track-num">{{ line_item.fulfillment.tracking_number }}</span></a
+                    >
+                  {% endif %}
+                  <span class="order-fulfill-date">{{ 'customer.order.fulfilled_at' | t: date: created_at }}</span>
+                  {%- if order.note -%}
+                    <div class="order-info-note">
+                      <span class="note-title">{{ settings.customer_order_note_title }}</span>
+                      <span class="note-desc text-danger">{{ order.note }}</span>
+                    </div>
+                  {%- endif -%}
+                </div>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="payment-summary">
+        <h6 class="m-0">Payment Summary</h6>
+        <div class="order-total-wrap">
+          <ul class="list-unstyled">
+            <li>
+              <span class="order-t-title">{{ 'customer.order.subtotal' | t }}</span>
+              <span class="order-t-price">{{ order.subtotal_price | money }}</span>
+            </li>
+            {% for discount in order.discounts %}
+              <li>
+                <span class="order-t-title">
+                  {{- discount.code -}}
+                  {{- 'customer.order.discount' | t -}}
+                </span>
+                <span class="order-t-price">{{ discount.savings | money }}</span>
+              </li>
+            {% endfor %}
+            {% for shipping_method in order.shipping_methods %}
+              <li>
+                <span class="order-t-title">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</span>
+                <span class="order-t-price">{{ shipping_method.price | money }}</span>
+              </li>
+            {% endfor %}
+            {% for tax_line in order.tax_lines %}
+              <li>
+                <span class="order-t-title">
+                  {{- 'customer.order.tax' | t }} ({{ tax_line.title }}
+                  {{ tax_line.rate | times: 100 }}%)</span
+                >
+                <span class="order-t-price">{{ tax_line.price | money }}</span>
+              </li>
+            {% endfor %}
+            <li>
+              <span class="order-t-title">{{ 'customer.order.total' | t }}</span>
+              <span class="order-t-price">{{ order.total_price | money }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  /* return account css */
+  .my-account-page .return-acc-detail a {
+    color: var(--font-color-body);
+    text-decoration: underline;
+  }
+  .my-account-page .return-acc-detail a:hover {
+    color: var(--font-color-header);
+  }
+  .my-account-page .order-info-overwrap {
+    margin-top: 30px;
+  }
+  /* order number title css */
+  .my-account-page .order-info-overwrap h2 {
+    font-size: 18px;
+    display: -ms-flexbox;
+    display: flex;
+
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .my-account-page .order-info-overwrap h2 span.order-date {
+    color: var(--font-color-body);
+    font-size: var(--font-size-body);
+    font-weight: 400;
+    margin-inline-start: 5px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .my-account-page .order-info-overwrap h2 span.order-date::before {
+    content: "";
+    width: 15px;
+    height: 2px;
+    background-color: var(--font-color-body);
+    margin-inline-end: 5px;
+  }
+  /* order grid css */
+  .my-account-page .order-address {
+    margin-top: 30px;
+    padding: 30px;
+    background-color: #f7f7f7;
+  }
+  .my-account-page .order-address ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -30px 0px 0px -30px;
+  }
+  .my-account-page .order-address ul li {
+    width: calc(50% - 30px);
+    margin: 30px 0px 0px 30px;
+  }
+  @media (max-width: 767px) {
+    .my-account-page .order-address ul {
+      margin: -30px 0px 0px -12px;
+    }
+    .my-account-page .order-address ul li {
+      width: calc(50% - 12px);
+      margin: 30px 0px 0px 12px;
+    }
+  }
+  @media (max-width: 479px) {
+    .my-account-page .order-address ul li {
+      width: calc(100% - 12px);
+      padding-top: 30px;
+      border-top: 1px solid var(--theme-border-color);
+    }
+    .my-account-page .order-address ul li:first-child {
+      padding-top: 0px;
+      border-top: none;
+    }
+  }
+  /* address css */
+  .my-account-page .order-address ul li h6 {
+    font-size: 18px;
+  }
+  .my-account-page .order-address ul li .order-paymenr-status {
+    margin-top: 20px;
+  }
+  .my-account-page .order-address ul li .order-paymenr-status .order-status {
+    display: flex;
+    margin-top: 9px;
+  }
+  .my-account-page .order-address ul li .order-paymenr-status .order-status:first-child {
+    margin-top: 0;
+  }
+  .my-account-page .order-address ul li .order-paymenr-status .order-status span.payment-status-title {
+    color: var(--font-color-header);
+    font-weight: 600;
+  }
+  .my-account-page .order-address ul li .order-paymenr-status .order-status span.payment-status {
+    margin-inline-start: 5px;
+  }
+  .my-account-page .order-address ul li p.address {
+    margin-top: 24px;
+    line-height: 1;
+  }
+  .my-account-page .order-address ul li p.address span {
+    display: block;
+    margin-top: 11px;
+  }
+  .my-account-page .order-address ul li p.address span:first-child {
+    margin-top: 0px;
+  }
+  /* order-overview css */
+  .my-account-page .order-overview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin: 0px 0px 0px -30px;
+  }
+  .my-account-page .order-overview .over-view-summary,
+  .my-account-page .order-overview .payment-summary {
+    width: calc(50% - 30px);
+    margin: 30px 0px 0px 30px;
+    padding: 30px;
+  }
+  .my-account-page .order-overview .over-view-summary {
+    background-color: #f7f7f7;
+  }
+  .my-account-page .order-overview .payment-summary {
+    position: sticky;
+    top: 0;
+    background-color: #f7f7f7;
+  }
+  @media (max-width: 991px) {
+    .my-account-page .order-overview .over-view-summary,
+    .my-account-page .order-overview .payment-summary {
+      width: calc(100% - 30px);
+    }
+    .my-account-page .order-overview .payment-summary {
+      position: unset;
+    }
+  }
+  @media (max-width: 767px) {
+    .my-account-page .order-overview {
+      display: flex;
+      flex-wrap: wrap;
+      margin-inline-start: -12px;
+    }
+    .my-account-page .order-overview .over-view-summary,
+    .my-account-page .order-overview .payment-summary {
+      width: calc(100% - 12px);
+      padding: 30px 12px;
+      margin-inline-start: 12px;
+    }
+  }
+  /* order summary css */
+  .my-account-page .order-overview .over-view-summary h6 {
+    font-size: 18px;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product {
+    margin-top: 20px;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li {
+    margin-top: 26px;
+    padding-top: 25px;
+    border-top: 1px solid var(--theme-border-color);
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li:first-child {
+    margin-top: 0px;
+    padding-top: 0px;
+    border-top: none;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item {
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 9px 0px 0px -30px;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item:first-child {
+    margin: 0px 0px 0px -30px;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-pro,
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-info {
+    width: calc(50% - 30px);
+    margin: 0px 0px 0px 30px;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-pro {
+    color: var(--font-color-header);
+    font-weight: 600;
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-info a {
+    color: var(--font-color-body);
+  }
+  .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-info a:hover {
+    color: var(--font-color-header);
+  }
+  @media (max-width: 767px) {
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item {
+      margin: 9px 0px 0px -12px;
+    }
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item:first-child {
+      margin: 0px 0px 0px -12px;
+    }
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-pro,
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-info {
+      width: calc(50% - 12px);
+      margin: 0px 0px 0px 12px;
+    }
+  }
+  @media (max-width: 479px) {
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-pro,
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-info {
+      width: calc(100% - 12px);
+    }
+    .my-account-page .order-overview .over-view-summary ul.order-product li .order-overview-wrap .order-item span.order-info {
+      margin: 6px 0px 0px 12px;
+    }
+  }
+  /* order note css */
+  .my-account-page .order-overview ul.order-product li .note {
+    margin-top: 19px;
+    margin-bottom: 0;
+    padding: 0;
+    border: none;
+    text-align: start;
+  }
+  .my-account-page .order-overview ul.order-product li .note a.order-company-track {
+    font-size: var(--font-size-body);
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px 0px 0px -30px;
+  }
+  .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-company,
+  .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-num {
+    width: calc(50% - 30px);
+    margin: 0px 0px 0px 30px;
+    font-weight: 600;
+  }
+  .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-company {
+    color: var(--font-color-header);
+  }
+  .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-num {
+    color: var(--font-color-primary);
+  }
+  .my-account-page .order-overview ul.order-product li .note span.order-fulfill-date {
+    display: block;
+    font-size: var(--font-size-body);
+    margin-top: 19px;
+  }
+  .my-account-page .order-overview ul.order-product li .note .order-info-note {
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 19px 0px 0px -30px;
+  }
+  .my-account-page .order-overview ul.order-product li .note .order-info-note span.note-title,
+  .my-account-page .order-overview ul.order-product li .note .order-info-note span.note-desc {
+    font-size: var(--font-size-body);
+    width: calc(50% - 30px);
+    margin: 0px 0px 0px 30px;
+  }
+  .my-account-page .order-overview ul.order-product li .note .order-info-note span.note-title {
+    color: var(--font-color-header);
+    font-weight: 600;
+  }
+  @media (max-width: 767px) {
+    .my-account-page .order-overview ul.order-product li .note a.order-company-track,
+    .my-account-page .order-overview ul.order-product li .note .order-info-note {
+      margin: 19px 0px 0px -12px;
+    }
+    .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-company,
+    .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-num,
+    .my-account-page .order-overview ul.order-product li .note .order-info-note span.note-title,
+    .my-account-page .order-overview ul.order-product li .note .order-info-note span.note-desc {
+      width: calc(50% - 12px);
+      margin: 0px 0px 0px 12px;
+    }
+  }
+  @media (max-width: 479px) {
+    .my-account-page .order-overview ul.order-product li .note a.order-company-track span.track-num,
+    .my-account-page .order-overview ul.order-product li .note .order-info-note span.note-desc {
+      width: calc(100% - 12px);
+      margin: 6px 0px 0px 12px;
+    }
+  }
+  /* order cancel css */
+  .my-account-page .errors.order-cancel {
+    padding: 15px 30px;
+    margin: 27px 0 30px;
+  }
+  .my-account-page .errors.order-cancel p {
+    color: #d02e2e;
+    font-size: var(--font-size-body);
+  }
+  /* payment summary css */
+  .my-account-page .order-overview .payment-summary h6 {
+    font-size: 18px;
+  }
+  .my-account-page .order-overview .payment-summary .order-total-wrap {
+    margin-top: 20px;
+  }
+  .my-account-page .order-overview .payment-summary .order-total-wrap ul li {
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 9px 0px 0px -30px;
+  }
+  .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-title,
+  .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-price {
+    width: calc(50% - 30px);
+    margin: 0px 0px 0px 30px;
+    font-weight: 600;
+  }
+  .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-title {
+    color: var(--font-color-body);
+  }
+  .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-price {
+    color: var(--font-color-header);
+  }
+  @media (max-width: 767px) {
+    .my-account-page .order-overview .payment-summary .order-total-wrap ul li {
+      margin: 9px 0px 0px -12px;
+    }
+    .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-title,
+    .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-price {
+      width: calc(50% - 12px);
+      margin: 0px 0px 0px 12px;
+    }
+  }
+  @media (max-width: 479px) {
+    .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-title,
+    .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-price {
+      width: calc(100% - 12px);
+    }
+    .my-account-page .order-overview .payment-summary .order-total-wrap ul li span.order-t-price {
+      margin: 6px 0px 0px 12px;
+    }
+  }
+</style>

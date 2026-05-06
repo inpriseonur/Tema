@@ -1,0 +1,264 @@
+<section class="customer-page section-ptb">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="log-acc-page" id="recover">
+          {% form 'recover_customer_password' %}
+          {% assign recover_success = form.posted_successfully? %}
+          {{ form.errors | default_errors }}
+          {% if form.posted_successfully? %}
+          {% assign resetPassword = true %}
+          {% endif %}
+          <div class="login-form-container">
+            <div class="title-text">
+              <h2>{{ 'customer.recover_password.title' | t }}</h2>
+              <p>{{ 'customer.recover_password.subtext' | t }}</p>
+            </div>
+            <ul class="fill-form">
+              <li class="log-email">
+                
+                <input type="email" value="" name="email" id="RecoverEmail" class="input-full" placeholder="{{ 'customer.recover_password.email' | t }}" autocorrect="off" autocapitalize="off" required>
+              </li>
+              <li class="form-toggle-btn">
+                <div class="form-action-button">
+                  <button class="btn btn-style1" type="submit">{{ 'customer.recover_password.submit' | t }}</button>
+                  <a href="#login">{{ 'customer.recover_password.cancel' | t }}</a>
+                </div>
+              </li>
+            </ul>
+          </div>
+          {% endform %}
+        </div>
+        <div class="log-acc-page" id="login">
+          <div class="acc-page">
+            <div class="login">
+              {% form 'customer_login' %}
+              {%- if recover_success == true -%}
+              <p class="form__message" tabindex="-1" autofocus>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 13 13" style="width: 20px;">
+                  <path d="M6.5 12.35C9.73087 12.35 12.35 9.73086 12.35 6.5C12.35 3.26913 9.73087 0.65 6.5 0.65C3.26913 0.65 0.65 3.26913 0.65 6.5C0.65 9.73086 3.26913 12.35 6.5 12.35Z" fill="#428445" stroke="white" stroke-width="0.7"/>
+                  <path d="M5.53271 8.66357L9.25213 4.68197" stroke="white"/>
+                  <path d="M4.10645 6.7688L6.13766 8.62553" stroke="white">
+                </svg>
+                {{ 'customer.recover_password.success' | t }}
+              </p>
+              {%- endif -%}
+              {{ form.errors | default_errors }}
+              <div class="login-form-container">
+                <div class="title-text">
+                  <h2>{{ 'customer.login.title' | t }}</h2>
+                  {%- if settings.login_sub_text != '' -%}
+                  <p>{{ settings.login_sub_text }}</p>
+                  {%- endif -%}
+                </div>
+                <ul class="fill-form">
+                  <li class="log-email">
+                    
+                    <input type="email" name="customer[email]" id="CustomerEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off" autofocus required>
+                  </li>
+                  {% if form.password_needed %}
+                  <li class="log-pwd">
+                    
+                    <input type="password" name="customer[password]" id="CustomerPassword" class="input-full{% if form.errors contains 'password' %} error{% endif %}" placeholder="{{ 'customer.login.password' | t }}" required>
+                  </li>
+                  {% endif %}
+                  <li class="form-toggle-btn">
+                    <div class="form-action-button">
+                      <button class="btn btn-style1" type="submit">{{ 'customer.login.sign_in' | t }}</button>
+                      {% if form.password_needed %}
+                      <a href="#recover">{{ 'customer.login.forgot_password' | t }}</a>
+                      {% endif %}
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              {% endform %}
+            </div>
+          </div>
+          <div class="acc-page">
+            <div class="side-form-wrap">
+              <div class="acc-title">
+                <h6>{{ settings.dnt_acc_title }}</h6>
+                <div class="account-optional-action">
+                  <a href="/account/register" class="btn-style1" id="customer_register_link">{{ 'customer.login.create_account' | t }}</a>
+                </div>
+              </div>
+              <div class="term-privacy">
+                <p class="term-con">
+                  <span><sup>{{ settings.log_term_con_syn }}</sup></span>
+                  <a href="{{ settings.log_term_con_url }}" target="_blank">{{ settings.log_term_con_text }}</a>
+                </p>
+                <p class="pri-pol">
+                  <span>{{ settings.log_pri_pol_desc }}<a href="{{ settings.log_pri_pol_url }}" target="_blank">{{ settings.log_pri_pol_text }}</a></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% if shop.checkout.guest_login %}
+        <div class="log-acc-page" id="guest-login">
+          <div class="login-form-container">
+            <div class="title-text">
+              <h2>{{ 'customer.login.guest_title' | t }}</h2>
+              {% form 'guest_login' %}
+              <input type="submit" value="{{ 'customer.login.guest_continue' | t }}">
+              {% endform %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+.customer-page .log-acc-page#recover {
+  display: none;
+}
+.customer-page .log-acc-page#recover:target {
+  display: block;
+}
+.customer-page .log-acc-page#recover:target ~ #login {
+  display: none;
+}
+
+.customer-page .log-acc-page{
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  max-width: 60%;
+  margin: 0 auto;
+}
+.customer-page .log-acc-page .acc-page{
+  width: 50%;
+}
+.customer-page .log-acc-page .login-form-container {
+  padding: 30px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 3px;
+}
+.customer-page .log-acc-page .login-form-container .title-text h2{
+  font-size: 30px;
+}
+.customer-page .log-acc-page .login-form-container p{
+  margin-top: 15px;
+}
+.customer-page .log-acc-page .login-form-container ul li{
+  margin-top: 30px;
+}
+.customer-page .log-acc-page .login-form-container ul li label{
+  margin-bottom: 5px;
+}
+.customer-page .log-acc-page .login-form-container input{
+  padding: 10px 15px;
+}
+.customer-page .log-acc-page .login-form-container .form-action-button{
+  text-align: center;
+}
+.customer-page .log-acc-page .login-form-container .form-action-button button{
+  width: 100%;
+}
+.customer-page .log-acc-page .login-form-container .form-action-button a{
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: 30px;
+}
+.customer-page .log-acc-page .errors{
+  padding: 8px 12px;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap{
+  margin-left: 30px;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .acc-title{
+  text-align: center;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .acc-title h6{
+  font-size: 16px;
+  font-weight: 600;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .acc-title .account-optional-action{
+  margin-top: 30px;
+}
+
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.term-con{
+  display: flex;
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.term-con sup{
+  top: -4px;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p a{
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.pri-pol{
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.pri-pol a{
+  margin-left: 5px;
+}
+.customer-page .log-acc-page .login-form-container .title-text input{
+  color: var(--color-primary);
+  margin-top: 30px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  font-weight: 600;
+  
+}
+@media (max-width : 1199px){
+  .customer-page .log-acc-page{
+    max-width: 70%;
+  }
+  .customer-page .log-acc-page .login-form-container .title-text h2{
+    font-size: 24px;
+  }
+}
+@media (max-width : 991px){
+  .customer-page .log-acc-page{
+    max-width: 100%;
+  }
+  .customer-page .log-acc-page .login-form-container .title-text h2{
+    font-size: 20px;
+  }
+}
+@media (max-width : 767px){
+  .customer-page .log-acc-page .login-form-container .title-text h2{
+    font-size: 18px;
+  }
+  .customer-page .log-acc-page .login-form-container p{
+    margin-top: 10px;
+  }
+  .customer-page .log-acc-page .login-form-container ul li{
+    margin-top: 15px;
+  }
+  .customer-page .log-acc-page .login-form-container ul li.form-toggle-btn{
+    margin-top: 20px;
+  }
+  .customer-page .log-acc-page .acc-page{
+    width: 100%;
+  }
+  .customer-page .log-acc-page .login-form-container{
+    padding: 15px;
+  }
+  .customer-page .log-acc-page .acc-page .side-form-wrap{
+    margin-left: 0;
+    margin-top: 20px;
+  }
+  .customer-page .log-acc-page .login-form-container .form-action-button a,
+  .customer-page .log-acc-page .acc-page .side-form-wrap .acc-title .account-optional-action,
+  .customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.term-con{
+    margin-top: 15px;
+  }
+  .customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.pri-pol{
+    margin-top: 0;
+  }
+}
+</style>

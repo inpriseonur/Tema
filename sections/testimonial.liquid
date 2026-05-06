@@ -1,0 +1,303 @@
+<!-- testimonial-area start -->
+<section class="testimonial-area">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="section-title">
+          {% if section.settings.testi_title !='' %}
+          <h2 class="heading-home">{{ section.settings.testi_title }}</h2>
+          {% endif %}
+        </div>
+        <div class="testimonial-slider owl-carousel" id="testimonial-slider">
+          {% for block in section.blocks %}
+          <div class="item">
+            <div class="testi-content">
+              <span class="author-review">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+              </span>
+              <p>{{ block.settings.testi_desc }}</p>
+              <h6>{{ block.settings.testi_authrtitle }}</h6>
+            </div>            
+          </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- testimonial-area end -->
+
+<script>
+addEventListener('DOMContentLoaded', (event) => {
+  $('#testimonial-slider').owlCarousel({
+    rewind: true,
+    nav: true,
+    margin: 30,
+    autoHeight: true,
+    navText: ['<i class="fa fa-angle-left"></i>','<i class="fa fa-angle-right"></i>'],
+    {%- if settings.enable_rtl -%}
+    rtl: true,
+    {%- endif -%}
+    loop: {{ section.settings.loop }},
+    autoplay: {{ section.settings.autoplay }},
+    autoplayTimeout: {{ section.settings.autoplay_time }},
+    autoplayHoverPause: true,
+    responsive:{
+      0:{
+        items:1,
+        margin: 15
+      },
+      479:{
+        items:1,
+        margin: 15
+      },
+      768:{
+        items:2
+      },
+      979:{
+        items:2
+      },
+      1199:{
+        items:3
+      },
+      1399:{
+        items:4
+      }
+    }
+  });
+});
+</script>
+{% schema %}
+{
+  "name": "Testimonial",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+    "type" : "color",
+    "id" : "our_ser_bgcolor",
+    "label" : "Background Color",
+    "default" : "#fff"
+  },
+  {
+    "type": "text",
+    "id": "testi_title",
+    "label": "Section Title",
+    "default": "Customer Reviews"
+  },
+  {
+    "type": "header",
+    "content": "slider settings"
+  },
+  {
+    "type": "checkbox",
+    "id": "loop",
+    "label": "Slider loop",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "autoplay",
+    "label": "Slider autoplay",
+    "default": true
+  },
+  {
+    "type": "number",
+    "id": "autoplay_time",
+    "label": "Slider timer out",
+    "default": 5000
+  }
+  ],
+  "blocks":[
+  {
+    "type": "single_slide",
+    "name": "Testimonial Items",
+    "settings": [
+	{
+      "type": "text",
+      "id": "testi_quote",
+      "label": "Content Icon",
+      "default": "fa fa-quote-left"
+    },
+    {
+      "type": "textarea",
+      "id": "testi_desc",
+      "label": "Review Content",
+      "default": "Write Here Customer Review"
+    },
+    {
+      "type": "text",
+      "id": "testi_authrtitle",
+      "label": "Reviewer title",
+      "default": "Friendly Support"
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Testimonial",
+    "category": "7. Testimonial"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.testimonial-area {
+  background-color: {{ section.settings.our_ser_bgcolor }};
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+}
+@media(max-width: 1199px) {
+  .testimonial-area {
+    padding-top: {{ section.settings.section_padding_top_xs }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+  }
+}
+
+.testimonial-slider .owl-item,
+.testimonial-slider .owl-stage {
+  display: flex;
+}
+.testimonial-slider .testi-content{
+  padding: 30px 20px;
+  border: 1px solid var(--color-primary);
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin-left: 2px;
+}
+.testimonial-slider .testi-content p{
+  padding-top: 15px;
+}
+.testimonial-slider .testi-content h6 {
+  padding-top: 15px;
+  font-size: 15px;
+}
+
+@media (max-width: 1199px){
+  .testimonial-slider .testi-content {
+    padding: 20px;
+  }
+}
+
+.testimonial-area .testimonial-slider.owl-theme .owl-nav{   
+  margin-top: 0px;
+}
+.testimonial-area .testimonial-slider .owl-dots{
+  text-align: center;
+  margin-top: 30px;
+  line-height: 0;
+}
+.testimonial-area .testimonial-slider .owl-dots button{
+  {% if settings.enable_rtl %}
+  margin-left: 10px;
+  {% else %}
+  margin-right: 10px;
+  {% endif %}
+}
+.testimonial-area .testimonial-slider .owl-dots button:last-child{
+  {% if settings.enable_rtl %}
+  margin-left: 0px;
+  {% else %}
+  margin-right: 0px;
+  {% endif %}
+}
+.testimonial-slider.owl-carousel .owl-dots button span{
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+.testimonial-area .testimonial-slider .owl-dots button:hover span,
+.testimonial-area .testimonial-slider .owl-dots button.active span{
+  background-color: var(--color-secondary); 
+}
+
+
+/*slider arrow*/
+.testimonial-area .testimonial-slider .owl-nav button{
+  position: absolute;
+  bottom: 50%;
+  transform: translateY(50%);
+  margin: 0;
+  line-height: 0;
+  font-size: 20px;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  color: #fff;
+  background-color: var(--color-primary);
+  box-shadow: 0px 0px 12px 0px rgba(123, 190, 70, 0.1);
+  -webkit-transition: all 0.2s ease-in-out 0s;
+  -o-transition: all 0.2s ease-in-out 0s;
+  transition: all 0.2s ease-in-out 0s;
+}
+.testimonial-area .testimonial-slider .owl-nav button.owl-prev{
+  left: -15px;
+}
+.testimonial-area .testimonial-slider .owl-nav button.owl-next{
+  right: -15px;
+}
+.testimonial-area .testimonial-slider .owl-nav button:hover{
+  color: var(--color-primary);
+  background-color: #fff;
+  box-shadow: 0px 0px 12px 0px rgba(123, 190, 70, 0.1);
+}
+</style>

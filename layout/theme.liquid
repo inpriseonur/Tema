@@ -1,0 +1,520 @@
+<!doctype html>
+<html class="no-js supports-no-cookies {% if settings.enable_box %}box-layout {% endif %}" lang="{{ shop.locale }}" dir="{%- if settings.enable_rtl -%}rtl{%- else -%}ltr{%- endif -%}">
+<head>
+
+<style>
+  @media screen and (max-width: 749px) {
+
+    /* Ürün görseli altındaki thumbnail slider'ı mobilde gizle */
+    .pro-slider,
+    .slider-small {
+      display: none !important;
+    }
+
+    /* Orijinal fiyat alanını gizle — sticky bar'da gösterileceği için.
+       Adet ve varyant seçeneklerinin scroll olmadan görünmesi sağlanır. */
+    .pro-price-label {
+      visibility: hidden;
+      height: 0 !important;
+      overflow: hidden;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Mobilde üst duyuru/bildirim barını gizle */
+    #shopify-section-sections--20682889035821__top-nocification-bar {
+      display: none !important;
+    }
+
+    /* CTA butonu JS yüklenene kadar gizle — FOUC önleme */
+    cart-action.product-form .pr-form-button {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+  }
+</style>
+
+
+
+
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="{{ canonical_url }}">
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+    {% render 'social-meta-tags' %}
+    {%- unless settings.body_custom_font_handle_enable and settings.header_custom_font_handle_enable and settings.paragraph_custom_font_handle_enable -%}
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+    {%- liquid
+    unless settings.body_custom_font_handle_enable
+      assign body_font = settings.body_font_handle
+      assign body_font_bolder = body_font | font_modify: 'weight', 'bolder'
+      assign body_font_bold = body_font | font_modify: 'weight', 'bold'
+      assign body_font_italic = body_font | font_modify: 'style', 'italic'
+      assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+    endunless
+    unless settings.header_custom_font_handle_enable
+      assign header_font = settings.header_font_handle
+    endunless
+    unless settings.paragraph_custom_font_handle_enable
+      assign paragraph_font = settings.paragraph_font_handle
+    endunless
+    -%}
+    
+    <style>
+    {% if settings.header_custom_font_handle_enable %}
+    @import url('https://fonts.googleapis.com/css2?family={{ settings.header_custom_font_handle }}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    {% else %}
+    {{ header_font | font_face: font_display: 'swap' }}
+    {% endif %}
+    {% if settings.paragraph_custom_font_handle_enable %}
+    @import url('https://fonts.googleapis.com/css2?family={{ settings.paragraph_custom_font_handle }}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    {% else %}
+    {{ paragraph_font | font_face: font_display: 'swap' }}
+    {% endif %}
+    {% if settings.body_custom_font_handle_enable %}
+    @import url('https://fonts.googleapis.com/css2?family={{ settings.body_custom_font_handle }}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    {% else %}
+    {{ body_font | font_face: font_display: 'swap' }}
+    {{ body_font_bolder | font_face: font_display: 'swap' }}
+    {{ body_font_bold | font_face: font_display: 'swap' }}
+    {{ body_font_italic | font_face: font_display: 'swap' }}
+    {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+    {% endif %}
+    {%- liquid
+    unless settings.header_custom_font_handle_enable
+      assign header_font = settings.header_font_handle
+     endunless 
+    -%}
+    {%- liquid
+      unless settings.paragraph_custom_font_handle_enable
+      assign paragraph_font = settings.paragraph_font_handle
+      endunless
+    -%}
+    {%- liquid
+      unless settings.body_custom_font_handle_enable
+        assign body_font = settings.body_font_handle
+        assign body_font_bolder = body_font | font_modify: 'weight', 'bolder'
+        assign body_font_bold = body_font | font_modify: 'weight', 'bold'
+        assign body_font_italic = body_font | font_modify: 'style', 'italic'
+        assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+      endunless
+    -%}
+    </style>
+    {%- render 'header-css' -%}
+    <style>
+    body {
+      color: var(--color-body);
+      font-size: var(--font-size-body);
+      background-color: var(--color-body-bg);
+      {% if settings.body_custom_font_handle_enable %}
+      font-family: var(--font-custom-stack-body);
+      font-weight: var(--font-custom-weight-body);
+      font-style: var(--font-custom-style-body);
+      {% else %}
+      font-family: var(--font-stack-body);
+      font-weight: var(--font-weight-body);
+      font-style: var(--font-style-body);
+      {% endif %}
+      line-height: normal;
+      letter-spacing: var(--font-letter-spacing-body);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: antialiased;
+      text-size-adjust: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--font-color-header);
+      margin: 0;
+      padding: 0;
+      {% if settings.header_custom_font_handle_enable %}
+      font-family: var(--font-custom-stack-header);
+      font-weight: var(--font-custom-weight-header);
+      font-style: var(--font-custom-style-header);
+      {% else %}
+      font-family: var(--font-stack-header);
+      font-weight: var(--font-weight-header);
+      font-style: var(--font-style-header);
+      {% endif %}
+      line-height: normal;
+    }
+    p {
+      color: var(--color-body);
+       margin-bottom: 0px;
+      --font-custom-stack-paragraph: '{{ settings.paragraph_custom_font_handle }}', sans-serif;
+      --font-custom-weight-paragraph: {{ settings.paragraph_custom_font_weight }};
+      --font-custom-style-paragraph: {{ settings.paragraph_custom_font_style }};
+
+      {% if settings.paragraph_custom_font_handle_enable %}
+      font-family: var(--font-custom-stack-paragraph);
+      font-weight: var(--font-custom-weight-paragraph);
+      font-style: var(--font-custom-style-paragraph);
+      {% else %}
+      font-family: var(--font-stack-paragraph);
+      {% endif %}
+      line-height: var(--font-line-height-paragraph);
+    }
+    {%- liquid 
+      unless settings.header_custom_font_handle_enable
+        echo header_font | font_face: font_display: 'swap'
+      endunless
+    -%}
+    {% unless settings.paragraph_custom_font_handle_enable %}
+    {{ paragraph_font | font_face: font_display: 'swap' }}
+    {% endunless %}
+    {% unless settings.body_custom_font_handle_enable %}
+    {{ body_font | font_face: font_display: 'swap' }}
+    {{ body_font_bolder | font_face: font_display: 'swap' }}
+    {{ body_font_bold | font_face: font_display: 'swap' }}
+    {{ body_font_italic | font_face: font_display: 'swap' }}
+    {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+    {% endunless %}
+    :root {
+      --font-weight-body--bold: {{ body_font_bold.weight | default: 700 }};
+      --font-weight-body--bolder: {{ body_font_bolder.weight | default: 700 }};
+      --color-primary: {{ settings.color_primary }};
+      --color-secondary: {{ settings.color_secondary }};
+      --color-body: {{ settings.body_text_color }};
+      --color-body-bg: {{ settings.color_body_bg }};
+      --font-size-body: {{ settings.body_font_size }}px;
+      {% if settings.body_custom_font_handle_enable %}
+      --font-custom-stack-body: '{{ settings.body_custom_font_handle }}', sans-serif;
+      --font-custom-weight-body: {{ settings.body_custom_font_weight }};
+      --font-custom-style-body: {{ settings.body_custom_font_style }};
+      {% else %}
+      --font-stack-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+      --font-weight-body: {{ body_font.weight }};
+      --font-style-body: {{ body_font.style }};
+      {% endif %}
+      --font-letter-spacing-body: {{ settings.body_letter_spacing }}px;
+    
+      --font-color-header: {{ settings.heading_text_color }};
+      {% if settings.header_custom_font_handle_enable %}
+      --font-custom-stack-header: '{{ settings.header_custom_font_handle }}', sans-serif;
+      --font-custom-weight-header: {{ settings.header_custom_font_weight }};
+      --font-custom-style-header: {{ settings.header_custom_font_style }};
+      {% else %}
+      --font-stack-header: {{ header_font.family }}, {{ header_font.fallback_families }};
+      --font-weight-header: {{ header_font.weight }};
+      --font-style-header: {{ header_font.style }};
+      {% endif %}
+    
+      --font-color-paragraph: {{ settings.para_text_color }};
+      {% if settings.paragraph_custom_font_handle_enable %}
+      --font-custom-stack-paragraph: '{{ settings.paragraph_custom_font_handle }}', sans-serif;
+      --font-custom-weight-paragraph: {{ settings.paragraph_custom_font_weight }};
+      --font-custom-style-paragraph: {{ settings.paragraph_custom_font_style }};
+      {% else %}
+      --font-stack-paragraph: {{ paragraph_font.family }}, {{ paragraph_font.fallback_families }};
+      {% endif %}
+      --font-line-height-paragraph: {{ settings.paragraph_font_line_height }}px;
+      --font-color-primary: {{ settings.color_primary }};
+      --font-color-secondary: {{ settings.color_secondary }};
+      --theme-border-color: {{ settings.theme_border_color | color_modify: 'alpha', settings.theme_border_color_opacity }};
+      --sti-color: {{ settings.tag_color }};
+      --sti-font-size: {{ settings.tag_font_size }}px;
+      --sti-bgcolor: {{ settings.tag_bgcolor }};
+      --sti-text: {{ settings.tag_text_transform }};
+      --sti-font-weight: {{ settings.tag_font_weight }};
+      --sti-border: 1px solid {{ settings.tag_border_color | color_modify: 'alpha', settings.tag_border_color_opacity }};
+      --sti-border-radius: {{ settings.tag_border_radius }}px;
+      --box-body-bgcolor: {{ settings.box_body_bgcolor }};
+    }
+    </style>
+    {{ content_for_header }}
+    <script type="text/javascript" src="{{ 'plugins.min.js' | asset_url }}" defer></script>
+    {%- render 'header-js' -%}
+    {% if template contains 'customers' or 'cart' %}
+    {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+    {% endif %}  
+    <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      if (Shopify.designMode) {
+        document.documentElement.classList.add('shopify-design-mode');
+      }
+    </script>
+
+    <!-- =====================================================
+        MOBİL ÜRÜN SAYFASI OPTİMİZASYONU
+        Amaç: Mobilde varyant/adet seçeneklerinin scroll 
+        olmadan görünmesi ve sticky satın alma butonu
+        ===================================================== -->
+    <style>
+      @media screen and (max-width: 749px) {
+
+        /* Ürün görseli altındaki thumbnail slider'ı mobilde gizle */
+        .pro-slider,
+        .slider-small {
+          display: none !important;
+        }
+
+        /* Orijinal fiyat alanını gizle — sticky bar'da gösterileceği için.
+          Adet ve varyant seçeneklerinin scroll olmadan görünmesi sağlanır. */
+        .pro-price-label {
+          visibility: hidden;
+          height: 0 !important;
+          overflow: hidden;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        /* Sticky satın alma butonu — ekranın altına sabitlenir */
+        cart-action.product-form .pr-form-button {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 999;
+          padding: 10px 16px !important;
+          margin: 0 !important;
+          background: #fff;
+          box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+        }
+
+        /* Sticky bar içindeki CTA butonu tam genişlik */
+        cart-action.product-form .ajax-cart-btn {
+          flex: 1;
+          margin: 0 !important;
+          display: flex !important;
+        }
+
+        /* Sepet yan paneli açıkken sticky butonu gizle —
+          panel altındaki ödeme butonları görünür kalsın */
+        ajax-cart.open ~ * cart-action.product-form .pr-form-button,
+        ajax-cart.active ~ * cart-action.product-form .pr-form-button,
+        ajax-cart[open] ~ * cart-action.product-form .pr-form-button {
+          display: none !important;
+        }
+
+        /* Mobilde görsel container boşluklarını sıfırla */
+        .product_detail_img {
+          margin-bottom: 0 !important;
+          padding-bottom: 0 !important;
+        }
+
+        .product_details.detail-info {
+          margin-top: -30px !important;
+          padding-top: 0 !important;
+        }
+
+        /* Genel ürün detay container boşluklarını sıkıştır */
+        .product-details .container {
+          padding-top: 4px !important;
+        }
+
+        .detail-wrap {
+          gap: 4px !important;
+        }
+
+        /* Mobilde görsel ile metin arasındaki 30px boşluğu sıfırla */
+        .product-details .detail-wrap .product_details {
+          margin: 0 0 0 8px !important;
+        }
+
+        /* Mobilde üst duyuru/bildirim barını gizle */
+        #shopify-section-sections--20682889035821__top-nocification-bar {
+          display: none !important;
+        }
+
+        /* =====================================================
+           QUICK VIEW (HIZLI GÖZAT) İSTİSNALARI
+           Hızlı gözat penceresinde fiyat ve butonları modal içinde gösterir.
+           ===================================================== */
+        .quickview-modal .pro-price-label {
+          visibility: visible !important;
+          height: auto !important;
+          overflow: visible !important;
+          margin: 15px 0 !important;
+          padding: 0 !important;
+        }
+
+        .quickview-modal cart-action.product-form .pr-form-button {
+          position: relative !important;
+          bottom: auto !important;
+          left: auto !important;
+          right: auto !important;
+          z-index: 1 !important;
+          padding: 10px 0 !important;
+          margin: 15px 0 0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          display: flex !important;
+          opacity: 1 !important;
+          flex-wrap: wrap;
+        }
+
+        .quickview-modal cart-action.product-form .pr-form-button .ajax-cart-btn,
+        .quickview-modal cart-action.product-form .pr-form-button .shopify-payment-button {
+          width: 100% !important;
+          flex: none !important;
+          margin: 10px 0 0 !important;
+        }
+
+        .quickview-modal .product_details.detail-info {
+          margin-top: 0 !important;
+        }
+
+      }
+    </style>
+
+
+  </head>
+  <body  id="{{ page_title | handle }}" class="template-{{ template.name | handle }}">
+    {%- if template == 'index' and settings.newsletter_popup_enable -%}
+    {% include 'newsletter-popup' %}
+    {%- endif -%}
+    {%- if settings.cart_type == 'drawer' -%}
+    {%- render 'ajax-cart' -%}
+    {%- endif -%}
+    {% sections 'header-group' %}
+    {%- if template != 'index' -%}
+    {% include 'breadcrumb-banner' %}
+    {%- endif -%}
+    <main role="main">
+      {{ content_for_layout }}
+    </main>
+    <div class="mm-fullscreen-bg"></div>
+    {% sections 'footer-group' %}
+    <script type="text/javascript">
+      
+      window.money_format = '{{ shop.money_format }}';
+      window.pro_id = '{{ product.id }}';
+      window.routes = {
+        increase_cart_url: '{{ routes.cart_add_url }}',
+        edite_cart_url: '{{ routes.cart_change_url }}',
+        change_cart_url: '{{ routes.cart_update_url }}',
+        cart_url: '{{ routes.cart_url }}',
+        ajax_search_url: '{{ routes.predictive_search_url }}'
+      };
+      window.stCartString = {
+        error: `{{ 'sections.cart.cart_error' | t }}`,
+        qtyError: `{{ 'sections.cart.cart_quantity_error_html' | t: quantity: '[quantity]' }}`
+      }
+      window.stThemeString = {
+        Straddcart: `{{ 'products.product.add_to_cart' | t }}`,
+        Strsoldout: `{{ 'products.product.sold_out' | t }}`,
+        Strunavailable: `{{ 'products.product.unavailable' | t }}`,
+        StrunavailableOp: `{{ 'products.product.value_unavailable' | t: option_value: '[value]' }}`,
+      }
+      
+    </script>
+    {%- if settings.ajax_search_enabled -%}
+    <script src="{{ 'search-ajax.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    <!-- Sticky bar'a dinamik fiyat bilgisini yazar — orijinal class'lar ve stiller korunur -->
+    <script>
+      
+      /* Thumbnail slider'ı gizle, FOUC önle ve desktop'ta sticky fiyatı gizle */
+      var style = document.createElement('style');
+      style.textContent = `
+        @media screen and (max-width: 749px) { 
+          .pro-slider, .slider-small { display: none !important; } 
+          .slider-big .big-button { display: none !important; }
+          .mobile-sticky-price {
+            flex: 0 0 42%;
+            max-width: 42%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            column-gap: 5px;
+            row-gap: 2px;
+            margin-left: 8px;
+          }
+          .mobile-sticky-price .price-box { display: contents; }
+          .mobile-sticky-price .new-price {
+            width: 100%;
+            font-size: 15px !important;
+            font-weight: 700;
+            line-height: 1.1;
+          }
+          .mobile-sticky-price .old-price {
+            font-size: 11px !important;
+            margin: 0 !important;
+            line-height: 1;
+          }
+          .mobile-sticky-price .product-label {
+            margin: 0 !important;
+            transform: scale(0.85);
+            transform-origin: left center;
+          }
+        }
+        @media screen and (min-width: 750px) { .mobile-sticky-price { display: none !important; } }
+        .slider-big:not(.swiper-initialized) .swiper-slide:not(:first-child) { display: none !important; }
+      `;
+      document.head.insertBefore(style, document.head.firstChild);
+      document.addEventListener('DOMContentLoaded', function() {
+        var priceBox = document.getElementById('price-template--20682888151085__product-template') || document.querySelector('.pro-price-label .price-box');
+        var discountLabel = document.querySelector('.product-label');
+        var btn = document.querySelector('cart-action.product-form .pr-form-button');
+        if (priceBox && btn) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'mobile-sticky-price';
+
+          var priceClone = priceBox.cloneNode(true);
+          wrapper.appendChild(priceClone);
+
+          if (discountLabel) {
+            var discountClone = discountLabel.cloneNode(true);
+            /* % işareti CSS pseudo-element ile gelmediyse manuel ekle */
+            var percentEl = discountClone.querySelector('.percent-count');
+            if (percentEl && !percentEl.textContent.includes('%')) {
+              percentEl.textContent = '%' + percentEl.textContent.trim();
+            }
+            wrapper.appendChild(discountClone);
+          }
+
+          btn.insertBefore(wrapper, btn.firstChild);
+
+          // Stok bilgisini adet kutusunun yanına taşı
+          var qtyContainer = document.querySelector('.product-qty');
+          var inventory = document.querySelector('.product-inventory');
+          if (qtyContainer && inventory) {
+            qtyContainer.appendChild(inventory);
+            inventory.style.marginTop = '0';
+            inventory.style.marginLeft = '15px';
+          }
+
+          // Varyant değiştiğinde klonları güncellemek için Observer
+          var observer = new MutationObserver(function() {
+            priceClone.innerHTML = priceBox.innerHTML;
+            if (discountLabel && discountClone) {
+              discountClone.innerHTML = discountLabel.innerHTML;
+              var pEl = discountClone.querySelector('.percent-count');
+              if (pEl && !pEl.textContent.includes('%')) {
+                pEl.textContent = '%' + pEl.textContent.trim();
+              }
+              discountClone.style.display = discountLabel.style.display;
+            }
+          });
+          observer.observe(priceBox, { childList: true, subtree: true, characterData: true, attributes: true });
+          if (discountLabel) {
+            observer.observe(discountLabel, { childList: true, subtree: true, characterData: true, attributes: true });
+          }
+        }
+
+        /* CTA butonu hazır olunca göster */
+        if (btn) {
+          btn.style.opacity = '1';
+        }
+      });
+    </script>
+
+  </body>
+</html>

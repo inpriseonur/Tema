@@ -1,0 +1,36 @@
+{%- if settings.logo_header -%}
+<a href="{{ shop.url }}" class="theme-header-logo">
+  {% if settings.logo_header.src != blank %}
+  {{ settings.logo_header.src | image_url: width: 500 | image_tag:
+    loading: 'lazy',
+    width: settings.logo_header.width,
+    height: settings.logo_header.height,
+    class: "img-fluid lazyload main-logo",
+    alt: shop.name | escape }}
+  {% endif %}
+</a>
+{%- else -%}
+<a href="{{ shop.url }}" class="theme-header-logo">
+  <span>{{ shop.name }}</span>
+</a>
+{%- endif -%}
+<style>
+  /* logo css */
+  a.theme-header-logo {
+    display: block;
+  }
+  a.theme-header-logo img {
+    width: {{ settings.logo_header_max_width }}px;
+  }
+  
+  /* store css */
+  a.theme-header-logo {
+    display: block;
+  }
+  a.theme-header-logo span {
+    color: var(--font-color-header);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+</style>

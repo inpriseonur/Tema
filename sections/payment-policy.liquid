@@ -1,0 +1,112 @@
+<section class="section-ptb other-page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="content-main-title">
+          {% if section.settings.pay_policy_title != '' %}
+          <h2>{{ section.settings.pay_policy_title }}</h2>
+          {% endif %}
+        </div>
+        <div class="que-ans">
+          <ul>
+            {% for block in section.blocks %}
+            <li>
+              <h6>{{ block.settings.pay_policy_que }}</h6>
+              <p>{{ block.settings.pay_policy_ans1 }}</p>
+
+              {% if block.settings.pay_policy_ans2 != '' %}
+              <p>{{ block.settings.pay_policy_ans2 }}</p>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Payment Policy",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Page Title"
+  },
+  {
+    "type": "text",
+    "id": "pay_policy_title",
+    "label": "Title",
+    "default": "Payment Policy"
+  }
+  ],
+  "blocks":[
+  {
+    "type": "payment-policy",
+    "name": "Payment Policy",
+    "settings": [
+    {
+      "type": "text",
+      "id": "pay_policy_que",
+      "label": "Question",
+      "default": "Type Here For Question?"
+    },
+    {
+      "type": "textarea",
+      "id": "pay_policy_ans1",
+      "label": "Answer1",
+      "default": "There is something about the saree that makes a woman look dignified, glorifying and every bit stylish. a was set up in the year 2017 with a motive to offer its designer collection at competitive price and merchantable quality to its whole seller and worldwide online customer."
+    },
+    {
+      "type": "textarea",
+      "id": "pay_policy_ans2",
+      "label": "Answer2",
+      "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed libero vel ex maximus vulputate nec eu ligula. Vestibulum elementum nisi ut fermentum lobortis. Sed quis iaculis felis."
+    }
+    ]
+  }
+  ]
+}
+{% endschema %}
+<style>
+.other-page .que-ans ul{
+  counter-reset: question;
+}
+.other-page .que-ans ul li{
+  margin-bottom: 30px;
+  position: relative;
+}
+.other-page .que-ans ul li::before {
+  counter-increment: question;
+  content: "Q." counter(question);
+  font-weight: 600;
+  background-color: #fff;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+.other-page .que-ans ul li h6{
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 15px;
+  color: #fff;
+  background-color: var(--color-primary);
+}
+.other-page .que-ans ul li p{
+  margin-top: 15px;  
+}
+@media (max-width : 767px){
+  .other-page .que-ans ul li{
+    margin-bottom: 20px;
+  }
+  .other-page .que-ans ul li p{
+    margin-top: 10px;
+  }
+  .other-page .que-ans ul li p:first-of-type{
+    margin-top: 15px;
+  }
+}
+</style>

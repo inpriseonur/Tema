@@ -1,0 +1,121 @@
+<section class="section-ptb faq-page other-page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="content-main-title">
+          {% if section.settings.faq_title != '' %}
+          <h2>{{ section.settings.faq_title }}</h2>
+          {% endif %}
+        </div>
+        <div class="que-ans">
+          <ul>
+            {% assign i = 0 %}
+            {% for block in section.blocks %}
+            {% assign i = i | plus: 1 %}
+            <li>
+              <a href="#collapse-{{ i }}" data-bs-toggle="collapse" {% if forloop.first %}aria-expanded="true"{% endif %}>{{ block.settings.accordion_title }}</a>
+                <div class="collapse{% if forloop.first %} show{% endif %}" id="collapse-{{ i }}">
+                <p>{{ block.settings.accordion_ans1 }}</p>
+
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Faq Accordion",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Page Title"
+  },
+  {
+    "type": "text",
+    "id": "faq_title",
+    "label": "Title",
+    "default": "FAQ's"
+  }
+  ],
+  "blocks": [
+  {
+    "type": "accordion_area",
+    "name": "Faq Accordion",
+    "settings": [
+    {
+      "type": "text",
+      "id": "accordion_title",
+      "label": "Accordion Title",
+      "default": "Type Here For Question?"
+    },
+    {
+      "type": "textarea",
+      "id": "accordion_ans1",
+      "label": "Answer1",
+      "default": "There is something about the saree that makes a woman look dignified, glorifying and every bit stylish. a was set up in the year 2017 with a motive to offer its designer collection at competitive price and merchantable quality to its whole seller and worldwide online customer."
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Faq Accordion",
+    "category": "8. Faq Page"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.other-page .que-ans ul{
+  counter-reset: question;
+}
+.other-page .que-ans ul li{
+  margin-bottom: 30px;
+  position: relative;
+}
+.other-page .que-ans ul li::before {
+  counter-increment: question;
+  content: "Q." counter(question);
+  font-weight: 600;
+  background-color: #fff;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+.other-page .que-ans ul li h6{
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 15px;
+  color: #fff;
+  background-color: var(--color-primary);
+}
+.other-page .que-ans ul li a {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 15px;
+    color: #fff;
+    display: block;
+    background-color: var(--color-primary);
+}
+.other-page .que-ans ul li p{
+  margin-top: 15px;  
+}
+@media (max-width : 767px){
+  .other-page .que-ans ul li{
+    margin-bottom: 20px;
+  }
+  .other-page .que-ans ul li p{
+    margin-top: 10px;
+  }
+  .other-page .que-ans ul li p:first-of-type{
+    margin-top: 15px;
+  }
+}
+</style>

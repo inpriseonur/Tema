@@ -1,0 +1,170 @@
+<section class="custom-image-area">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="custom-image">
+          {% if section.settings.video_enable %}
+            <video width="320" height="240" controls loop autoplay>
+              <source src="{{ section.settings.video_url }}" type="video/mp4">
+            </video>
+          {% else %}
+          {%- if section.settings.custom_image -%}
+          <img srcset="
+          {%- if section.settings.custom_image.width >= 375 -%}{{ section.settings.custom_image | image_url: width: 375 }} 375w,{%- endif -%}
+          {%- if section.settings.custom_image.width >= 550 -%}{{ section.settings.custom_image | image_url: width: 550 }} 550w,{%- endif -%}
+          {%- if section.settings.custom_image.width >= 750 -%}{{ section.settings.custom_image | image_url: width: 750 }} 750w,{%- endif -%}
+          {%- if section.settings.custom_image.width >= 1100 -%}{{ section.settings.custom_image | image_url: width: 1100 }} 1100w,{%- endif -%}
+          {%- if section.settings.custom_image.width >= 1500 -%}{{ section.settings.custom_image | image_url: width: 1500 }} 1500w,{%- endif -%}
+          {%- if section.settings.custom_image.width >= 1780 -%}{{ section.settings.custom_image | image_url: width: 1780 }} 1780w,{%- endif -%}
+          {%- if section.settings.custom_image.width >= 2000 -%}{{ section.settings.custom_image | image_url: width: 2000 }} 2000w,{%- endif -%}
+          {{ section.settings.custom_image | image_url }} {{ section.settings.custom_image.width }}w
+          "
+          src="{{ section.settings.custom_image | image_url: width: 2000 }}"
+          data-src="{{ section.settings.custom_image | image_url: width: 2000 }}"
+          alt="{{ section.settings.custom_image.alt | escape }}"
+          class="img-fluid lazyload"
+          width="{{ section.settings.custom_image.width }}"
+          height="{{ section.settings.custom_image.width | divided_by: section.settings.custom_image.aspect_ratio }}"
+          decoding="async"
+          loading="lazy"
+          sizes="100vw">
+          {%- else -%}
+          {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+          {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Custom Image & Video",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Section Padding"
+  },
+  {
+    "type" : "paragraph",
+    "content" : "Desktop / Laptop / tablet"
+  },
+  {
+    "type": "range",
+    "id": "our_ser_padding_top",
+    "label": "Section Padding Top",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "unit": "px",
+    "default": 100
+  },
+  {
+    "type": "range",
+    "id": "our_ser_padding_bottom",
+    "label": "Section Padding bottom",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "unit": "px",
+    "default": 100
+  },
+  {
+    "type" : "paragraph",
+    "content" : "Ipad pro / Ipad"
+  },
+  {
+    "type": "range",
+    "id": "our_ser_padding_top_ip",
+    "label": "Section Padding Top",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "unit": "px",
+    "default": 80
+  },
+  {
+    "type": "range",
+    "id": "our_ser_padding_bottom_ip",
+    "label": "Section Padding bottom",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "unit": "px",
+    "default": 80
+  },
+  {
+    "type" : "paragraph",
+    "content" : "Mobile"
+  },
+  {
+    "type": "range",
+    "id": "our_ser_padding_top_xs",
+    "label": "Section Padding Top",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "unit": "px",
+    "default": 60
+  },
+  {
+    "type": "range",
+    "id": "our_ser_padding_bottom_xs",
+    "label": "Section Padding bottom",
+    "min": 0,
+    "max": 100,
+    "step": 1,
+    "unit": "px",
+    "default": 60
+  },
+  {
+    "type": "header",
+    "content": "Video & image"
+  },
+  {
+    "type": "checkbox",
+    "id": "video_enable",
+    "label": "Video enable",
+    "default": true
+  },
+  {
+    "type": "text",
+    "id": "video_url",
+    "label": "Video url"
+  },
+  {
+    "type": "image_picker",
+    "id": "custom_image",
+    "label": "Image",
+    "info": "Recommended Size: 1370 x 700px"
+  }
+  ],
+  "presets":[
+  {
+    "name": "Custom Image & Video"
+  }
+  ]
+}
+{% endschema %}
+<style>
+  .custom-image-area {
+    padding-top: {{ section.settings.our_ser_padding_top }}px;
+    padding-bottom: {{ section.settings.our_ser_padding_bottom }}px;
+  }
+  @media (max-width: 1199px) {
+    .custom-image-area {
+      padding-top: {{ section.settings.our_ser_padding_top_ip }}px;
+      padding-bottom: {{ section.settings.our_ser_padding_bottom_ip }}px;
+    }
+  }
+  @media (max-width: 767px) {
+    .custom-image-area {
+      padding-top: {{ section.settings.our_ser_padding_top_xs }}px;
+      padding-bottom: {{ section.settings.our_ser_padding_bottom_xs }}px;
+    }
+  }
+  video {
+    width: 100%;
+  }
+</style>

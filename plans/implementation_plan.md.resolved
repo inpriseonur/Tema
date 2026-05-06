@@ -1,0 +1,160 @@
+# Sepet Sayfası (/cart) Optimizasyon Planı
+
+## 1. Mevcut Durum Analizi
+
+Sepet sayfanız (`templates/cart.json`) şu anda 4 section içeriyor, sırasıyla:
+
+| # | Section | Tip | Durum |
+|---|---------|-----|-------|
+| 1 | `cart-section` | Ürün tablosu + Ara toplam + Ödemeye Geç | ✅ Aktif |
+| 2 | `custom_text_qKriTg` | "İSTANBUL İÇİN ÜCRETSİZ TESLİMAT" bilgi bloğu | ✅ Aktif |
+| 3 | `featured_product_GzHGNp` | Featured Product Tab Slider | ❌ Devre dışı |
+| 4 | `new_product_MH6hd9` | "EN ÇOK TERCİH EDİLENLER" (icecekler koleksiyonu) | ✅ Aktif |
+
+### Mevcut Sorunlar
+- İstanbul teslimat metni görsel olarak sade, dikkat çekmiyor
+- "En Çok Tercih Edilenler" genel ürünler gösteriyor, sepetteki ürünlerle ilgisi yok
+- Tamamlayıcı ürün desteği yok
+- Sayfada satın almaya devam etme motivasyonu zayıf
+
+---
+
+## 2. Önerilen Yeni Sayfa Düzeni
+
+Aşağıdaki sıralama, müşteriyi "sepeti tamamla → teslimat avantajını gör → ödemeye geç" akışına yönlendirir:
+
+```
+┌──────────────────────────────────────────────────┐
+│  SEPET TABLOSU (cart-section)                    │
+│  Ürünler + Ara toplam + Ödemeye Geç              │
+├──────────────────────────────────────────────────┤
+│  🚛 İSTANBUL TESLİMAT BİLGİSİ (custom-text)    │
+│  İkon + vurgulu başlık + açıklama metni          │
+│  Görsel olarak dikkat çekici kart tasarımı        │
+├──────────────────────────────────────────────────┤
+│  🛒 BUNU DA EKLEYİN (cart-page-complementary)   │
+│  Tamamlayıcı ürünler — yatay kart listesi        │
+│  Sepetteki HER ürünün tamamlayıcısı gösterilir   │
+├──────────────────────────────────────────────────┤
+│  ⭐ EN ÇOK TERCİH EDİLENLER (new-product)       │
+│  Sadece tamamlayıcı ürün YOKSA gösterilir        │
+└──────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Detaylı Değişiklik Planı
+
+### Değişiklik 1: Yeni Section — Tam Sayfa Tamamlayıcı Ürünler
+
+#### [NEW] `sections/cart-page-complementary.liquid`
+
+Drawer'daki `cart-complementary.liquid`'den farklı olarak:
+- **Birden fazla ürün** gösterilecek (sepetteki her ürünün tamamlayıcısı ayrı ayrı sorgulanır)
+- Yatay kart tasarımı (resim + başlık + fiyat + "Sepete Ekle" butonu)
+- Responsive grid: desktop'ta 3-4 sütun, mobilde 2 sütun
+- Her kart üzerinde "Sepete Ekle" butonu (AJAX, sayfa yenilemesiz)
+
+**Teknik yaklaşım:**
+- Sayfa yüklendiğinde JS ile sepetteki her ürünün `product_id`'si toplanır
+- Her biri için `intent=complementary` ile Recommendations API sorgulanır
+- Tekrar eden tamamlayıcılar (aynı ürün birden fazla gelirse) filtrelenir
+- Sepette zaten olan ürünler de filtrelenir
+- Sonuçlar bir karta yerleştirilir
+
+**Tamamlayıcı ürün yoksa:** Section tamamen gizlenir (yer kaplamaz)
+
+---
+
+### Değişiklik 2: Custom Text (İstanbul Teslimat) Görsel İyileştirmesi
+
+#### [MODIFY] Shopify Admin → Tema Özelleştirici veya `custom-text.liquid`
+
+Mevcut görünüm düz metin. Önerilen yeni görünüm:
+
+```
+┌─────────────────────────────────────────────────┐
+│  🚛  İSTANBUL İÇİN ÜCRETSİZ TESLİMAT          │
+│                                                  │
+│  İstanbul içersinden en geç bir gün sonrası      │
+│  için kendi araçlarımız ile teslimat...           │
+│                                                  │
+│  ✅ Sepet tutarı 5.000 TL ve üzeri olmalıdır     │
+│  ✅ Posta kodu 34 ile başlamalıdır               │
+└─────────────────────────────────────────────────┘
+```
+
+Yapılacaklar:
+- Başlığın soluna kamyon ikonu (🚛 veya SVG)
+- Arka plan rengi: açık yeşil (`#f2fdef` — zaten ayarlanmış, korunabilir veya daha dikkat çekici bir ton)
+- Sol kenarda renkli border (5px solid yeşil/mavi accent)
+- Başlık font-size büyütme + bold
+- Metin içindeki önemli noktaları (5000 TL, 34 posta kodu) **bold** veya ayrı satır olarak vurgulama
+- Yuvarlak köşeler (border-radius) ekleyerek modern kart hissi
+
+> [!NOTE]
+> Bu değişikliklerin bir kısmı Shopify Admin tema özelleştiricide metin düzenlemesiyle, bir kısmı `custom-text.liquid` CSS'ine override ekleyerek yapılabilir.
+
+---
+
+### Değişiklik 3: Koşullu Görünürlük (Tamamlayıcı ↔ En Çok Tercih Edilenler)
+
+#### [MODIFY] `cart-page-complementary.liquid` (JS mantığı)
+
+Mantık:
+1. Tamamlayıcı ürün API'den **en az 1 sonuç döndüyse** → "Bunu da ekleyin" gösterilir, "En Çok Tercih Edilenler" gizlenir
+2. **Hiç tamamlayıcı yoksa** → "Bunu da ekleyin" gizlenir, "En Çok Tercih Edilenler" görünür kalır
+
+Teknik: JS ile tamamlayıcı sonuçları geldikten sonra, `new-product` section'ının `display` değeri kontrol edilir.
+
+---
+
+### Değişiklik 4: Section Sıralama
+
+#### [MODIFY] `templates/cart.json`
+
+Yeni sıralama:
+```json
+"order": [
+  "cart-section",
+  "custom_text_qKriTg",
+  "cart-page-complementary",      ← YENİ
+  "new_product_MH6hd9"
+]
+```
+
+---
+
+## 4. Dosya Değişiklik Özeti
+
+| Dosya | İşlem | Açıklama |
+|-------|-------|----------|
+| `sections/cart-page-complementary.liquid` | **YENİ** | Tam sayfa sepet tamamlayıcı ürünler section'ı |
+| `templates/cart.json` | **MODIFY** | Yeni section'ı ekle + sıralama |
+| `sections/custom-text.liquid` veya `layout/theme.liquid` | **MODIFY** | İstanbul teslimat bloğu CSS override |
+
+---
+
+## 5. Açık Sorular
+
+> [!IMPORTANT]
+> Aşağıdaki sorulara cevabınızı bekliyorum:
+
+### Soru 1: Tamamlayıcı Ürün Sayısı
+Tam sayfa sepette en fazla kaç tamamlayıcı ürün gösterilsin?
+- **A)** Sepetteki her ürün için 1'er tane (yani 3 ürün varsa max 3 tamamlayıcı)
+- **B)** Sabit limit (ör: en fazla 4)
+
+### Soru 2: İstanbul Teslimat Bloğu
+Mevcut metin ve yerleşim hakkında:
+- **A)** Mevcut metni koruyalım, sadece görselini iyileştirelim (ikon, border, bold vurgular)
+- **B)** Metni yeniden yazalım — yeni metin öneriniz var mı?
+- **C)** Koşullarını daha net listeleyelim mi? (madde madde: ✅ 5000 TL üzeri, ✅ 34 ile başlayan posta kodu)
+
+### Soru 3: "En Çok Tercih Edilenler" Koleksiyonu
+Şu an "içecekler" koleksiyonunu gösteriyor. Tamamlayıcı ürün olmadığında bu koleksiyonu göstermeye devam mı edelim, yoksa başka bir koleksiyon mu olsun?
+
+### Soru 4: "Sepete Ekle" Sonrası Davranış
+Tam sayfa sepette tamamlayıcı üründe "Sepete Ekle"ye basınca:
+- **A)** Sayfa yenilensin (sepet tablosunda yeni ürün görünsün)
+- **B)** AJAX ile eklensin, butonda onay ikonu gösterilsin, ama sayfa yenilenmesin (tepede küçük bir bildirim çıksın)

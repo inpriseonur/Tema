@@ -1,0 +1,323 @@
+{% comment %}
+  Cart Page Complementary Products
+  Fetches complementary products for all cart items via Recommendations API (JSON).
+  Displays up to 2 unique complementary products with page reload on add.
+  If results found → hides "En Çok Tercih Edilenler" section.
+{% endcomment %}
+
+{%- if cart != empty -%}
+{%- comment -%} "En Çok Tercih Edilenler"i baştan gizle, tamamlayıcı yoksa JS ile tekrar gösterir {%- endcomment -%}
+<style>.shopify-section--new-product-section, .shopify-section .new-product { }</style>
+<script>
+  /* Trending'i baştan gizle (FOUC önleme) */
+  (function(){
+    var style = document.createElement('style');
+    style.textContent = '.cart-complementary-page ~ .shopify-section { visibility: hidden; height: 0; overflow: hidden; }';
+    document.head.appendChild(style);
+    window.__compTrendingStyle = style;
+  })();
+</script>
+
+<section class="cart-complementary-page" id="cart-complementary-page" style="display:none;">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="section-title">
+          <h2 class="heading-home">{{ section.settings.section_title | default: 'Bunu da ekleyin' }}</h2>
+        </div>
+        <div class="cart-comp-grid" id="cart-comp-grid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var MAX_ITEMS = 2;
+    var section = document.getElementById('cart-complementary-page');
+    var grid = document.getElementById('cart-comp-grid');
+    if (!section || !grid) return;
+
+    function showTrending() {
+      if (window.__compTrendingStyle) {
+        window.__compTrendingStyle.remove();
+        window.__compTrendingStyle = null;
+      }
+    }
+
+    /* 1) Sepetteki ürünleri /cart.js ile al */
+    fetch('/cart.js')
+      .then(function(r) { return r.json(); })
+      .then(function(cart) {
+        if (!cart.items || !cart.items.length) { showTrending(); return; }
+
+        var cartProductIds = cart.items.map(function(item) { return item.product_id; });
+
+        /* 2) Her ürün için tamamlayıcı çek */
+        var fetches = cartProductIds.map(function(pid) {
+          return fetch('/recommendations/products.json?product_id=' + pid + '&limit=3&intent=complementary')
+            .then(function(r) { return r.json(); })
+            .then(function(data) { return data.products || []; })
+            .catch(function() { return []; });
+        });
+
+        Promise.all(fetches).then(function(results) {
+          var seen = {};
+          var complementary = [];
+
+          for (var i = 0; i < results.length; i++) {
+            var products = results[i];
+            for (var j = 0; j < products.length; j++) {
+              var p = products[j];
+              if (cartProductIds.indexOf(p.id) !== -1) continue;
+              if (seen[p.id]) continue;
+              seen[p.id] = true;
+              complementary.push(p);
+              if (complementary.length >= MAX_ITEMS) break;
+            }
+            if (complementary.length >= MAX_ITEMS) break;
+          }
+
+          if (!complementary.length) {
+            showTrending();
+            return;
+          }
+
+          /* Kartları oluştur */
+          var html = '';
+          for (var k = 0; k < complementary.length; k++) {
+            html += buildCard(complementary[k]);
+          }
+          grid.innerHTML = html;
+          section.style.display = '';
+
+          /* Butonlara event listener ekle */
+          grid.querySelectorAll('.cart-comp-card__add').forEach(function(btn) {
+            btn.addEventListener('click', handleAdd);
+          });
+        });
+      })
+      .catch(function() { showTrending(); });
+
+    function buildCard(product) {
+      var variant = product.variants[0];
+      var imgSrc = product.featured_image ? product.featured_image.replace(/(\.[^\.]+)$/, '_300x$1') : '';
+      var price = formatMoney(variant.price);
+      var compareHtml = '';
+      if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+        compareHtml = '<span class="old-price">' + formatMoney(variant.compare_at_price) + '</span>';
+      }
+      var btnHtml = variant.available
+        ? '<button type="button" class="cart-comp-card__add btn-style1" data-variant-id="' + variant.id + '" data-qty="' + (variant.quantity_rule && variant.quantity_rule.min ? variant.quantity_rule.min : 1) + '"><i class="fa fa-plus"></i> Ekle</button>'
+        : '<button type="button" class="cart-comp-card__add btn-style1" disabled>Tükendi</button>';
+
+      return '<div class="cart-comp-card">'
+        + '<a href="' + product.url + '" class="cart-comp-card__img">'
+        + '<img src="' + imgSrc + '" alt="' + (product.title || '').replace(/"/g, '&quot;') + '" loading="lazy" width="150" height="150">'
+        + '</a>'
+        + '<div class="cart-comp-card__info">'
+        + '<a href="' + product.url + '" class="cart-comp-card__name">' + truncate(product.title, 50) + '</a>'
+        + '<div class="cart-comp-card__price">'
+        + '<span class="new-price">' + price + '</span>'
+        + compareHtml
+        + '</div>'
+        + '</div>'
+        + btnHtml
+        + '</div>';
+    }
+
+    function handleAdd() {
+      var btn = this;
+      var vid = btn.dataset.variantId;
+      var qty = parseInt(btn.dataset.qty) || 1;
+      if (!vid) return;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Ekleniyor...';
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: parseInt(vid), quantity: qty })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function() {
+        /* Sayfayı yenile — sepet tablosu ve toplam güncellensin */
+        window.location.reload();
+      })
+      .catch(function() {
+        btn.innerHTML = '<i class="fa fa-plus"></i> Ekle';
+        btn.disabled = false;
+      });
+    }
+
+    function formatMoney(cents) {
+      if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
+        return Shopify.formatMoney(cents, window.money_format || '{{amount_with_comma_separator}}₺');
+      }
+      return (cents / 100).toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + '₺';
+    }
+
+    function truncate(str, len) {
+      if (!str) return '';
+      return str.length > len ? str.substring(0, len) + '…' : str;
+    }
+  });
+})();
+</script>
+{%- endif -%}
+
+<style>
+  .cart-complementary-page {
+    padding-top: {{ section.settings.section_padding_top | default: 30 }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom | default: 30 }}px;
+  }
+  .cart-comp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .cart-comp-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: box-shadow 0.25s ease;
+  }
+  .cart-comp-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .cart-comp-card__img {
+    display: block;
+    margin: 0 auto 12px;
+    width: 120px;
+    height: 120px;
+  }
+  .cart-comp-card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .cart-comp-card__info {
+    flex: 1;
+    margin-bottom: 12px;
+  }
+  .cart-comp-card__name {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+    line-height: 1.4;
+    min-height: 36px;
+  }
+  .cart-comp-card__name:hover {
+    color: var(--color-primary, #80bb01);
+  }
+  .cart-comp-card__price {
+    margin-top: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .cart-comp-card__price .new-price {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a2b4c;
+  }
+  .cart-comp-card__price .old-price {
+    font-size: 12px;
+    text-decoration: line-through;
+    color: #999;
+  }
+  .cart-comp-card__add {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+  }
+  .cart-comp-card__add:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .cart-comp-card__added {
+    background: #4caf50 !important;
+    border-color: #4caf50 !important;
+    color: #fff !important;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 575px) {
+    .cart-comp-grid {
+      gap: 10px;
+    }
+    .cart-comp-card {
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .cart-comp-card__img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 8px;
+    }
+    .cart-comp-card__name {
+      font-size: 12px;
+      min-height: 32px;
+    }
+    .cart-comp-card__price .new-price {
+      font-size: 13px;
+    }
+    .cart-comp-card__add {
+      padding: 6px 10px;
+      font-size: 12px;
+      min-height: 40px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Cart Complementary",
+  "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Bunu da ekleyin"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart Complementary"
+    }
+  ]
+}
+{% endschema %}

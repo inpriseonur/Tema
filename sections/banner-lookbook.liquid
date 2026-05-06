@@ -1,0 +1,345 @@
+<!-- banner-area start -->
+<div class="banner-grid">
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<div class="grid-wrap">
+					<div class="grid-wrapper title-wrapper">
+						<div class="banner-title">
+							{% if section.settings.banner_title != '' %}
+							<h2>{{ section.settings.banner_title }}</h2>
+							{% endif %}
+							{% if section.settings.banner_des != '' %}
+							<p>{{ section.settings.banner_des }}</p>
+							{% endif %}
+							{% if section.settings.banner_button_text != '' %}
+							<a href="{{ section.settings.banner_url }}" class="btn-style2">{{ section.settings.banner_button_text }}</a>
+							{% endif %}
+						</div>
+					</div>
+					<div class="grid-wrapper">
+						<div class="banner-block">
+							<img class="img-fluid" src="{% if section.settings.banner_img %}{{ section.settings.banner_img | img_url: 'master' }}{% else %}https://via.placeholder.com/1080x700{% endif %}">
+							{% for block in section.blocks %}
+							{%- assign product = block.settings.product1 -%}
+							{% if product != '' %}
+							<div class="st-hotspot" style="top: {{ block.settings.hotspot1_top }}%;left: {{ block.settings.hotspot1_left }}%;">
+								<div class="st-btn" style="top: {{ block.settings.hotspot1_top }}%;left: {{ block.settings.hotspot1_left }}%;">
+								  	<span class="shoppable-image__hotspot-background"></span>
+								  	<span class="shoppable-image__hotspot-inner"></span>
+								</div>
+								<div class="st-content-parent">
+								  	<div class="product-list-item">
+									  	<div class="tt-hotspot-content">
+										    {% render 'product-list-item',product: product %}								    
+									  	</div>
+								  	</div>
+								</div>
+							</div>
+							{% endif %}
+				            {% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+addEventListener('DOMContentLoaded', (event) => {
+  $('.st-hotspot').on('click', function(){
+    $(this).toggleClass("open").siblings().removeClass("open");
+  });
+});
+</script>
+<!-- banner-area end -->
+{% schema %}
+{
+	"name": "Banner lookbook",
+	"settings": [
+	{
+        "type": "header",
+        "content": "Section Padding"
+    },
+    {
+        "type": "range",
+        "id": "section_padding_top",
+        "label": "Section Padding Top",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "default": 80
+    },
+    {
+        "type": "range",
+        "id": "section_padding_bottom",
+        "label": "Section Padding Bottom",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "default": 80
+    },
+    {
+        "type" : "paragraph",
+        "content" : "Mobile"
+    },
+    {
+        "type": "range",
+        "id": "section_padding_top_xs",
+        "label": "Section Padding Top",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "default": 50
+    },
+    {
+        "type": "range",
+        "id": "section_padding_bottom_xs",
+        "label": "Section Padding Bottom",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "default": 50
+    },
+    {
+        "type": "header",
+        "content": "Banner title"
+    },
+    {
+		"type": "text",
+		"id": "banner_title",
+		"label": "Banner title",
+		"default": "Shop all flavour juicy"
+	},
+	{
+		"type": "text",
+		"id": "banner_des",
+		"label": "Banner description",
+		"default": "When it comes to hosting your most ideal picnic, there are so many things to think about. From sauces to trays, we've got you covered."
+	},
+	{
+		"type": "url",
+		"id": "banner_url",
+		"label": "Banner button url"
+	},
+	{
+		"type": "text",
+		"id": "banner_button_text",
+		"label": "Banner button",
+		"default": "Browse all"
+	},
+	{
+        "type": "header",
+        "content": "Banner image"
+    },
+	{
+		"type": "image_picker",
+		"id": "banner_img",
+		"label": "Banner BG Image",
+		"info": "Recommended Size: 675px x 395px"
+	}
+	],
+	"blocks":[
+	{
+		"type": "lookbook",
+		"name": "Lookbook",
+		"settings": [
+			{
+		      "type": "header",
+		      "content": "Lookbook pointer"
+		    },
+		    {
+		        "type": "range",
+		        "id": "hotspot1_top",
+		        "label": "hotspot top",
+		        "min": 0,
+		        "max": 100,
+		        "step": 1,
+		        "unit": "%",
+		        "default": 60
+		    },
+		    {
+		        "type": "range",
+		        "id": "hotspot1_left",
+		        "label": "hotspot left",
+		        "min": 0,
+		        "max": 100,
+		        "step": 1,
+		        "unit": "%",
+		        "default": 60
+		    },
+		    {
+		      "type": "header",
+		      "content": "Select product"
+		    },
+		    {
+		      "type": "product",
+		      "id": "product1",
+		      "label": "Select product"
+		    }
+		]
+	}
+	],
+	"presets":[
+	{
+		"name": "Banner lookbook"
+	}
+	]
+}
+{% endschema %}
+<style>
+.banner-grid {
+    padding-top: {{ section.settings.section_padding_top }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom }}px;
+}
+@media(max-width: 1199px) {
+    .banner-grid {
+        padding-top: {{ section.settings.section_padding_top_xs }}px;
+        padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+    }
+}
+
+.banner-grid .grid-wrap{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: -30px 0 0 -30px;
+}
+.banner-grid .grid-wrap .grid-wrapper {
+	width: calc(66.67% - 30px);
+	margin: 30px 0 0 30px;
+}
+.banner-grid .grid-wrap .grid-wrapper.title-wrapper {
+	width: calc(33.33% - 30px);
+	margin: 30px 0 0 30px;
+}
+.banner-grid .banner-title {
+    text-align: center;
+}
+.banner-grid .banner-title h2 {
+    font-size: 30px;
+    font-family: Fredoka,sans-serif;
+}
+.banner-grid .banner-title p {
+    font-size: 14px;
+    padding-top: 30px;
+}
+.banner-grid .banner-title a {
+	margin-top: 30px;
+}
+.banner-grid .banner-block {
+	position: relative;
+}
+.banner-grid .banner-block {
+	box-shadow: 0 1px 4px #8080801c;
+}
+.banner-grid .banner-block .st-hotspot {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.banner-grid .banner-block .st-hotspot .st-btn {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	cursor: pointer;
+}
+.banner-grid .banner-block .st-hotspot .shoppable-image__hotspot-background {
+    width: 100%;
+    height: 100%;
+    background-color: #0006;
+    border-radius: 50%;
+    outline: none;
+    box-shadow: none;
+    transition: background-color .15s cubic-bezier(.4,0,.2,1),box-shadow .15s cubic-bezier(.4,0,.2,1);
+    animation: pulse .8s cubic-bezier(.42,0,.58,1) .1s infinite alternate both running;
+}
+.banner-grid .banner-block .st-hotspot.open .shoppable-image__hotspot-background {
+    animation-play-state: paused;
+}
+.banner-grid .banner-block .st-hotspot.open .shoppable-image__hotspot-background {
+    background-color: #0009;
+    box-shadow: 0 0 0 2px #fff inset, 0 1px 4px #00000026;
+}
+.banner-grid .banner-block .st-hotspot .shoppable-image__hotspot-inner {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform .15s cubic-bezier(.4,0,.2,1);
+    transform: scale(1) translate(-50%,50%);
+}
+.banner-grid .banner-block .st-hotspot.open .shoppable-image__hotspot-inner {
+	transform: scale(.7) translate(-70%,70%);
+}
+.banner-grid .banner-block .st-hotspot .st-content-parent {
+    position: absolute;
+    z-index: 1;
+    top: 35px;
+    background-color: #fff;
+    width: 265px;
+    height: 128px;
+    display: flex;
+    justify-content: space-between;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    z-index: 2;
+    -webkit-transition: all .3s ease-in-out 0s;
+    -o-transition: all .3s ease-in-out 0s;
+    transition: all .3s ease-in-out 0s;
+    box-shadow: 0 1px 4px #8080801c;
+}
+.banner-grid .banner-block .st-hotspot.open .st-content-parent {
+  opacity: 1;
+  visibility: visible;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.8);
+  }
+}
+@media(max-width: 991px){
+	.banner-grid .grid-wrap .grid-wrapper,
+	.banner-grid .grid-wrap .grid-wrapper.title-wrapper {
+    	width: calc(100% - 30px);
+	}
+}
+@media(max-width: 767px){
+  .banner-grid .grid-wrap{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: -30px 0 0 -15px;
+  }
+  .banner-grid .grid-wrap .grid-wrapper {
+    width: calc(100% - 15px);
+    margin: 30px 0 0 15px;
+  }
+  .banner-grid .banner-block .st-hotspot {
+    position: unset;
+    width: auto;
+    height: auto;
+  }
+  .banner-grid .banner-block .st-hotspot .st-btn {
+    position: absolute;
+  }
+  .banner-grid .banner-block .st-hotspot .st-content-parent {
+    top: 100%;
+  }
+}
+</style>

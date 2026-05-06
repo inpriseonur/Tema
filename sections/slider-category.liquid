@@ -1,0 +1,310 @@
+<!-- Browuse categoryies -->
+<section class="slider-category">
+  <div class="container"> 
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12">
+        <div class="section-title">
+          <h2>{{ section.settings.slider_cat_title }}</h2>
+        </div>
+        <div class="cat-slider owl-carousel" id="category-slider-{{ section.id }}">
+          {% for block in section.blocks %}
+          {% assign category_product = collections[block.settings.slider_category_handle] %}
+          <div class="item">
+            <div class="category-wrap">
+              <div class="category-image">
+                  <a href="{{ category_product.url }}" class="cat-img">
+                    <img class="img-fluid" src="{% if block.settings.collection_img %}{{ block.settings.collection_img | img_url: 'master' }}{% else %}https://via.placeholder.com/210x210{% endif %}">
+                    <span class="cat-title">{{ category_product.title }}</span>
+                  </a>
+                <span class="cat-count">{{ category_product.products_count }} Item </span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script type="text/javascript">
+  addEventListener('DOMContentLoaded', (event) => {
+  $('#category-slider-{{ section.id }}').owlCarousel({
+    rewind: true,
+    margin: 30,
+    nav: true,
+    navText: ['<i class="fa fa-angle-left"></i>','<i class="fa fa-angle-right"></i>'],
+    dots: false,
+    {%- if settings.enable_rtl -%}
+    rtl: true,
+    {%- endif -%}
+    loop: {{ section.settings.loop }},
+    autoplay: {{ section.settings.autoplay }},
+    autoplayTimeout: {{ section.settings.autoplay_time }},
+    autoplayHoverPause: true,
+    responsive:{
+      0:{
+        items:2,
+        margin: 15,
+      },
+      479:{
+        items:2
+      },
+      768:{
+        items:3
+      },
+      979:{
+        items:5
+      },
+      1199:{
+        items:6
+      }
+    }
+  });
+  });
+</script>
+{% schema %}
+{
+  "name": "Slider category",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+    "type" : "color",
+    "id" : "section_bg_color",
+    "label" : "Background Color",
+    "default" : "#f7f7f7"
+  },
+  {
+    "type": "text",
+    "id": "slider_cat_title",
+    "label": "Section Title",
+    "default": "Shop by category"
+  },
+  {
+    "type": "header",
+    "content": "slider settings"
+  },
+  {
+    "type": "checkbox",
+    "id": "loop",
+    "label": "Slider loop",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "autoplay",
+    "label": "Slider autoplay",
+    "default": true
+  },
+  {
+    "type": "number",
+    "id": "autoplay_time",
+    "label": "Slider timer out",
+    "default": 5000
+  }
+  ],
+  "blocks" : [
+  {
+    "name" : "Slider category",
+    "type" : "slider_category",
+    "settings" : [
+    {
+      "type": "collection",
+      "id": "slider_category_handle",
+      "label": "Select Your Collection"
+    },
+    {
+      "type": "image_picker",
+      "id": "collection_img",
+      "label": "Collection image",
+      "info": "Recommended Size: 210x210px"
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Slider category"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.slider-category {
+  background-color: {{ section.settings.section_bg_color }};
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+}
+@media(max-width: 1199px) {
+    .slider-category {
+        padding-top: {{ section.settings.section_padding_top_xs }}px;
+        padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+    }
+}
+
+.cat-slider .category-wrap{
+    text-align: center;
+}
+.cat-slider .category-wrap .category-image{
+    position: relative;
+}
+.cat-slider .category-wrap .category-image a.cat-img{
+    position: relative;
+    z-index: 1;
+    border: 1px solid #e5e5e5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cat-slider .category-wrap .category-image a.cat-img img{
+    border-radius: 50%;
+}
+.cat-slider .category-wrap .category-image a.cat-img::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 50%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: scale(0);
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -o-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
+}
+.cat-slider .category-wrap .category-image:hover a.cat-img::before{
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -o-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
+}
+.cat-slider .category-wrap .category-image .cat-title{
+    font-size: 14px;
+    color: #fff;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -o-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
+}
+.cat-slider .category-wrap:hover .category-image .cat-title {
+    opacity: 1;
+    visibility: visible;
+}
+.cat-slider .category-wrap .category-image span.cat-count{
+    margin-top: 15px;
+}
+.cat-slider.owl-carousel .owl-nav{
+    margin-top: 0;
+}
+.cat-slider.owl-carousel .owl-nav button{
+    position: absolute;
+    bottom: 50%;
+    transform: translateY(50%);
+    margin: 0;
+    line-height: 0;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 20px;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -o-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
+    background-color: var(--color-primary);
+}
+.cat-slider.owl-carousel .owl-nav button.owl-prev{
+    left: 0;
+}
+.cat-slider.owl-carousel .owl-nav button.owl-next{
+    right: 0;
+}
+.cat-slider.owl-carousel:hover .owl-nav button{
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    -o-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
+}
+.cat-slider.owl-carousel .owl-nav button:hover{
+  color: var(--color-primary);
+  background-color: #fff;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.1);
+}
+.cat-slider.owl-carousel:hover .owl-nav button.owl-prev{
+    left: -15px;
+}
+.cat-slider.owl-carousel:hover .owl-nav button.owl-next{
+    right: -15px;
+}
+@media (max-width : 1199px){
+    .cat-slider.owl-carousel .owl-nav button{
+        opacity: 1;
+        visibility: visible;
+    }
+    .cat-slider.owl-carousel .owl-nav button.owl-prev{
+        left: -15px;
+    }
+    .cat-slider.owl-carousel .owl-nav button.owl-next{
+        right: -15px;
+    }
+}
+</style>

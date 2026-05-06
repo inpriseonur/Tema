@@ -1,0 +1,245 @@
+<div class="our-service-area">
+  <div class="container">
+    <div class="section-title">
+      {% if section.settings.section_title != '' %}
+      <h2>{{ section.settings.section_title }}</h2>
+      {% endif %}
+      {% if section.settings.section_des != '' %}
+      <p>{{ section.settings.section_des }}</p>
+      {% endif %} 
+    </div>
+    <ul class="ser-wrap">
+      {% for block in section.blocks %}
+      <li class="ser-wrapper">
+        <div class="main-block">
+          <a href="{{ block.settings.service_url }}">
+            <div class="icon-block" style="background-color: {{ block.settings.service_bg }};">
+              {% if block.settings.service_img %}
+              <img class="img-fluid" src="{{ block.settings.service_img | img_url: '80x80', crop: 'center' }}">
+              {% endif %}
+            </div>
+            <div class="service-text">
+              {%if block.settings.service_title != '' %}
+              <span>{{ block.settings.service_title }}</span>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Our Service",
+  "settings": [
+  {
+      "type": "header",
+      "content": "Section Padding"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+  },
+  {
+      "type" : "paragraph",
+      "content" : "Mobile"
+  },
+  {
+      "type": "range",
+      "id": "section_padding_top_xs",
+      "label": "Section Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+      "type": "range",
+      "id": "section_padding_bottom_xs",
+      "label": "Section Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+  },
+  {
+    "type" : "header",
+    "content" : "Background Color"
+  },
+  {
+    "type" : "color",
+    "id" : "our_ser_bgcolor",
+    "label" : "Background Color",
+    "default" : "#fff"
+  },
+  {
+    "type" : "header",
+    "content" : "Section title"
+  },
+  {
+    "type": "text",
+    "id": "section_title",
+    "label": "Section title",
+    "default": "What Makes Us Different?"
+  },
+  {
+    "type": "text",
+    "id": "section_des",
+    "label": "Section description",
+    "default": "Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store."
+  }
+  ],
+  "blocks":[
+  {
+    "type": "our_services",
+    "name": "Our Services",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "service_img",
+      "label": "Service Image",
+      "info": "Recommended Size: 512px x 512px"
+    },
+    {
+      "type": "text",
+      "id": "service_title",
+      "label": "Service Description",
+      "default": "Free Home Delivary."
+    },
+    {
+      "type": "url",
+      "id": "service_url",
+      "label": "Service url"
+    },
+    {
+      "type": "color",
+      "id": "service_bg",
+      "label": "Service background color",
+      "default": "#d8e9d3"
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Our Service"
+  }
+  ]
+}
+{% endschema %}
+<style>
+.our-service-area {
+  padding-top: {{ section.settings.section_padding_top }}px;
+  padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  background-color: {{ section.settings.our_ser_bgcolor }};
+}
+@media(max-width: 1199px) {
+  .our-service-area {
+      padding-top: {{ section.settings.section_padding_top_xs }}px;
+      padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+  }
+}
+.our-service-area .section-title {
+  max-width: 50%;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
+.our-service-area .section-title h2 {
+  margin-bottom: 0;
+}
+.our-service-area .section-title p {
+  line-height: normal;
+  padding-top: 15px;
+}
+.our-service-area ul.ser-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: -30px 0 0 -30px;
+}
+.our-service-area ul.ser-wrap li.ser-wrapper{
+  width: calc(16.66% - 30px);
+  margin: 30px 0 0 30px;
+}
+.our-service-area ul.ser-wrap li.ser-wrapper .main-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.our-service-area ul.ser-wrap li.ser-wrapper .icon-block {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  -webkit-transition: all .2s ease-in-out 0s;
+  -o-transition: all .2s ease-in-out 0s;
+  transition: all .2s ease-in-out 0s;
+}
+.our-service-area ul.ser-wrap li.ser-wrapper:hover .icon-block {
+  transform: translateY(-10px);
+} 
+.our-service-area ul.ser-wrap li.ser-wrapper .icon-block img {
+  max-width: 45px;
+}
+.our-service-area ul.ser-wrap li.ser-wrapper .service-text {
+  margin-top: 15px;
+  text-align: center;
+}
+.our-service-area ul.ser-wrap li.ser-wrapper .service-text span {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+@media (max-width: 1199px) {
+  .our-service-area ul.ser-wrap li.ser-wrapper{
+    width: calc(33.33% - 30px);
+  }
+}
+@media (max-width: 991px) {
+  .our-service-area .section-title {
+    max-width: 100%; 
+  }
+  .our-service-area ul.ser-wrap li.ser-wrapper .service-text span {
+    font-size: 14px;
+  }
+}
+@media (max-width: 767px) {
+  .our-service-area ul.ser-wrap {
+    margin: -30px 0 0 -12px;
+  }
+  .our-service-area ul.ser-wrap li.ser-wrapper {
+    width: calc(33.33% - 12px);
+    margin: 30px 0 0 12px;
+  }
+@media (max-width: 479px) {
+  .our-service-area ul.ser-wrap li.ser-wrapper {
+    width: calc(50% - 12px);
+  }
+}
+
+</style>

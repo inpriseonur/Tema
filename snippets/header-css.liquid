@@ -1,0 +1,39 @@
+<link href="{{ 'bootstrap.min.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+<link href="{{ 'product-template.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+<link href="{{ 'style.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+<link href="{{ 'skin-theme.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+<link href="{{ 'cart-drawer.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+
+<link rel="stylesheet" href="{{ 'font-awesome.min.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'owl.carousel.min.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'owl.theme.default.min.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'swiper-bundle.min.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'themify-icons.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'simple-line-icons.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'magnific-popup.css' | asset_url }}" media="print" onload="this.media='all'">
+
+
+{%- if template contains 'search' -%}
+  <link href="{{ 'search-page.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+{%- endif -%}
+
+{%- if template == 'cart' -%}
+  <link href="{{ 'cart-page.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+{%- endif -%}
+
+{%- if template contains 'list-collections' -%}
+  <link href="{{ 'list-collection.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+{%- endif -%}
+
+{%- if template contains 'collection' -%}
+  <link href="{{ 'collection.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+  <link href="{{ 'collection-sidebar.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+{%- endif -%}
+
+{%- if template contains 'blog' or template contains 'article' -%}
+  <link href="{{ 'blog-sidebar.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+{%- endif -%}
+
+{%- if settings.enable_rtl -%}
+  <link href="{{ 'style-rtl.css' | asset_url }}" rel="stylesheet" type="text/css" media="all">
+{%- endif -%}

@@ -1,0 +1,30 @@
+{% form 'new_comment', article %}
+{{ form.errors | default_errors }}
+<div class="comments-reply-area">
+  <h2 class="comment-title">{{ 'blogs.comments.title' | t }}</h2>
+  <form action="#" class="comment-form-area">
+    <div class="form-wrap">
+      <div class="form-filed">
+        <label>Name <span class="required">*</span></label>
+        <input type="text" class="{% if form.errors contains 'author' %}error{% endif %}" name="comment[author]" id="commentAuthor" value="{{ form.author }}" placeholder="{{ 'blogs.comments.name' | t }}">
+      </div>
+      <div class="form-filed">
+        <label>Email <span class="required">*</span></label>
+        <input type="text" class="{% if form.errors contains 'email' %}error{% endif %}" name="comment[email]" id="commentEmail" value="{{ form.email }}" placeholder="{{ 'blogs.comments.email' | t }}">
+      </div>
+      <div class="form-filed">
+        <label>Comment <span class="required">*</span></label>
+        <textarea class="comment-notes{% if form.errors contains 'body' %} error{% endif %}" name="comment[body]" id="commentBody"  placeholder="{{ 'blogs.comments.message' | t }}">{{ form.body }}</textarea>
+      </div>
+    </div>
+    {% if blog.moderated? %}
+    <p>{{ 'blogs.comments.moderated' | t }}</p>
+    {% endif %}
+    <div class="comment-form-submit">
+      <button class="btn btn-style1" type="submit">
+        <span class="pre-msg">{{ 'blogs.comments.post' | t }}</span>
+      </button>
+    </div>
+  </form>
+</div>
+{% endform %}

@@ -1,0 +1,215 @@
+<section class="customer-page section-ptb">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="log-acc-page">
+          <div class="acc-page">
+            <div class="registers">
+              {% form 'create_customer' %}
+              {{ form.errors | default_errors }}
+              <div class="login-form-container">
+                <div class="title-text">
+                  <h2>{{ 'customer.register.title' | t }}</h2>
+                  {% if settings.register_sub_text != '' %}
+                  <p>{{ settings.register_sub_text }}</p>
+                  {% endif %}
+                </div>
+                <ul class="fill-form">
+                  <li class="fname">
+                    
+                    <input type="text" name="customer[first_name]" id="FirstName" class="input-full" placeholder="{{ 'customer.register.first_name' | t }}" {% if form.first_name %}value="{{ form.first_name }}"{% endif %} autocapitalize="words" autofocus required>
+                  </li>
+
+                  <li class="lname">
+                    
+                    <input type="text" name="customer[last_name]" id="LastName" class="input-full" placeholder="{{ 'customer.register.last_name' | t }}" {% if form.last_name %}value="{{ form.last_name }}"{% endif %} autocapitalize="words" required>
+                  </li>
+
+                  <li class="log-email">
+                    
+                    <input type="email" name="customer[email]" id="Email" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.register.email' | t }}" {% if form.email %} value="{{ form.email }}"{% endif %} autocorrect="off" autocapitalize="off" required>
+                  </li>
+
+                  <li class="log-pwd">
+                    
+                    <input type="password" name="customer[password]" id="CreatePassword" class="input-full{% if form.errors contains 'password' %} error{% endif %}" placeholder="{{ 'customer.register.password' | t }}" required>
+                  </li>
+
+                  <li class="form-toggle-btn">
+                    <div class="form-action-button">
+                      <button type="submit" class="btn-style1">{{ 'customer.register.submit' | t }}</button>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              {% endform %}
+            </div>
+          </div>
+          <div class="acc-page">
+            <div class="side-form-wrap">
+              <div class="acc-title">
+                <h6>{{ settings.alredy_acc_title }}</h6>
+                <div class="account-optional-action">
+                  <a href="/account/login" class="btn-style1" id="customer_login_link">{{ 'customer.login.log_in' | t }}</a>
+                  {% comment %}<a href="{{ shop.url }}">{{ 'customer.register.cancel' | t }}</a>{% endcomment %}
+                </div>
+              </div>
+              <div class="term-privacy">
+                <p class="term-con">
+                  <span><sup>{{ settings.log_term_con_syn }}</sup></span>
+                  <a href="{{ settings.log_term_con_url }}" target="_blank">{{ settings.log_term_con_text }}</a>
+                </p>
+                <p class="pri-pol">
+                  <span>{{ settings.log_pri_pol_desc }}<a href="{{ settings.log_pri_pol_url }}" target="_blank">{{ settings.log_pri_pol_text }}</a></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  
+  .customer-page .log-acc-page{
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  max-width: 60%;
+  margin: 0 auto;
+}
+.customer-page .log-acc-page .acc-page{
+  width: 50%;
+}
+.customer-page .log-acc-page .login-form-container {
+  padding: 30px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 3px;
+}
+.customer-page .log-acc-page .login-form-container .title-text h2{
+  font-size: 30px;
+}
+.customer-page .log-acc-page .login-form-container p{
+  margin-top: 15px;
+}
+.customer-page .log-acc-page .login-form-container ul li{
+  margin-top: 30px;
+}
+.customer-page .log-acc-page .login-form-container ul li label{
+  margin-bottom: 5px;
+}
+.customer-page .log-acc-page .login-form-container input{
+  padding: 10px 15px;
+}
+.customer-page .log-acc-page .login-form-container .form-action-button{
+  text-align: center;
+}
+.customer-page .log-acc-page .login-form-container .form-action-button button{
+  width: 100%;
+}
+.customer-page .log-acc-page .login-form-container .form-action-button a{
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: 30px;
+}
+.customer-page .log-acc-page .errors{
+  padding: 8px 12px;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap{
+  margin-left: 30px;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .acc-title{
+  text-align: center;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .acc-title h6{
+  font-size: 16px;
+  font-weight: 600;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .acc-title .account-optional-action{
+  margin-top: 30px;
+}
+
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.term-con{
+  display: flex;
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.term-con sup{
+  top: -4px;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p a{
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.pri-pol{
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+.customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.pri-pol a{
+  margin-left: 5px;
+}
+.customer-page .log-acc-page .login-form-container .title-text input{
+  color: var(--color-primary);
+  margin-top: 30px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  font-weight: 600;
+  
+}
+@media (max-width : 1199px){
+  .customer-page .log-acc-page{
+    max-width: 70%;
+  }
+  .customer-page .log-acc-page .login-form-container .title-text h2{
+    font-size: 24px;
+  }
+}
+@media (max-width : 991px){
+  .customer-page .log-acc-page{
+    max-width: 100%;
+  }
+  .customer-page .log-acc-page .login-form-container .title-text h2{
+    font-size: 20px;
+  }
+}
+@media (max-width : 767px){
+  .customer-page .log-acc-page .login-form-container .title-text h2{
+    font-size: 18px;
+  }
+  .customer-page .log-acc-page .login-form-container p{
+    margin-top: 10px;
+  }
+  .customer-page .log-acc-page .login-form-container ul li{
+    margin-top: 15px;
+  }
+  .customer-page .log-acc-page .login-form-container ul li.form-toggle-btn{
+    margin-top: 20px;
+  }
+  .customer-page .log-acc-page .acc-page{
+    width: 100%;
+  }
+  .customer-page .log-acc-page .login-form-container{
+    padding: 15px;
+  }
+  .customer-page .log-acc-page .acc-page .side-form-wrap{
+    margin-left: 0;
+    margin-top: 20px;
+  }
+  .customer-page .log-acc-page .login-form-container .form-action-button a,
+  .customer-page .log-acc-page .acc-page .side-form-wrap .acc-title .account-optional-action,
+  .customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.term-con{
+    margin-top: 15px;
+  }
+  .customer-page .log-acc-page .acc-page .side-form-wrap .term-privacy p.pri-pol{
+    margin-top: 0;
+  }
+}
+</style>

@@ -1,0 +1,226 @@
+{% comment %}
+  Renders a megamenu for the header.
+
+  Usage:
+  {% render 'header-mega-menu' %}
+{% endcomment %}
+
+<nav class="mainwrap">
+  <ul class="list-unstyled main-menu" role="list">
+    {%- for link in section.settings.menu.links -%}
+      {%- assign link_title_downcase = link.title | strip | downcase -%}
+      {%- assign mega_menu_block = '' -%}
+
+      {%- for block in section.blocks -%}
+        {%- assign menu_item_downcase = block.settings.menu_item | strip | downcase -%}
+
+        {%- if menu_item_downcase == link_title_downcase -%}
+          {%- assign mega_menu_block = block -%}
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      <li class="menu-link">
+          <div
+            id="Details-HeaderMenu-{{ forloop.index }}"
+            class="{%- if mega_menu_block != '' -%} mega-menu {%- elsif link.links.size > 0 -%} sub-menu{%- endif -%}"
+          >
+            <a href="{{ link.url }}"
+              id="HeaderMenu-{{ link.handle }}"
+              class="link-title"
+            >
+              <span class="sp-link-title {% if link.child_active %} active{% endif %}">
+                {{- link.title -}}
+              </span>
+              {%- if mega_menu_block != '' or link.links.size > 0 -%}
+              <span class="menu-arrow"><i class="fa fa-angle-down"></i></span>
+              {%- endif -%}
+            </a>
+            {%- if mega_menu_block != '' -%}
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu dropdown-content menu-dropdown"
+                tabindex="-1"
+              >
+                <div class="container">
+                  <div class="link-wrapper">
+                    <ul
+                      class="list-unstyled {% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                      role="list"
+                    >
+                      <div class="ul">
+                        {%- for childlink in link.links -%}
+                          <li class="shoplink-li">
+                            <a
+                              id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                              href="{{ childlink.url }}"
+                              class="shoplink-title {% if childlink.current %} active{% endif %}"
+                              {% if childlink.current %}
+                                aria-current="page"
+                              {% endif %}
+                            >
+                              {{ childlink.title }}
+                            </a>
+                            {%- if childlink.links != blank -%}
+                              <ul class="list-unstyled shopsupmenu-dropdown" role="list">
+                                {%- for grandchildlink in childlink.links -%}
+                                  <li class="shopsupmenu-li">
+                                    <a
+                                      id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                      href="{{ grandchildlink.url }}"
+                                      class="shopsuplink-title {% if grandchildlink.current %} active{% endif %}"
+                                      {% if grandchildlink.current %}
+                                        aria-current="page"
+                                      {% endif %}
+                                    >
+                                      {{ grandchildlink.title }}
+                                    </a>
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+                            {%- endif -%}
+                          </li>
+                        {%- endfor -%}
+                      </div>
+                    </ul>
+                  </div>
+                    {%- if mega_menu_block.settings.banner_enable -%}
+                      <div class="banner-wrap">
+                        <div class="grid-wrapper">
+                          <a
+                            class="banner-block"
+                              href="{{ mega_menu_block.settings.banner_url }}"
+                          >
+                            <div class="banner-img">
+                              {%- if mega_menu_block.settings.banner_img != blank -%}
+                                {{
+                                  mega_menu_block.settings.banner_img
+                                  | image_url: width: 1080
+                                  | image_tag:
+                                    loading: 'lazy',
+                                    width: mega_menu_block.settings.banner_img.width,
+                                    height: mega_menu_block.settings.banner_img.height,
+                                    class: 'lazyload img-fluid',
+                                    alt: mega_menu_block.settings.banner_img.alt
+                                  | escape
+                                }}
+                              {%- else -%}
+                                {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3, 4 %}{%- endcapture -%}
+                                {{ placeholder | placeholder_svg_tag: 'placeholder-svg w-100 h-100' }}
+                              {%- endif -%}
+                            </div>
+                          </a>
+                        </div>
+                        <div class="grid-wrapper">
+                          <a
+                            class="banner-block"
+                              href="{{ mega_menu_block.settings.banner_url2 }}"
+                          >
+                            <div class="banner-img">
+                              {%- if mega_menu_block.settings.banner_img2 != blank -%}
+                                {{
+                                  mega_menu_block.settings.banner_img2
+                                  | image_url: width: 1080
+                                  | image_tag:
+                                    loading: 'lazy',
+                                    width: mega_menu_block.settings.banner_img2.width,
+                                    height: mega_menu_block.settings.banner_img2.height,
+                                    class: 'lazyload img-fluid',
+                                    alt: mega_menu_block.settings.banner_img2.alt
+                                  | escape
+                                }}
+                              {%- else -%}
+                                {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3, 4 %}{%- endcapture -%}
+                                {{ placeholder | placeholder_svg_tag: 'placeholder-svg w-100 h-100' }}
+                              {%- endif -%}
+                            </div>
+                          </a>
+                        </div>
+                        <div class="grid-wrapper">
+                          <a
+                            class="banner-block"
+                              href="{{ mega_menu_block.settings.banner_url3 }}"
+                          >
+                            <div class="banner-img">
+                              {%- if mega_menu_block.settings.banner_img3 != blank -%}
+                                {{
+                                  mega_menu_block.settings.banner_img3
+                                  | image_url: width: 1080
+                                  | image_tag:
+                                    loading: 'lazy',
+                                    width: mega_menu_block.settings.banner_img3.width,
+                                    height: mega_menu_block.settings.banner_img3.height,
+                                    class: 'lazyload img-fluid',
+                                    alt: mega_menu_block.settings.banner_img3.alt
+                                  | escape
+                                }}
+                              {%- else -%}
+                                {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3, 4 %}{%- endcapture -%}
+                                {{ placeholder | placeholder_svg_tag: 'placeholder-svg w-100 h-100' }}
+                              {%- endif -%}
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                    {%- endif -%}
+                </div>
+              </div>
+            {%- elsif link.links.size > 0 -%}
+              <ul
+                id="HeaderMenu-MenuList-{{ forloop.index }}"
+                class="list-unstyled menu-dropdown dropdown-content"
+                role="list"
+                tabindex="-1"
+              >
+                {%- for childlink in link.links -%}
+                  <li class="singlemenu-li">
+                    {%- if childlink.links == blank -%}
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        href="{{ childlink.url }}"
+                        class="singlelink-title {% if childlink.current %} active{% endif %}"
+                        {% if childlink.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        <span class="sp-link-title">{{ childlink.title }}</span>
+                      </a>
+                    {%- else -%}
+                      <div id="Details-HeaderSubMenu-{{ link.handle }}-{{ childlink.handle }}">
+                        <a href="{{ childlink.url }}" 
+                          id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                          class="singlelink-title"
+                        >
+                          <span class="sp-link-title">{{ childlink.title }}</span>
+                          <span class="menu-arrow"><i class="fa fa-angle-right"></i></span>
+                        </a>
+                        <ul
+                          id="HeaderMenu-SubMenuList-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                          class="list-unstyled supmenu-dropdown dropdown-content"
+                        >
+                          {%- for grandchildlink in childlink.links -%}
+                            <li class="supmenu-li">
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="suplink-title {% if grandchildlink.current %} active{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                <span class="sp-link-title">{{ grandchildlink.title }}</span>
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
