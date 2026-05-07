@@ -7,6 +7,19 @@
           <div class="detail-wrap">
             <div class="product_details">
               <div class="product_detail_img">
+                <div class="custom-badge-overlay">
+                  {%- for block in section.blocks -%}
+                    {%- if block.type == 'custom_badge' -%}
+                      {%- if product.tags contains block.settings.badge_tag -%}
+                        <div class="custom-badge-item position-{{ block.settings.badge_position }}" style="width: {{ block.settings.badge_width }}px;">
+                          {%- if block.settings.badge_image != blank -%}
+                            {{ block.settings.badge_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.badge_tag }}
+                          {%- endif -%}
+                        </div>
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
                 <div class="product_img_top">
                   <div class="slider-big swiper slider-big-{{ product.id }}" id="slider-big-{{ product.id }}" {% if settings.enable_rtl %}dir="rtl"{% endif %} data-slides-per-view="1">
                     <div class="swiper-wrapper">
@@ -997,6 +1010,45 @@
           "default": "Option 1,\nOption 2,\nOption 3,\nOption 4,\nOption 5"
         }
       ]
+    },
+    {
+      "type": "custom_badge",
+      "name": "Custom Product Badge",
+      "settings": [
+        {
+          "type": "text",
+          "id": "badge_tag",
+          "label": "Trigger Tag",
+          "info": "Enter the product tag that will trigger this badge (e.g., 'Orijinal')"
+        },
+        {
+          "type": "image_picker",
+          "id": "badge_image",
+          "label": "Badge Image"
+        },
+        {
+          "type": "select",
+          "id": "badge_position",
+          "label": "Badge Position",
+          "options": [
+            { "value": "top-left", "label": "Top Left" },
+            { "value": "top-right", "label": "Top Right" },
+            { "value": "bottom-left", "label": "Bottom Left" },
+            { "value": "bottom-right", "label": "Bottom Right" }
+          ],
+          "default": "top-left"
+        },
+        {
+          "type": "range",
+          "id": "badge_width",
+          "label": "Badge Width",
+          "min": 30,
+          "max": 200,
+          "step": 5,
+          "unit": "px",
+          "default": 80
+        }
+      ]
     }
   ]
 }
@@ -1011,5 +1063,41 @@
     padding-top: {{ section.settings.section_padding_top_xs }}px;
     padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
   }
+}
+.product_detail_img {
+  position: relative;
+}
+.custom-badge-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+.custom-badge-item {
+  position: absolute;
+  padding: 10px;
+}
+.custom-badge-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.custom-badge-item.position-top-left { top: 0; left: 0; }
+.custom-badge-item.position-top-right { top: 0; right: 0; }
+.custom-badge-item.position-bottom-left { bottom: 0; left: 0; }
+.custom-badge-item.position-bottom-right { bottom: 0; right: 0; }
+
+@media(max-width: 767px) {
+  .custom-badge-item {
+    transform: scale(0.8);
+    transform-origin: center center;
+  }
+  .custom-badge-item.position-top-left { transform-origin: top left; }
+  .custom-badge-item.position-top-right { transform-origin: top right; }
+  .custom-badge-item.position-bottom-left { transform-origin: bottom left; }
+  .custom-badge-item.position-bottom-right { transform-origin: bottom right; }
 }
 </style>
