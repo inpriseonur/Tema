@@ -41,6 +41,30 @@
       margin-top: 6px !important;
     }
 
+    /* =====================================================
+       HEADER İKON SADELEŞTİRME (MOBİL)
+       Alt barda olan ikonları üst header'dan kaldırarak ferahlık sağlar.
+       ===================================================== */
+    @media screen and (max-width: 991px) {
+      /* 1. Genel Sayfalar: Arama, Hesap ve Wishlist'i üstten kaldır (Alt barda mevcutlar) */
+      body:not(.template-product):not(.template-cart) .header-main .search-mobile,
+      body:not(.template-product):not(.template-cart) .header-main .user-wrap,
+      body:not(.template-product):not(.template-cart) .header-main .wishlist-wrap {
+        display: none !important;
+      }
+
+      /* 2. Ürün Sayfası: Arama ve Hesap'ı kaldır (Wishlist KALSIN - çünkü alt bar burada yok) */
+      body.template-product .header-main .search-mobile,
+      body.template-product .header-main .user-wrap {
+        display: none !important;
+      }
+      
+      /* Logo ve Hamburger arası denge */
+      .header-main .logo {
+        flex: 1;
+      }
+    }
+
   }
 
   /* ═══════════════════════════════════════════════════════
@@ -349,6 +373,7 @@
           gap: 12px;
         }
 
+
         /* Sticky bar içindeki CTA butonu tam genişlik */
         cart-action.product-form .ajax-cart-btn {
           flex: 1;
@@ -499,11 +524,22 @@
             margin-left: 8px;
           }
           .mobile-sticky-price .price-box { display: contents; }
+          .mobile-sticky-price {
+            flex: 0 0 45%;
+            max-width: 45%;
+          }
+          .mobile-sticky-price .price-box { 
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+          }
           .mobile-sticky-price .new-price {
-            width: 100%;
-            font-size: 15px !important;
+            flex: 0 0 100%;
+            font-size: 16px !important;
             font-weight: 700;
             line-height: 1.1;
+            margin-bottom: 2px;
           }
           .mobile-sticky-price .old-price {
             font-size: 11px !important;
@@ -538,10 +574,12 @@
             if (percentEl && !percentEl.textContent.includes('%')) {
               percentEl.textContent = '%' + percentEl.textContent.trim();
             }
-            wrapper.appendChild(discountClone);
+            // İndirim balonunu fiyat kutusunun içine ekle
+            priceClone.appendChild(discountClone);
           }
 
-          btn.insertBefore(wrapper, btn.firstChild);
+          // Fiyat alanını en başa ekle (prepend)
+          btn.prepend(wrapper);
 
           // Stok bilgisini adet kutusunun yanına taşı
           var qtyContainer = document.querySelector('.product-qty');
@@ -562,6 +600,8 @@
                 pEl.textContent = '%' + pEl.textContent.trim();
               }
               discountClone.style.display = discountLabel.style.display;
+              // İndirim balonunu her seferinde tekrar fiyat kutusuna iliştir
+              priceClone.appendChild(discountClone);
             }
           });
           observer.observe(priceBox, { childList: true, subtree: true, characterData: true, attributes: true });

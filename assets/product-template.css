@@ -492,7 +492,12 @@
   justify-content: center;
   border-radius: 3px;
 }
-.product_details_info .pr-option .option-block input:checked+.op-lb.ot-size,
+.product_details_info .pr-option .option-block input:checked+.op-lb.ot-size{
+  background-color: var(--color-secondary);
+  color: #fff;
+  border-color: var(--color-secondary);
+  font-weight: 600;
+}
 .product_details_info .pr-option .option-block .op-lb.ot-size:hover{
   border: 1px solid var(--color-primary);
 }
