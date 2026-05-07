@@ -617,5 +617,169 @@
       });
     </script>
 
+    <!-- =====================================================
+         MOBİL FOOTER BOTTOM SHEET MODAL (SADECE SEPET SAYFASINDA)
+         ===================================================== -->
+    {% if template == 'cart' %}
+    <style>
+      @media screen and (max-width: 991px) {
+        .footer-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 99998;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+        }
+        .footer-modal-overlay.active {
+          opacity: 1;
+          pointer-events: auto;
+        }
+        .footer-modal {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 85vh;
+          background: var(--color-body-bg, #fff);
+          z-index: 99999;
+          transform: translateY(100%);
+          transition: transform 0.3s ease-out;
+          border-radius: 20px 20px 0 0;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+        }
+        .footer-modal.active {
+          transform: translateY(0);
+        }
+        .footer-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 15px 20px;
+          border-bottom: 1px solid #eee;
+          background: #f9f9f9;
+          border-radius: 20px 20px 0 0;
+        }
+        .footer-modal-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--color-secondary, #333);
+          margin: 0;
+          text-transform: uppercase;
+        }
+        .footer-modal-close {
+          background: none;
+          border: none;
+          font-size: 28px;
+          line-height: 1;
+          color: #999;
+          cursor: pointer;
+          padding: 0;
+        }
+        .footer-modal-close:hover {
+          color: #333;
+        }
+        .footer-modal-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: 20px;
+        }
+        .footer-modal-body .loader {
+          text-align: center;
+          padding: 40px 0;
+          color: #666;
+          font-size: 14px;
+        }
+      }
+    </style>
+
+    <div id="footer-modal-overlay" class="footer-modal-overlay"></div>
+    <div id="footer-modal" class="footer-modal">
+      <div class="footer-modal-header">
+        <span class="footer-modal-title" id="footer-modal-title">...</span>
+        <button class="footer-modal-close" id="footer-modal-close">&times;</button>
+      </div>
+      <div class="footer-modal-body" id="footer-modal-body"></div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth > 991) return; // Sadece mobilde
+        
+        var overlay = document.getElementById('footer-modal-overlay');
+        var modal = document.getElementById('footer-modal');
+        var closeBtn = document.getElementById('footer-modal-close');
+        var modalBody = document.getElementById('footer-modal-body');
+        var modalTitle = document.getElementById('footer-modal-title');
+
+        if (!overlay || !modal) return;
+
+        function closeModal() {
+          overlay.classList.remove('active');
+          modal.classList.remove('active');
+          setTimeout(function() {
+            modalBody.innerHTML = '';
+          }, 300);
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', closeModal);
+
+        // Sepet sayfasındaki alt footer linklerini yakala
+        var cartFooterLinks = document.querySelectorAll('.cart-footer-link, .footer-bottom-area a, .footer-top-area a.ft-sublink');
+        
+        cartFooterLinks.forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            var href = this.getAttribute('href');
+            if (!href) return;
+            
+            // Sadece politika ve içerik sayfaları (policies veya pages)
+            if (href.includes('/policies/') || href.includes('/pages/')) {
+              e.preventDefault();
+              
+              var titleText = this.textContent || this.innerText;
+              modalTitle.textContent = titleText.trim();
+              modalBody.innerHTML = '<div class="loader"><span class="spinner-border spinner-border-sm"></span> Yükleniyor...</div>';
+              
+              overlay.classList.add('active');
+              modal.classList.add('active');
+              
+              fetch(href)
+                .then(function(response) { return response.text(); })
+                .then(function(html) {
+                  var parser = new DOMParser();
+                  var doc = parser.parseFromString(html, 'text/html');
+                  
+                  // İçeriği çek
+                  var mainContent = doc.querySelector('main[role="main"]');
+                  if (!mainContent) mainContent = doc.querySelector('.main-content');
+                  
+                  if (mainContent) {
+                    modalBody.innerHTML = mainContent.innerHTML;
+                    
+                    // Gereksiz bileşenleri gizle (örn. breadcrumb vs)
+                    var breadcrumbs = modalBody.querySelectorAll('.breadcrumb-area, .breadcrumb');
+                    breadcrumbs.forEach(function(b){ b.style.display = 'none'; });
+                  } else {
+                    modalBody.innerHTML = '<div style="padding: 20px; text-align: center;">İçerik yüklenemedi.</div>';
+                  }
+                })
+                .catch(function(err) {
+                  console.error('Fetch error:', err);
+                  modalBody.innerHTML = '<div style="padding: 20px; text-align: center;">Bağlantı hatası oluştu.</div>';
+                });
+            }
+          });
+        });
+      });
+    </script>
+    {% endif %}
+
   </body>
 </html>
