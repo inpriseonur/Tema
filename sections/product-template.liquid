@@ -7,20 +7,20 @@
           <div class="detail-wrap">
             <div class="product_details">
               <div class="product_detail_img">
-                <div class="custom-badge-overlay">
-                  {%- for block in section.blocks -%}
-                    {%- if block.type == 'custom_badge' -%}
-                      {%- if product.tags contains block.settings.badge_tag -%}
-                        <div class="custom-badge-item position-{{ block.settings.badge_position }}" style="width: {{ block.settings.badge_width }}px;">
-                          {%- if block.settings.badge_image != blank -%}
-                            {{ block.settings.badge_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.badge_tag }}
-                          {%- endif -%}
-                        </div>
-                      {%- endif -%}
-                    {%- endif -%}
-                  {%- endfor -%}
-                </div>
                 <div class="product_img_top">
+                  <div class="custom-badge-overlay">
+                    {%- for block in section.blocks -%}
+                      {%- if block.type == 'custom_badge' -%}
+                        {%- if product.tags contains block.settings.badge_tag -%}
+                          <div class="custom-badge-item position-{{ block.settings.badge_position }}" style="width: {{ block.settings.badge_width }}px;">
+                            {%- if block.settings.badge_image != blank -%}
+                              {{ block.settings.badge_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: block.settings.badge_tag }}
+                            {%- endif -%}
+                          </div>
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
                   <div class="slider-big swiper slider-big-{{ product.id }}" id="slider-big-{{ product.id }}" {% if settings.enable_rtl %}dir="rtl"{% endif %} data-slides-per-view="1">
                     <div class="swiper-wrapper">
                       {%- for media in product.media -%}
@@ -1067,6 +1067,10 @@
 .product_detail_img {
   position: relative;
 }
+.product_img_top {
+  position: relative;
+  z-index: 1;
+}
 .custom-badge-overlay {
   position: absolute;
   top: 0;
@@ -1074,7 +1078,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 10;
+  z-index: 2;
 }
 .custom-badge-item {
   position: absolute;
@@ -1087,8 +1091,8 @@
 }
 .custom-badge-item.position-top-left { top: 0; left: 0; }
 .custom-badge-item.position-top-right { top: 0; right: 0; }
-.custom-badge-item.position-bottom-left { bottom: 0; left: 0; }
-.custom-badge-item.position-bottom-right { bottom: 0; right: 0; }
+.custom-badge-item.position-bottom-left { bottom: 12%; left: 0; }
+.custom-badge-item.position-bottom-right { bottom: 12%; right: 0; }
 
 @media(max-width: 767px) {
   .custom-badge-item {
@@ -1097,7 +1101,7 @@
   }
   .custom-badge-item.position-top-left { transform-origin: top left; }
   .custom-badge-item.position-top-right { transform-origin: top right; }
-  .custom-badge-item.position-bottom-left { transform-origin: bottom left; }
-  .custom-badge-item.position-bottom-right { transform-origin: bottom right; }
+  .custom-badge-item.position-bottom-left { bottom: 6%; transform-origin: bottom left; }
+  .custom-badge-item.position-bottom-right { bottom: 6%; transform-origin: bottom right; }
 }
 </style>
