@@ -1064,44 +1064,4 @@
     padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
   }
 }
-.product_detail_img {
-  position: relative;
-}
-.product_img_top {
-  position: relative;
-  z-index: 1;
-}
-.custom-badge-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-.custom-badge-item {
-  position: absolute;
-  padding: 10px;
-}
-.custom-badge-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.custom-badge-item.position-top-left { top: 0; left: 0; }
-.custom-badge-item.position-top-right { top: 0; right: 0; }
-.custom-badge-item.position-bottom-left { bottom: 12%; left: 0; }
-.custom-badge-item.position-bottom-right { bottom: 12%; right: 0; }
-
-@media(max-width: 767px) {
-  .custom-badge-item {
-    transform: scale(0.8);
-    transform-origin: center center;
-  }
-  .custom-badge-item.position-top-left { transform-origin: top left; }
-  .custom-badge-item.position-top-right { transform-origin: top right; }
-  .custom-badge-item.position-bottom-left { bottom: 6%; transform-origin: bottom left; }
-  .custom-badge-item.position-bottom-right { bottom: 6%; transform-origin: bottom right; }
-}
 </style>
