@@ -612,6 +612,16 @@
         "step": 100,
         "unit": "£",
         "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Istanbul Free Shipping Bar"
+      },
+      {
+        "type": "number",
+        "id": "istanbul_free_shipping_threshold",
+        "label": "Istanbul Free Shipping Threshold (TL)",
+        "default": 5000
       }
     ]
   },

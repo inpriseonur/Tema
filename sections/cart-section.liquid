@@ -246,9 +246,7 @@
                       if(comp.length>=MAX) break;
                     }
                     if(!comp.length) {
-                      /* Tamamlayıcı yok — trending göster */
-                      var np=document.querySelector('.new-product');
-                      if(np) np.classList.add('trending-visible');
+                      /* Tamamlayıcı yok — YENİ KURAL: Sepet doluysa trending asla gösterilmeyecek. */
                       return;
                     }
                     var h='';
@@ -323,42 +321,80 @@
                 {%- render 'cart-shipping-calculator' -%}
               </div>
               {%- endif -%}
-              <div class="cart-blocks">
-                <div class="js-contents-subtotal" {{ block.shopify_attributes }}>
-                  <div class="totals">
-                    <span class="total-title">{{ 'sections.cart.subtotal' | t }}</span>
-                    <span>{{ cart.total_price | money_with_currency }}</span>
-                  </div>
-                  {%- if cart.cart_level_discount_applications.size > 0 -%}
-                  <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
-                    {%- for discount in cart.cart_level_discount_applications -%}
-                      <li class="discounts__discount discounts__discount--position">
-                        <span>{{ discount.title }}
-                        (-{{ discount.total_allocated_amount | money }})</span>
-                      </li>
-                    {%- endfor -%}
-                  </ul>
-                  {%- endif -%}
-                  <small class="tax-note caption-large rte">
-                    {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
-                      {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
-                    {%- elsif cart.taxes_included -%}
-                      {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
-                    {%- elsif shop.shipping_policy.body != blank -%}
-                      {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
-                    {%- else -%}
-                      {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+              <div class="desktop-cart-blocks d-none d-md-block">
+                <div class="cart-blocks">
+                  <div class="js-contents-subtotal" {{ block.shopify_attributes }}>
+                    <div class="totals">
+                      <span class="total-title">{{ 'sections.cart.subtotal' | t }}</span>
+                      <span>{{ cart.total_price | money_with_currency }}</span>
+                    </div>
+                    {%- if cart.cart_level_discount_applications.size > 0 -%}
+                    <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                      {%- for discount in cart.cart_level_discount_applications -%}
+                        <li class="discounts__discount discounts__discount--position">
+                          <span>{{ discount.title }}
+                          (-{{ discount.total_allocated_amount | money }})</span>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
                     {%- endif -%}
-                  </small>
-                </div>
-                <div class="checkout-btn" {{ block.shopify_attributes }}>
-                  <button class="btn-style1 check-btn" type="submit" id="checkout" name="checkout" form="cart">
-                    {{ 'sections.cart.checkout' | t }}
-                  </button>
+                    <small class="tax-note caption-large rte">
+                      {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                        {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                      {%- elsif cart.taxes_included -%}
+                        {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                      {%- elsif shop.shipping_policy.body != blank -%}
+                        {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                      {%- else -%}
+                        {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                      {%- endif -%}
+                    </small>
+                  </div>
+                  <div class="checkout-btn" {{ block.shopify_attributes }}>
+                    <button class="btn-style1 check-btn" type="submit" id="checkout" name="checkout" form="cart">
+                      {{ 'sections.cart.checkout' | t }}
+                    </button>
+                  </div>
                 </div>
               </div>
+              <div class="mobile-sticky-cart sticky d-md-none">
+                {% liquid 
+                  assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
+                  assign ist_value_left = ist_threshold | minus: cart.total_price 
+                  assign ist_procent = cart.total_price | times: 100 | divided_by: ist_threshold | at_most: 100
+                %}
+                <div class="ship-bar-bg"><div class="ship-bar-fill" style="width:{{ ist_procent }}%"></div></div>
+                {% if ist_value_left <= 0 %}
+                  <p class="ship-text">İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!</p>
+                {% else %}
+                  <p class="ship-text">İstanbul ücretsiz özel teslimata <b>{{ ist_value_left | money }}</b> kaldı</p>
+                {% endif %}
+                <div class="total-row js-contents-subtotal">
+                  <div class="total-left">
+                    <span class="total-label">Ara toplam</span>
+                    <span class="total-price">{{ cart.total_price | money }}</span>
+                  </div>
+                </div>
+                <div class="trust-badges">
+                  <span class="trust-badge">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L2 3v3c0 2.5 1.8 4.3 4 5 2.2-.7 4-2.5 4-5V3L6 1z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
+                    Vergiler dahil
+                  </span>
+                  <span class="trust-dot"></span>
+                  <span class="trust-badge">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="5" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3 5V3.5a3 3 0 0 1 6 0V5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+                    Güvenli ödeme
+                  </span>
+                  <span class="trust-dot"></span>
+                  <span class="trust-badge">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M3 1h6M2 4l1 7h6l1-7" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Ücretsiz kargo
+                  </span>
+                </div>
+                <button class="checkout-btn-mobile" type="submit" name="checkout" form="cart">Ödemeye Geç →</button>
+              </div>
               {%- if section.settings.delivery_enable -%}
-              <div class="cart-delivery-info">
+              <div class="cart-delivery-info d-none d-md-flex">
                 <div class="cart-delivery-info__icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                 </div>
@@ -641,6 +677,11 @@
                 const cartHtml = htmlDocument.documentElement.querySelector('.cart-body').innerHTML;
                 ///console.log(cartHtml);
                 document.querySelector('.cart-body').innerHTML = cartHtml;
+                
+                const cartTotalHtml = htmlDocument.documentElement.querySelector('.cart-body-total').innerHTML;
+                if (cartTotalHtml && document.querySelector('.cart-body-total')) {
+                  document.querySelector('.cart-body-total').innerHTML = cartTotalHtml;
+                }
               })
               .catch(function(error) {
                 console.log('Error: ' + error.message);
@@ -812,6 +853,73 @@
     }
     .cart-comp-card__price .new-price {
       font-size: 13px;
+    }
+  }
+
+  /* Mobile Sticky Cart CTA */
+  @media (max-width: 767px) {
+    .mobile-sticky-cart {
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 6px 16px 16px;
+      position: sticky;
+      bottom: 0;
+      z-index: 99;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+      margin: 0 -15px;
+    }
+    .mobile-sticky-cart .ship-bar-bg { height: 3px; background: #f0f0f0; border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+    .mobile-sticky-cart .ship-bar-fill { height: 100%; background: #2a7a4b; border-radius: 2px; }
+    .mobile-sticky-cart .ship-text { font-size: 11px; color: #666; margin-bottom: 8px; line-height: 1.2; }
+    .mobile-sticky-cart .ship-text b { color: #2a7a4b; }
+    .mobile-sticky-cart .total-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
+    .mobile-sticky-cart .total-left { display: flex; flex-direction: column; gap: 2px; }
+    .mobile-sticky-cart .total-label { font-size: 12px; color: #666; }
+    .mobile-sticky-cart .total-price { font-size: 20px; font-weight: 600; color: #1a2b4c; }
+    .mobile-sticky-cart .trust-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+    .mobile-sticky-cart .trust-badge { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #666; }
+    .mobile-sticky-cart .trust-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
+    .mobile-sticky-cart .checkout-btn-mobile { width: 100%; padding: 14px; background: #1a1a2e; color: #fff; font-size: 15px; font-weight: 600; border: none; border-radius: 10px; cursor: pointer; display: block; text-align: center; text-decoration: none; }
+
+    /* Single Row Item Layout for Mobile */
+    .cart-item {
+      display: grid !important;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      padding-bottom: 15px;
+      gap: 10px 0;
+    }
+    .item-media {
+      grid-column: 1 / -1;
+      width: 100%;
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+    }
+    .item-quantity, .cart-item-totals {
+      display: contents !important;
+    }
+    .cart-item__quantity-wrapper, .cart-qty-box {
+      display: contents !important;
+    }
+    qty-box {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .cart-item-totals .item-price {
+      grid-column: 2;
+      grid-row: 2;
+      text-align: center;
+      margin: 0 !important;
+    }
+    delpro-btn {
+      grid-column: 3;
+      grid-row: 2;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .cart-pro-err {
+      grid-column: 1 / -1;
+      grid-row: 3;
     }
   }
 </style>

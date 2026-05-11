@@ -1,45 +1,40 @@
-# Mobil Sepet (Cart Drawer) Sticky CTA Geliştirme Planı
+# Mobil Ana Sepet Sayfası (Cart Page) Geliştirme Planı
 
-Bu plan, Claude AI analiziniz doğrultusunda mobil alışveriş sepeti çekmecesini (cart drawer) kullanıcı deneyimini (UX) ve dönüşüm oranlarını artıracak şekilde modernize etmeyi amaçlamaktadır. Ürün detay sayfasında oluşturduğunuz sabit (sticky) yapıya benzer, aşinalık hissi yaratan ve sepette ödemeye geçişi hızlandıran bir tasarım uygulanacaktır.
+Bu plan, ilettiğiniz `cart_final_v3.html` draft dosyası doğrultusunda mobil ana sepet sayfasının (`/cart`) kullanıcı deneyimini ve dönüşüm oranlarını artıracak şekilde modernize edilmesini amaçlamaktadır. **Not: Sağdan açılan sepet panelinde (cart drawer) hiçbir değişiklik yapılmayacaktır.**
+
+## HTML Draft İncelemesi ve Performans Değerlendirmesi
+İlettiğiniz HTML yapısı modern CSS (Flexbox, `position: sticky`) kullanılarak oluşturulmuş temiz bir tasarımdır. Temanıza uygulanmasında hiçbir teknik engel yoktur. Karmaşık JavaScript hesaplamaları veya ağır DOM elemanları içermediği için **performans sorunu yaratmaz**, aksine sayfa hızını olumsuz etkilemeden mobil uygulama hissiyatı (app-like experience) sunar. Mevcut temanın CSS yapısına kolayca entegre edilebilir.
 
 ## Hedefler
-- **Sabit (Sticky) Sepet Alt Alanı:** Kullanıcı sayfayı/sepeti ne kadar kaydırırsa kaydırsın (scroll), ara toplam ve "Ödemeye Geç" butonu ekranın en altında sabit ve her an tıklanabilir kalacak.
-- **Odaklı ve Yüksek Kontrastlı CTA:** "Ödemeye Geç" butonu tam genişlikte (full-width), koyu renkli ve net olacak. Yanındaki veya üstündeki gereksiz butonlar kaldırılacak / gizlenecek.
-- **Aşinalık Hissi:** Ürün detay sayfasındaki sticky bara benzer yükseklik, arka plan ve buton stili ile kullanıcıya güven veren tutarlı bir deneyim sunulacak.
-- **Güven Sinyalleri (Opsiyonel ama Önerilen):** Alt panele Visa/Mastercard logoları veya SSL Güvenli Ödeme ibareleri eklenebilecek bir alan açılacak.
-- **Upsell (Tamamlayıcı Ürünler) Görünürlüğü:** Upsell (Bunu da Ekleyin) kartlarının en altta sticky barın arkasında (gizli) kalmaması için kaydırılabilir (scrollable) alanın altına doğru boşluk (padding-bottom) veya flex yapısı eklenecek.
-
-## 🛠️ Açık Sorular (User Review Required)
-> [!IMPORTANT]
-> Lütfen aşağıdaki maddeleri inceleyip onay verin veya tercihlerinizi belirtin:
-> 1. **Mevcut "Sepeti Gör" Butonu:** Sepet alt yapısında genelde "Sepeti Gör" (View Cart) butonu da bulunuyor. Minimalist bir yapı için "Sepeti Gör" butonunu mobilde gizleyip SADECE "Ödemeye Geç" (Checkout) butonuna mı odaklanalım? (Dönüşüm oranları için tavsiye edilen sadece Ödemeye Geç'in olmasıdır).
-> 2. **Kargo Barı (Free Shipping Bar):** Şu anda sepetin en üst bölümünde (header altında) çıkıyor. Bunu mevcut yerinde tutup sadece Sepet Alt kısmını (Ara Toplam + Buton) mı sabitleyelim? Yoksa kargo ilerleme çubuğunu da sabit alt panele mi entegre edelim? (Mevcut yerinde kalması genelde daha temiz bir alan sağlar).
+- **Sabit (Sticky) Alt Alan:** Ara toplam, güven rozetleri (Vergiler dahil, Güvenli ödeme, Ücretsiz kargo) ve "Ödemeye Geç" butonu sayfanın en altında kaydırma (scroll) sırasında sabit kalacak.
+- **İstanbul'a Özel Teslimat Barı:** Draftta yer alan İstanbul ücretsiz teslimat ilerleme çubuğu sisteme entegre edilecek. Bu bar için gereken hedef tutar (örn. 5000 TL) **tema ayarlarından (Theme Settings) kolayca değiştirilebilir** bağımsız bir ayar olarak eklenecek.
+- **Metin Güncellemesi:** Ödemeye geç butonunun altındaki güven rozetlerinde yer alan "Ücretsiz iade" yazısı, "Ücretsiz kargo" olarak güncellenecek.
+- **Trending ve Upsell Gösterim Mantığı:**
+  - **Upsell (Bunu da Ekleyin):** Sadece sepette ürün varken gösterilecek.
+  - **Trending Products:** Sadece sepet **tamamen boş olduğunda** gösterilecek.
 
 ## 🚀 Önerilen Değişiklikler
 
-### 1. HTML Yapısal Düzenlemeleri (`snippets/ajax-cart.liquid`)
+### 1. Tema Ayarlarına İstanbul Teslimat Baremi Eklenmesi (`config/settings_schema.json`)
+- Temanın yapılandırma dosyasına yeni bir ayar eklenecek (örn. `istanbul_free_shipping_threshold`).
+- Böylece mağaza yöneticisi mevcut ücretsiz kargo ayarından bağımsız olarak İstanbul için hedef tutarı (örn. 5000 TL, 10000 TL) dilediği gibi güncelleyebilecek.
 
-Mevcut yapıda ürünler, upsell widget'ı ve alt bölüm (footer) birbirini iterek aşağı kaydırıyor. Bunu engellemek için Flexbox mantığı ile CSS mimarisini güncelleyeceğiz.
+### 2. Sepet Sayfası Yapısal Düzenlemeleri (`templates/cart.liquid` veya ilgili section/snippet)
+- `cart_final_v3.html` içerisindeki `.sticky` yapı sepet sayfasının mobil görünümüne entegre edilecek.
+- Güven rozetlerindeki "Ücretsiz iade" metni "Ücretsiz kargo" olarak güncellenecek.
+- Sepet boş/dolu durumlarına göre Liquid `{% if cart.item_count == 0 %}` kontrolleri eklenecek:
+  - Trending Products section'ı sadece boş sepette görünecek şekilde kurgulanacak.
+  - Upsell section'ı sadece dolu sepette görünecek şekilde ayarlanacak.
 
-**[MODIFY] `snippets/ajax-cart.liquid`**
-- `cart-pro` (ürün listesi) ve `#cart-complementary-slot` (Upsell alanı) etiketlerini sarmalayacak yeni bir kaydırılabilir gövde div'i (`<div class="ajax-cart-body scroll-bar">`) eklenecek.
-- `.footer-mini-cart` bölümü bu kaydırılabilir gövdenin **dışında**, ancak `.drawer-inner` içinde kalarak en alt kısma sabitlenecek.
-- Mobilde "Sepeti Gör" butonunu gizlemek için (eğer onaylarsanız) gerekli CSS sınıfları (örn. `d-none d-md-block`) eklenecek.
-- Kredi kartı ikonları / Güvenlik metni "Ödemeye Geç" butonunun altına eklenecek.
-
-### 2. CSS Optimizasyonları (`assets/cart-drawer.css` veya `<style>` blokları)
-
-**[MODIFY] CSS Stilleri**
-- `.drawer-inner` sınıfına `display: flex; flex-direction: column; height: 100vh;` özellikleri eklenecek.
-- Yeni oluşturulacak `.ajax-cart-body` alanına `flex: 1; overflow-y: auto; padding-bottom: 30px;` (son ürünün veya upsell kartının tam görünmesi için güvenlik boşluğu) verilecek.
-- `.footer-mini-cart` sınıfına `flex-shrink: 0; position: sticky; bottom: 0; background: #fff; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);` gibi özellikler eklenerek ürün sayfanızdaki sticky tasarıma benzer tok ve yüksek kontrastlı bir stil giydirilecek.
-- Ara Toplam metninin font büyüklüğü (font-size) artırılacak ve kalın (bold) hale getirilecek.
-- "Ödemeye Geç" butonu `width: 100%` yapılarak parmakla dokunma hedefi (touch target) maksimize edilecek.
+### 3. CSS Stillerinin Entegrasyonu
+- Draft dosyasındaki `.sticky`, `.ship-bar-bg`, `.trust-badges` vb. class'lar temanın ana CSS dosyasına (veya sepet özelindeki CSS dosyasına) eklenecek.
+- Masaüstü görünümün etkilenmemesi için yeni eklenen CSS kuralları sadece mobil medya sorguları (`@media (max-width: 767px)`) içerisine yazılacak veya uygun sınıflarla izole edilecek.
 
 ## 🧪 Doğrulama Planı (Verification Plan)
-1. Mobilde ürünü sepete atarak çekmecenin (drawer) sağdan açılışında tasarımın bozulmadığını kontrol etmek.
-2. Sepette 5-6 ürün (veya upsell ürünleri eklendiğinde) liste kaydırılırken (scroll edilirken) "Ödemeye Geç" butonunun ekrandan kaybolmadığını, en altta **sabit (sticky)** kaldığını test etmek.
-3. Kaydırma çubuğunun (scroll) en sonuna gelindiğinde, Upsell (Bunu da Ekleyin) kartlarının yarısının buton altında kalıp kalmadığını kontrol etmek.
-4. Tasarımın masaüstü görünümde mevcut davranışını koruduğundan emin olmak. (Medya sorguları `@media (max-width: 767px)` ile korunacak).
+1. Ana sepet sayfasına (`/cart`) mobilden girildiğinde yeni sticky alt barın sorunsuz çalıştığının test edilmesi.
+2. Tema ayarlarından (Customizer) İstanbul ücretsiz teslimat tutarının değiştirilip frontend'e anında yansıdığının görülmesi.
+3. Sepette ürün varken Upsell alanının çıkması ve Trending ürünlerin gizlenmesi; sepet boşaltıldığında ise Upsell'in kaybolup Trending ürünlerin listelendiğinin test edilmesi.
+4. Sağdan açılan sepet çekmecesinin (cart drawer) bu değişikliklerden etkilenmediğinin ve eski haliyle düzgün çalıştığının teyit edilmesi.
 
-Planı inceledikten sonra onayınızı (ve açık sorulara cevaplarınızı) bekliyorum. Onayınızla birlikte kodlama aşamasına geçeceğim.
+> [!NOTE]
+> Önceki plandaki 1. ve 2. sorular, bu geliştirmenin sadece ana sepet sayfasını kapsaması ve kargo barının mevcut durumu nedeniyle kaldırılmıştır. Plan tamamen yeni yönlendirmelerinize göre güncellenmiştir. Herhangi bir kod değişikliği yapılmamıştır.
