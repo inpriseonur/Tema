@@ -246,7 +246,7 @@
                       if(comp.length>=MAX) break;
                     }
                     if(!comp.length) {
-                      /* Tamamlayıcı yok — YENİ KURAL: Sepet doluysa trending asla gösterilmeyecek. */
+                      /* YENİ KURAL: Sepet doluysa trending asla gösterilmeyecek. */
                       return;
                     }
                     var h='';
@@ -306,7 +306,15 @@
             /* Sayfa zaten bos yuklendiyse trending goster */
             document.addEventListener('DOMContentLoaded', function(){
               var np = document.querySelector('.new-product');
-              if(np) np.classList.add('trending-visible');
+              if(np) {
+                np.classList.add('trending-visible');
+                setTimeout(function(){
+                  window.dispatchEvent(new Event('resize'));
+                  if(window.jQuery) {
+                    jQuery('.new-product-slider').trigger('refresh.owl.carousel');
+                  }
+                }, 100);
+              }
             });
             </script>
             {%- endif -%}
@@ -682,6 +690,22 @@
                 if (cartTotalHtml && document.querySelector('.cart-body-total')) {
                   document.querySelector('.cart-body-total').innerHTML = cartTotalHtml;
                 }
+                
+                /* Sepet bosaldiysa trending goster ve slider'i guncelle */
+                fetch('/cart.js').then(r=>r.json()).then(cart => {
+                  if(cart.item_count === 0) {
+                    var np = document.querySelector('.new-product');
+                    if(np) {
+                      np.classList.add('trending-visible');
+                      setTimeout(function(){
+                        window.dispatchEvent(new Event('resize'));
+                        if(window.jQuery) {
+                          jQuery('.new-product-slider').trigger('refresh.owl.carousel');
+                        }
+                      }, 100);
+                    }
+                  }
+                });
               })
               .catch(function(error) {
                 console.log('Error: ' + error.message);
@@ -872,8 +896,8 @@
     .mobile-sticky-cart .ship-bar-fill { height: 100%; background: #2a7a4b; border-radius: 2px; }
     .mobile-sticky-cart .ship-text { font-size: 11px; color: #666; margin-bottom: 8px; line-height: 1.2; }
     .mobile-sticky-cart .ship-text b { color: #2a7a4b; }
-    .mobile-sticky-cart .total-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
-    .mobile-sticky-cart .total-left { display: flex; flex-direction: column; gap: 2px; }
+    .mobile-sticky-cart .total-row { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .mobile-sticky-cart .total-left { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
     .mobile-sticky-cart .total-label { font-size: 12px; color: #666; }
     .mobile-sticky-cart .total-price { font-size: 20px; font-weight: 600; color: #1a2b4c; }
     .mobile-sticky-cart .trust-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
