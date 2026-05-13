@@ -76,7 +76,7 @@ class CartProduct extends HTMLElement {
       {
         id: 'cart-section-total',
         section: document.getElementById('cart-section-total').dataset.id,
-        selector: '.js-contents-subtotal'
+        selector: '.cart-footer'
       }
     ];
   }
