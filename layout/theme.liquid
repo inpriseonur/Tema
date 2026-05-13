@@ -368,9 +368,45 @@
           background: #fff;
           box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
           display: flex;
-          align-items: center;
+          flex-direction: column;
+          align-items: stretch;
           justify-content: center;
-          gap: 12px;
+          gap: 10px;
+        }
+
+        .sticky-top-row {
+          display: flex;
+          align-items: stretch;
+          justify-content: space-between;
+          width: 100%;
+          gap: 5px;
+        }
+
+        .mobile-sticky-badges {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          max-width: 160px;
+          padding: 2px 0;
+          gap: 4px;
+        }
+
+        .sticky-badge-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 4px;
+          font-size: 10px;
+          line-height: 1;
+        }
+        .sticky-badge-item span {
+          color: var(--color-text-secondary, #6b7280);
+        }
+        .sticky-badge-item svg {
+          width: 12px;
+          height: 12px;
+          margin-top: 1px;
+          flex-shrink: 0;
+          color: #4a8c3f;
         }
 
 
@@ -379,6 +415,12 @@
           flex: 1;
           margin: 0 !important;
           display: flex !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          padding-top: 14px !important;
+          padding-bottom: 14px !important;
+          font-size: 15px !important;
+          border-radius: 6px;
         }
 
         /* Sepet yan paneli açıkken sticky butonu gizle —
@@ -514,19 +556,12 @@
           .pro-slider, .slider-small { display: none !important; } 
           .slider-big .big-button { display: none !important; }
           .mobile-sticky-price {
-            flex: 0 0 42%;
-            max-width: 42%;
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            column-gap: 5px;
-            row-gap: 2px;
-            margin-left: 8px;
-          }
-          .mobile-sticky-price .price-box { display: contents; }
-          .mobile-sticky-price {
-            flex: 0 0 45%;
-            max-width: 45%;
+            flex-direction: column;
+            justify-content: center;
+            flex: 0 0 50%;
+            max-width: 50%;
+            gap: 2px;
           }
           .mobile-sticky-price .price-box { 
             display: flex;
@@ -552,7 +587,7 @@
             transform-origin: left center;
           }
         }
-        @media screen and (min-width: 750px) { .mobile-sticky-price { display: none !important; } }
+        @media screen and (min-width: 750px) { .sticky-top-row, .mobile-sticky-price { display: none !important; } }
         .slider-big:not(.swiper-initialized) .swiper-slide:not(:first-child) { display: none !important; }
       `;
       document.head.insertBefore(style, document.head.firstChild);
@@ -578,8 +613,38 @@
             priceClone.appendChild(discountClone);
           }
 
-          // Fiyat alanını en başa ekle (prepend)
-          btn.prepend(wrapper);
+          // Üst satırı (fiyat + ikonlar) oluştur
+          var topRow = document.createElement('div');
+          topRow.className = 'sticky-top-row';
+          topRow.appendChild(wrapper); // Fiyat kutusunu ekle
+
+          // Dinamik güven rozetlerini ekle
+          var badgesHtml = `
+            <div class="mobile-sticky-badges">
+              {%- if settings.sticky_badge_1_text != blank -%}
+              <div class="sticky-badge-item">
+                {{ settings.sticky_badge_1_icon }}
+                <span>{{ settings.sticky_badge_1_text }}</span>
+              </div>
+              {%- endif -%}
+              {%- if settings.sticky_badge_2_text != blank -%}
+              <div class="sticky-badge-item">
+                {{ settings.sticky_badge_2_icon }}
+                <span>{{ settings.sticky_badge_2_text }}</span>
+              </div>
+              {%- endif -%}
+              {%- if settings.sticky_badge_3_text != blank -%}
+              <div class="sticky-badge-item">
+                {{ settings.sticky_badge_3_icon }}
+                <span>{{ settings.sticky_badge_3_text }}</span>
+              </div>
+              {%- endif -%}
+            </div>
+          `;
+          topRow.insertAdjacentHTML('beforeend', badgesHtml);
+
+          // Hazırlanan üst satırı butondan önceye ekle
+          btn.prepend(topRow);
 
           // Stok bilgisini adet kutusunun yanına taşı
           var qtyContainer = document.querySelector('.product-qty');

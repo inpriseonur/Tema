@@ -108,6 +108,35 @@
                       {% endif %}
                     </div>
                     {%- endif -%}
+                  {%- when 'trust_badge' -%}
+                  <style>
+                    .product-trust-badge {
+                      display: inline-flex;
+                      align-items: center;
+                      gap: 8px;
+                      padding: 6px 12px;
+                      border-radius: 8px;
+                      margin-bottom: 15px;
+                      width: fit-content;
+                      font-size: 13px;
+                      font-weight: 500;
+                    }
+                    .product-trust-badge .trust-icon {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    }
+                    .product-trust-badge .trust-icon svg {
+                      width: 16px;
+                      height: 16px;
+                    }
+                  </style>
+                  <div class="product-trust-badge" {{ block.shopify_attributes }} style="background-color: {{ block.settings.bg_color }}; color: {{ block.settings.text_color }}; border: 1px solid {{ block.settings.border_color }};">
+                    {%- if block.settings.icon != blank -%}
+                      <span class="trust-icon">{{ block.settings.icon }}</span>
+                    {%- endif -%}
+                    <span class="trust-text">{{ block.settings.text }}</span>
+                  </div>
                   {%- when 'inventory' -%}
                   <div class="product-inventory{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} hidden{% endif %}" {{ block.shopify_attributes }} id="Inventory-{{ section.id }}" role="status">
                     <h6>{{ block.settings.availability_title }}</h6>
@@ -698,6 +727,42 @@
     "type": "title_wrap",
     "name": "Product title",
     "limit": 1
+  },
+  {
+    "type": "trust_badge",
+    "name": "Trust Badge",
+    "settings": [
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Badge Text",
+        "default": "Pazaryeri komisyonu yok — bu fiyata sadece primegurme.com'da"
+      },
+      {
+        "type": "textarea",
+        "id": "icon",
+        "label": "SVG Icon (Optional)",
+        "default": "<svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z\"></path><circle cx=\"7\" cy=\"7\" r=\"1\"></circle></svg>"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Color",
+        "default": "#e9f2e4"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#2b5a19"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "Border Color",
+        "default": "transparent"
+      }
+    ]
   },
   
   {

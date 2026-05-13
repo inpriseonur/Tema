@@ -634,6 +634,15 @@
 }
 {% endschema %}
 <script>
+  /* Mobilde footer'ı sticky bar'ın hemen altına yapıştır */
+  if (window.innerWidth <= 767) {
+    document.body.style.minHeight = 'auto';
+    document.body.style.display = 'block';
+    var mainEl = document.querySelector('main[role="main"]');
+    if (mainEl) mainEl.style.flex = 'none';
+  }
+</script>
+<script>
   document.addEventListener('DOMContentLoaded', function () {
     ShippingBar = (function() {
       var bar = document.querySelector('.shipping-bar');
@@ -728,9 +737,6 @@
   }
   @media (max-width: 767px){
     .cart-page {
-      min-height: 100vh;
-    }
-    .store-location{
       padding-top: {{ section.settings.section_padding_top_xs }}px;
       padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
     }
