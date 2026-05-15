@@ -2,7 +2,7 @@
 
 **Tarih:** 2026-05-14  
 **Plan:** Shopify Grow — Sepet sayfasında kurumsal fatura bilgisi toplama  
-**Durum:** 🟡 Taslak — Onay bekleniyor
+**Durum:** 🟢 Onaylandı — Faz 1 (Sadece Cart Attributes, bağımsız section)
 
 ---
 
@@ -87,18 +87,25 @@ Araştırma sonucunda şu tespit yapıldı:
 
 | Dosya | Açıklama |
 |-------|----------|
-| `snippets/kurumsal-fatura-modal.liquid` | Modal HTML + CSS + JavaScript — tüm özellik tek dosyada |
+| `sections/kurumsal-fatura.liquid` | Bağımsız tema section'ı — Buton + Modal HTML + CSS + JavaScript |
 
 ### Değiştirilecek Dosyalar:
 
-| Dosya | Değişiklik | Satır Aralığı |
-|-------|-----------|---------------|
-| `sections/cart-section.liquid` | `{% render 'kurumsal-fatura-modal' %}` çağrısı eklenecek | ~204-214 arası (discount-content'ten sonra, cart-comp-section'dan önce) |
+| Dosya | Değişiklik |
+|-------|----------|
+| `templates/cart.json` | Yeni section referansı eklenecek (Theme Editor'dan da yapılabilir) |
 
-### Neden Tek Snippet?
-- Tema güncellemelerinde minimum çakışma riski
-- Tüm HTML + CSS + JS kendi kapsülünde
-- Ana section dosyasına sadece 1 satır ekleniyor (`render` çağrısı)
+### Neden Bağımsız Section?
+- `cart-section.liquid` dosyasına hiç dokunulmuyor — sıfır çakışma riski
+- Theme Editor'da sürükle-bırak ile konum değiştirilebilir
+- Buton metni section settings'ten düzenlenebilir
+- İndirim kutusu açık/kapalı olsa da bağımsız çalışır
+- Popup, form alanları ve validasyon kodda çakılı kalır
+
+### Section Settings (Theme Editor'dan düzenlenebilir):
+- Buton metni (varsayılan: "🧾 Kurumsal fatura bilgisi ekle")
+- Onay metni (varsayılan: "✅ Kurumsal fatura bilgisi eklendi")
+- Modal başlık metni
 
 ---
 

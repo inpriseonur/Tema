@@ -211,6 +211,9 @@
                   </form>
                 </div>
             </ajax-items>
+            {%- if section.settings.kurumsal_fatura_enable and cart != empty -%}
+            {%- render 'kurumsal-fatura-modal', kf_button_text: section.settings.kf_button_text, kf_saved_text: section.settings.kf_saved_text, kf_modal_title: section.settings.kf_modal_title -%}
+            {%- endif -%}
             {%- if cart != empty -%}
             <div class="cart-comp-section" id="cart-comp-section" style="display:none;">
               <h5 class="cart-comp-section__title">Sepetini tamamla</h5>
@@ -301,6 +304,10 @@
             })();
             </script>
             {%- endif -%}
+            
+            <!-- App terms will be moved here on mobile -->
+            <div id="mobile-terms-target" class="mobile-terms-wrapper d-md-none" style="margin-top: 20px; padding: 0 15px;"></div>
+            
             {%- if cart == empty -%}
             <script>
             /* Sayfa zaten bos yuklendiyse trending goster */
@@ -399,7 +406,7 @@
                     Ücretsiz kargo
                   </span>
                 </div>
-                <button class="checkout-btn-mobile" type="submit" name="checkout" form="cart">Ödemeye Geç →</button>
+                <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
               </div>
               {%- if section.settings.delivery_enable -%}
               <div class="cart-delivery-info d-none d-md-flex">
@@ -607,6 +614,34 @@
       "type": "url",
       "id": "shop_button_url",
       "label": "Shop button url"
+    },
+    {
+      "type": "header",
+      "content": "Kurumsal Fatura"
+    },
+    {
+      "type": "checkbox",
+      "id": "kurumsal_fatura_enable",
+      "label": "Kurumsal fatura alanını göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "kf_button_text",
+      "label": "Buton Metni",
+      "default": "🧾 Kurumsal fatura bilgisi ekle"
+    },
+    {
+      "type": "text",
+      "id": "kf_saved_text",
+      "label": "Kayıt Sonrası Buton Metni",
+      "default": "✅ Kurumsal fatura bilgisi eklendi"
+    },
+    {
+      "type": "text",
+      "id": "kf_modal_title",
+      "label": "Modal Başlık",
+      "default": "Kurumsal Fatura Bilgileri"
     },
     {
       "type": "header",
@@ -943,4 +978,154 @@
       grid-row: 3;
     }
   }
+
+  /* Mesafeli Sozlesme Checkbox Alignment Fix */
+  .mesafeli-sozlesme-app-wrapper {
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  /* Hedeflenen kapsayicilarin icindeki bloklari yan yana getir */
+  .mesafeli-sozlesme-app-wrapper > div,
+  .mesafeli-sozlesme-app-wrapper > p,
+  .mesafeli-sozlesme-app-wrapper > label,
+  .mesafeli-sozlesme-app-wrapper .checkbox-wrapper,
+  .mesafeli-sozlesme-app-wrapper .terms-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-bottom: 12px !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+  .mesafeli-sozlesme-app-wrapper input[type="checkbox"] {
+    margin-top: 3px !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+  }
+  .mesafeli-sozlesme-app-wrapper label,
+  .mesafeli-sozlesme-app-wrapper span {
+    display: inline !important;
+    line-height: 1.4 !important;
+    font-size: 13.5px !important;
+    color: #444 !important;
+    margin: 0 !important;
+  }
+  .mesafeli-sozlesme-app-wrapper a {
+    display: inline !important;
+    text-decoration: underline !important;
+    color: #1a1a2e !important;
+    font-weight: 500 !important;
+  }
 </style>
+
+<script>
+  // Mesafeli Sozlesme App Proxy and Relocation Script
+  document.addEventListener('DOMContentLoaded', function () {
+    const cartBlocks = document.querySelector('.cart-blocks');
+    const targetMobile = document.getElementById('mobile-terms-target');
+    const mobileTrigger = document.getElementById('mobile-checkout-trigger');
+    const desktopCheckoutBtn = document.getElementById('checkout');
+
+    if (!cartBlocks || !targetMobile || !mobileTrigger || !desktopCheckoutBtn) return;
+
+    let appTermsElement = null;
+
+    function moveTerms() {
+      if (!appTermsElement) return;
+      if (window.innerWidth <= 767) {
+        if (appTermsElement.parentNode !== targetMobile) {
+          targetMobile.appendChild(appTermsElement);
+        }
+      } else {
+        if (appTermsElement.parentNode !== cartBlocks && appTermsElement.parentNode !== desktopCheckoutBtn.parentNode) {
+          cartBlocks.insertBefore(appTermsElement, document.querySelector('.checkout-btn'));
+        }
+      }
+    }
+
+    function checkAndSetAppElement(node) {
+      if (node.nodeType === 1 && 
+          !node.classList.contains('js-contents-subtotal') && 
+          !node.classList.contains('checkout-btn') &&
+          node.tagName !== 'SCRIPT' && 
+          node.tagName !== 'STYLE') {
+        
+        if (!node.classList.contains('mesafeli-sozlesme-app-wrapper')) {
+          node.classList.add('mesafeli-sozlesme-app-wrapper');
+          
+          // Yapisi bozuk html'i duzenle: Input ve Span'lari div icine al, &nbsp; ve <br>'leri sil.
+          const inputs = node.querySelectorAll('input[type="checkbox"]');
+          inputs.forEach(input => {
+            const span = input.nextElementSibling;
+            if (span && span.tagName === 'SPAN') {
+              const wrapper = document.createElement('div');
+              wrapper.className = 'terms-row';
+              input.parentNode.insertBefore(wrapper, input);
+              wrapper.appendChild(input);
+              wrapper.appendChild(span);
+            }
+          });
+
+          // Text node'lari (bosluk, &nbsp;) ve BR'leri temizle
+          Array.from(node.childNodes).forEach(child => {
+            if (child.nodeType === 3 || child.tagName === 'BR') {
+              child.remove();
+            }
+          });
+        }
+
+        appTermsElement = node;
+        moveTerms();
+        return true;
+      }
+      return false;
+    }
+
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) {
+          checkAndSetAppElement(node);
+        });
+      });
+    });
+
+    observer.observe(cartBlocks, { childList: true, subtree: false });
+
+    Array.from(cartBlocks.children).forEach(child => {
+      checkAndSetAppElement(child);
+    });
+
+    window.addEventListener('resize', moveTerms);
+
+    mobileTrigger.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      let allChecked = true;
+      if (appTermsElement) {
+        const checkboxes = appTermsElement.querySelectorAll('input[type="checkbox"]');
+        if (checkboxes.length > 0) {
+          checkboxes.forEach(cb => {
+            if (!cb.checked) allChecked = false;
+          });
+        }
+      }
+
+      if (!allChecked && appTermsElement) {
+        appTermsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          desktopCheckoutBtn.click();
+        }, 300);
+      } else {
+        desktopCheckoutBtn.click();
+      }
+    });
+  });
+</script>
