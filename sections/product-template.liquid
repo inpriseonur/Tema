@@ -145,43 +145,141 @@
                   {%- when 'trust_badge' -%}
                   <style>
                     .product-trust-badge {
-                      display: inline-flex;
+                      display: flex;
                       align-items: center;
-                      gap: 8px;
-                      padding: 6px 12px;
+                      gap: 12px;
+                      padding: 12px 16px;
                       border-radius: 8px;
                       margin-bottom: 15px;
-                      width: fit-content;
                       font-size: 13px;
                       font-weight: 500;
+                      font-family: var(--font-body-family), sans-serif;
                     }
                     .product-trust-badge .trust-icon {
                       display: flex;
                       align-items: center;
                       justify-content: center;
+                      width: 26px;
+                      height: 26px;
+                      flex-shrink: 0;
                     }
                     .product-trust-badge .trust-icon svg {
-                      width: 16px;
-                      height: 16px;
+                      width: 20px;
+                      height: 20px;
+                    }
+                    .product-trust-badge .trust-text {
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: center;
                     }
                     .product-trust-badge .trust-text p {
                       margin: 0;
-                      display: inline;
+                      display: block;
+                      line-height: 1.2;
                     }
                     .product-trust-badge .trust-text a {
                       color: {{ block.settings.link_color | default: block.settings.text_color }};
                       text-decoration: underline;
                       font-weight: 600;
+                      vertical-align: baseline;
                     }
                     .product-trust-badge .trust-text a:hover {
                       opacity: 0.8;
                     }
                   </style>
-                  <div class="product-trust-badge" {{ block.shopify_attributes }} style="background-color: {{ block.settings.bg_color }}; color: {{ block.settings.text_color }}; border: 1px solid {{ block.settings.border_color }};">
+                  <div class="product-trust-badge" {{ block.shopify_attributes }} style="background-color: {{ block.settings.bg_color }}; color: {{ block.settings.text_color }}; border: 1px solid {{ block.settings.border_color }}; border-left: 4px solid #3B6D11;">
                     {%- if block.settings.icon != blank -%}
                       <span class="trust-icon">{{ block.settings.icon }}</span>
                     {%- endif -%}
-                    <span class="trust-text">{{ block.settings.text | replace: '<a ', '<a target="_blank" ' }}</span>
+                    <div class="trust-text">{{ block.settings.text | replace: '<a ', '<a style="vertical-align: baseline;" target="_blank" ' }}</div>
+                  </div>
+                  {%- when 'cod_message' -%}
+                  <style>
+                    .product-cod-message {
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      background-color: {{ block.settings.bg_color }};
+                      border: 1px solid {{ block.settings.border_color }};
+                      border-left: 4px solid {{ block.settings.border_left_color }};
+                      padding: 12px 16px;
+                      border-radius: 8px;
+                      margin-bottom: 15px;
+                      font-family: var(--font-body-family), sans-serif;
+                    }
+                    .product-cod-message .cod-left {
+                      display: flex;
+                      align-items: center;
+                      gap: 12px;
+                    }
+                    .product-cod-message .cod-icon {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      width: 26px;
+                      height: 26px;
+                      border-radius: 50%;
+                      background-color: {{ block.settings.icon_bg_color }};
+                      flex-shrink: 0;
+                    }
+                    .product-cod-message .cod-icon svg {
+                      width: 14px;
+                      height: 14px;
+                      fill: none;
+                      stroke: {{ block.settings.icon_stroke_color }};
+                      stroke-width: 1.5;
+                      stroke-linecap: round;
+                      stroke-linejoin: round;
+                    }
+                    .product-cod-message .cod-text-wrap {
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: center;
+                    }
+                    .product-cod-message .cod-title {
+                      font-size: 14px;
+                      font-weight: 600;
+                      color: {{ block.settings.title_color }};
+                      line-height: 1.2;
+                      margin-bottom: 2px;
+                      white-space: nowrap;
+                    }
+                    .product-cod-message .cod-subtitle {
+                      font-size: 12px;
+                      font-weight: 500;
+                      color: {{ block.settings.subtitle_color }};
+                      line-height: 1.2;
+                    }
+                    .product-cod-message .cod-right .cod-badge {
+                      background-color: transparent;
+                      color: {{ block.settings.badge_bg_color }};
+                      border: 1px solid {{ block.settings.badge_bg_color }};
+                      font-size: 10px;
+                      font-weight: 500;
+                      padding: 2px 8px;
+                      border-radius: 4px;
+                      letter-spacing: 0.5px;
+                      white-space: nowrap;
+                    }
+                  </style>
+                  <div class="product-cod-message" {{ block.shopify_attributes }}>
+                    <div class="cod-left">
+                      <div class="cod-icon">
+                        <svg viewBox="0 0 24 24">
+                          <rect x="3" y="8" width="18" height="12" rx="2" ry="2"></rect>
+                          <path d="M12 8v12"></path>
+                          <path d="M8 14h8"></path>
+                          <path d="M16 8V6a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v2"></path>
+                        </svg>
+                      </div>
+                      <div class="cod-text-wrap">
+                        <span class="cod-title">{{ block.settings.title }}</span>
+                        <span class="cod-subtitle">{{ block.settings.sub_message }}</span>
+                      </div>
+                    </div>
+                    <div class="cod-right">
+                      <span class="cod-badge">Ücretsiz</span>
+                    </div>
                   </div>
                   {%- when 'inventory' -%}
                   <div class="product-inventory{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} hidden{% endif %}" {{ block.shopify_attributes }} id="Inventory-{{ section.id }}" role="status">
@@ -846,6 +944,79 @@
         "id": "text_color",
         "label": "Yazı Rengi",
         "default": "#555555"
+      }
+    ]
+  },
+  {
+    "type": "cod_message",
+    "name": "Kapıda Ödeme Mesajı",
+    "limit": 1,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Başlık",
+        "default": "İstanbul'a Kapıda Ödeme"
+      },
+      {
+        "type": "text",
+        "id": "sub_message",
+        "label": "Alt Mesaj",
+        "default": "Nakit veya kart, kapınızda"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Arka Plan",
+        "default": "#FAEEDA"
+      },
+      {
+        "type": "color",
+        "id": "border_left_color",
+        "label": "Sol Aksan Çizgisi",
+        "default": "#BA7517"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "İnce Kenar",
+        "default": "#FAC775"
+      },
+      {
+        "type": "color",
+        "id": "icon_bg_color",
+        "label": "İkon Daire Arka Planı",
+        "default": "#854F0B"
+      },
+      {
+        "type": "color",
+        "id": "icon_stroke_color",
+        "label": "İkon Çizgi Rengi",
+        "default": "#FAC775"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Başlık Yazısı",
+        "default": "#633806"
+      },
+      {
+        "type": "color",
+        "id": "subtitle_color",
+        "label": "Alt Yazı",
+        "default": "#854F0B"
+      },
+      {
+        "type": "color",
+        "id": "badge_bg_color",
+        "label": "Ücretsiz Etiket Arka Planı",
+        "default": "#854F0B"
+      },
+      {
+        "type": "color",
+        "id": "badge_text_color",
+        "label": "Ücretsiz Etiket Yazısı",
+        "default": "#FAC775"
       }
     ]
   },

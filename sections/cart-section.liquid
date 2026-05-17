@@ -1024,6 +1024,12 @@
     color: #1a1a2e !important;
     font-weight: 500 !important;
   }
+
+  /* Sepet bos oldugunda mobildeki target'i gizle */
+  ajax-items.is-empty ~ #mobile-terms-target,
+  .cart-body.is-empty ~ #mobile-terms-target {
+    display: none !important;
+  }
 </style>
 
 <script>
@@ -1040,13 +1046,18 @@
 
     function moveTerms() {
       if (!appTermsElement) return;
+      
+      const currentCartBlocks = document.querySelector('.cart-blocks');
+      const currentDesktopCheckoutBtn = document.getElementById('checkout');
+      const currentTargetMobile = document.getElementById('mobile-terms-target');
+      
       if (window.innerWidth <= 767) {
-        if (appTermsElement.parentNode !== targetMobile) {
-          targetMobile.appendChild(appTermsElement);
+        if (currentTargetMobile && appTermsElement.parentNode !== currentTargetMobile) {
+          currentTargetMobile.appendChild(appTermsElement);
         }
       } else {
-        if (appTermsElement.parentNode !== cartBlocks && appTermsElement.parentNode !== desktopCheckoutBtn.parentNode) {
-          cartBlocks.insertBefore(appTermsElement, document.querySelector('.checkout-btn'));
+        if (currentCartBlocks && currentDesktopCheckoutBtn && appTermsElement.parentNode !== currentCartBlocks && appTermsElement.parentNode !== currentDesktopCheckoutBtn.parentNode) {
+          currentCartBlocks.insertBefore(appTermsElement, currentDesktopCheckoutBtn.parentNode);
         }
       }
     }
@@ -1097,15 +1108,48 @@
       });
     });
 
-    observer.observe(cartBlocks, { childList: true, subtree: false });
+    if (cartBlocks) {
+      observer.observe(cartBlocks, { childList: true, subtree: false });
+    }
 
-    Array.from(cartBlocks.children).forEach(child => {
-      checkAndSetAppElement(child);
-    });
+    // Ajax güncellemelerine karşı 100% dirençli Interval
+    setInterval(() => {
+      const possibleNewNode = document.getElementById('ors_a8_order_div');
+      if (possibleNewNode && possibleNewNode !== appTermsElement) {
+        checkAndSetAppElement(possibleNewNode);
+      }
+      if (appTermsElement) {
+        moveTerms();
+      }
+    }, 400);
+
+    // Yeni yuklemelerde aninda tepki icin Observer'i guncelleme
+    if (typeof user === 'function' && typeof SP_OBJECT !== 'undefined') {
+      user(SP_OBJECT.ajxcartRefresh, function() {
+        const newCartBlocks = document.querySelector('.cart-blocks');
+        if (newCartBlocks) {
+          observer.disconnect();
+          observer.observe(newCartBlocks, { childList: true, subtree: false });
+        }
+        if (appTermsElement) moveTerms();
+      });
+    }
+
+    if (cartBlocks) {
+      Array.from(cartBlocks.children).forEach(child => {
+        checkAndSetAppElement(child);
+      });
+    }
 
     window.addEventListener('resize', moveTerms);
 
-    mobileTrigger.addEventListener('click', function(e) {
+    // Özel Ödeme Yönlendirmesi ve Validasyon (Bozulan app veya HTML5 engellerini aşar)
+    document.addEventListener('click', function(e) {
+      const mobileBtn = e.target.closest('#mobile-checkout-trigger');
+      const desktopBtn = e.target.closest('#checkout');
+      
+      if (!mobileBtn && !desktopBtn) return;
+      
       e.preventDefault();
       
       let allChecked = true;
@@ -1120,11 +1164,29 @@
 
       if (!allChecked && appTermsElement) {
         appTermsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => {
-          desktopCheckoutBtn.click();
-        }, 300);
+        
+        const firstUnchecked = Array.from(appTermsElement.querySelectorAll('input[type="checkbox"]')).find(cb => !cb.checked);
+        if (firstUnchecked && typeof firstUnchecked.reportValidity === 'function') {
+          firstUnchecked.reportValidity();
+        } else {
+          alert('Lütfen Mesafeli Satış Sözleşmesi ve Ön Bilgilendirme Formunu onaylayın.');
+        }
       } else {
-        desktopCheckoutBtn.click();
+        const form = document.getElementById('cart');
+        if (form) {
+          if (appTermsElement) {
+             appTermsElement.querySelectorAll('input').forEach(i => i.removeAttribute('required'));
+          }
+          let hiddenInput = form.querySelector('input[name="checkout"]');
+          if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'checkout';
+            hiddenInput.value = 'Checkout';
+            form.appendChild(hiddenInput);
+          }
+          form.submit();
+        }
       }
     });
   });
