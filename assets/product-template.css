@@ -564,6 +564,28 @@
   gap: 10px;
 }
 
+@media (max-width: 767px) {
+  .product_details_info .pr-option .option-block {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 5px;
+    margin-right: -15px;
+    padding-right: 15px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-width: 100vw;
+  }
+  
+  .product_details_info .pr-option .option-block::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .product_details_info .pr-option .option-block > * {
+    flex-shrink: 0;
+  }
+}
+
 .product_details_info .pr-option .option-block input {
   display: none;
 }
