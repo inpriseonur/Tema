@@ -1,0 +1,342 @@
+{%- comment -%}
+  Kurumsal Fatura Bilgisi — Modal Snippet
+  cart-section.liquid içinden render edilir.
+  Gerekli değişkenler: kf_button_text, kf_saved_text, kf_modal_title
+{%- endcomment -%}
+
+<div id="kurumsal-fatura-area" class="kf-area">
+  <button type="button" id="kf-trigger-btn" class="kf-trigger-btn" aria-haspopup="dialog">
+    <span class="kf-btn-icon">🧾</span>
+    <span class="kf-btn-text" id="kf-btn-text">{{ kf_button_text }}</span>
+  </button>
+</div>
+
+{%- comment -%} Modal — fixed pozisyon, DOM konumu önemsiz {%- endcomment -%}
+<div id="kf-overlay" class="kf-overlay" role="dialog" aria-modal="true" aria-label="{{ kf_modal_title }}" style="display:none;">
+  <div class="kf-modal">
+    <div class="kf-modal__header">
+      <h3 class="kf-modal__title">{{ kf_modal_title }}</h3>
+      <button type="button" class="kf-modal__close" id="kf-close-btn" aria-label="Kapat">&times;</button>
+    </div>
+    <div class="kf-modal__body">
+      <div class="kf-field">
+        <label for="kf-firma-unvani" class="kf-label">Firma Unvanı</label>
+        <input type="text" id="kf-firma-unvani" class="kf-input" placeholder="Örn: ABC Gıda A.Ş." autocomplete="organization">
+      </div>
+      <div class="kf-field">
+        <label for="kf-vergi-numarasi" class="kf-label">Vergi Numarası</label>
+        <input type="text" id="kf-vergi-numarasi" class="kf-input" placeholder="Maks. 10 haneli" inputmode="numeric" maxlength="10" autocomplete="off">
+        <span class="kf-hint">Sadece rakam, en fazla 10 karakter</span>
+      </div>
+      <div class="kf-field">
+        <label for="kf-vergi-dairesi" class="kf-label">Vergi Dairesi</label>
+        <input type="text" id="kf-vergi-dairesi" class="kf-input" placeholder="Örn: Kadıköy">
+      </div>
+    </div>
+    <div class="kf-modal__footer">
+      <button type="button" id="kf-save-btn" class="kf-btn kf-btn--save">Kaydet</button>
+      <button type="button" id="kf-cancel-btn" class="kf-btn kf-btn--cancel">Vazgeç</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ── Buton Alanı — indirim kutusunun altında ── */
+  .kf-area {
+    margin-top: 20px;
+  }
+  .kf-trigger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 20px;
+    border: 1.5px dashed #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    line-height: 1.4;
+  }
+  .kf-trigger-btn:hover {
+    border-color: #999;
+    background: #f0f0f0;
+  }
+  .kf-trigger-btn.kf-saved {
+    border-style: solid;
+    border-color: #4caf50;
+    background: #f2fdef;
+    color: #2e7d32;
+  }
+  .kf-trigger-btn.kf-saved:hover {
+    background: #e8f5e2;
+  }
+  .kf-btn-icon { font-size: 17px; line-height: 1; }
+  .kf-btn-edit { margin-left: 4px; font-size: 14px; opacity: 0.7; }
+
+  /* ── Overlay ── */
+  .kf-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: kfFadeIn 0.2s ease;
+  }
+  @keyframes kfFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── Modal ── */
+  .kf-modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: kfSlideUp 0.25s ease;
+  }
+  @keyframes kfSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Header ── */
+  .kf-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid #eee;
+  }
+  .kf-modal__title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--font-color-header, #1a2b4c);
+    margin: 0;
+    line-height: 1.3;
+  }
+  .kf-modal__close {
+    background: none;
+    border: none;
+    font-size: 26px;
+    color: #999;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .kf-modal__close:hover { color: #333; }
+
+  /* ── Body ── */
+  .kf-modal__body { padding: 20px 22px; }
+  .kf-field { margin-bottom: 16px; }
+  .kf-field:last-child { margin-bottom: 0; }
+  .kf-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+  }
+  .kf-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    transition: border-color 0.15s ease;
+    box-sizing: border-box;
+  }
+  .kf-input:focus {
+    outline: none;
+    border-color: var(--font-color-header, #1a2b4c);
+    box-shadow: 0 0 0 3px rgba(26, 43, 76, 0.08);
+  }
+  .kf-input::placeholder { color: #bbb; }
+  .kf-hint { display: block; font-size: 11px; color: #999; margin-top: 4px; }
+
+  /* ── Footer ── */
+  .kf-modal__footer {
+    display: flex;
+    gap: 10px;
+    padding: 14px 22px 20px;
+    border-top: 1px solid #eee;
+  }
+  .kf-btn {
+    flex: 1;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1.3;
+  }
+  .kf-btn--save { background: var(--font-color-header, #1a1a2e); color: #fff; }
+  .kf-btn--save:hover { opacity: 0.9; }
+  .kf-btn--save:disabled { opacity: 0.6; cursor: not-allowed; }
+  .kf-btn--save.kf-success { background: #4caf50; }
+  .kf-btn--cancel { background: #f0f0f0; color: #555; }
+  .kf-btn--cancel:hover { background: #e4e4e4; }
+
+  /* ── Mobil ── */
+  @media (max-width: 767px) {
+    .kf-modal { max-width: 92vw; border-radius: 12px; }
+    .kf-modal__header { padding: 16px 18px 12px; }
+    .kf-modal__body { padding: 16px 18px; }
+    .kf-modal__footer { padding: 12px 18px 16px; }
+    .kf-modal__title { font-size: 16px; }
+    .kf-trigger-btn { font-size: 13px; padding: 11px 16px; }
+  }
+</style>
+
+<script>
+(function() {
+  'use strict';
+  var ATTR_KEYS = { firma: 'Firma Unvani', vergi: 'Vergi Numarasi', daire: 'Vergi Dairesi' };
+  var SAVED_TEXT = {{ kf_saved_text | json }};
+  var DEFAULT_TEXT = {{ kf_button_text | json }};
+
+  var triggerBtn, btnText, overlay, closeBtn, saveBtn, cancelBtn;
+  var inputFirma, inputVergi, inputDaire;
+
+  /* Son kaydedilen değerler — vazgeçte bunlara geri dönülür */
+  var savedValues = { firma: '', vergi: '', daire: '' };
+
+  function init() {
+    triggerBtn = document.getElementById('kf-trigger-btn');
+    btnText    = document.getElementById('kf-btn-text');
+    overlay    = document.getElementById('kf-overlay');
+    closeBtn   = document.getElementById('kf-close-btn');
+    saveBtn    = document.getElementById('kf-save-btn');
+    cancelBtn  = document.getElementById('kf-cancel-btn');
+    inputFirma = document.getElementById('kf-firma-unvani');
+    inputVergi = document.getElementById('kf-vergi-numarasi');
+    inputDaire = document.getElementById('kf-vergi-dairesi');
+    if (!triggerBtn || !overlay) return;
+
+    /* Vergi numarası: sadece rakam */
+    inputVergi.addEventListener('input', function() {
+      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+    });
+    inputVergi.addEventListener('paste', function() {
+      var self = this;
+      setTimeout(function() { self.value = self.value.replace(/[^0-9]/g, '').slice(0, 10); }, 0);
+    });
+
+    triggerBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', cancelAndClose);
+    cancelBtn.addEventListener('click', cancelAndClose);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) cancelAndClose(); });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.style.display !== 'none') cancelAndClose();
+    });
+    saveBtn.addEventListener('click', handleSave);
+    loadCartAttributes();
+  }
+
+  function openModal() {
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    inputFirma.focus();
+  }
+
+  function closeModal() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  /* Vazgeç: inputları son kaydedilen değerlere geri döndür */
+  function cancelAndClose() {
+    inputFirma.value = savedValues.firma;
+    inputVergi.value = savedValues.vergi;
+    inputDaire.value = savedValues.daire;
+    closeModal();
+  }
+
+  function loadCartAttributes() {
+    fetch('/cart.js', { credentials: 'same-origin' })
+      .then(function(r) { return r.json(); })
+      .then(function(cart) {
+        var a = cart.attributes || {};
+        savedValues.firma = a[ATTR_KEYS.firma] || '';
+        savedValues.vergi = a[ATTR_KEYS.vergi] || '';
+        savedValues.daire = a[ATTR_KEYS.daire] || '';
+        inputFirma.value = savedValues.firma;
+        inputVergi.value = savedValues.vergi;
+        inputDaire.value = savedValues.daire;
+        if (savedValues.firma || savedValues.vergi || savedValues.daire) setSavedState();
+      })
+      .catch(function(e) { console.warn('[KurumsalFatura]', e); });
+  }
+
+  function handleSave() {
+    var firma = inputFirma.value.trim();
+    var vergi = inputVergi.value.trim();
+    var daire = inputDaire.value.trim();
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Kaydediliyor\u2026';
+
+    var body = { attributes: {} };
+    body.attributes[ATTR_KEYS.firma] = firma;
+    body.attributes[ATTR_KEYS.vergi] = vergi;
+    body.attributes[ATTR_KEYS.daire] = daire;
+
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(body)
+    })
+    .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function() {
+      /* Başarılı kayıt — savedValues güncelle */
+      savedValues.firma = firma;
+      savedValues.vergi = vergi;
+      savedValues.daire = daire;
+
+      saveBtn.textContent = '\u2713 Kaydedildi';
+      saveBtn.classList.add('kf-success');
+      if (firma || vergi || daire) setSavedState(); else setDefaultState();
+      setTimeout(function() {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Kaydet';
+        saveBtn.classList.remove('kf-success');
+        closeModal();
+      }, 800);
+    })
+    .catch(function(err) {
+      console.error('[KurumsalFatura]', err);
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Hata! Tekrar dene';
+      setTimeout(function() { saveBtn.textContent = 'Kaydet'; }, 2000);
+    });
+  }
+
+  function setSavedState() {
+    triggerBtn.classList.add('kf-saved');
+    btnText.innerHTML = SAVED_TEXT + ' <span class="kf-btn-edit">\u270E</span>';
+  }
+  function setDefaultState() {
+    triggerBtn.classList.remove('kf-saved');
+    btnText.textContent = DEFAULT_TEXT;
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>

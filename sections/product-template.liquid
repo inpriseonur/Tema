@@ -108,34 +108,178 @@
                       {% endif %}
                     </div>
                     {%- endif -%}
+                  {%- when 'sales_count' -%}
+                  {%- assign satis_adedi = product.metafields.custom.satis_adedi | default: 0 | plus: 0 -%}
+                  {%- if satis_adedi >= block.settings.min_count -%}
+                    <style>
+                      .product-sales-badge {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        margin-bottom: 15px;
+                        width: fit-content;
+                        font-size: 13px;
+                        font-weight: 400;
+                        font-family: var(--font-body-family), sans-serif;
+                      }
+                      .product-sales-badge .sales-icon {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        line-height: 1;
+                      }
+                      .product-sales-badge .sales-icon svg {
+                        width: 14px;
+                        height: 14px;
+                      }
+                    </style>
+                    <div class="product-sales-badge" {{ block.shopify_attributes }} style="color: {{ block.settings.text_color }};">
+                      {%- if block.settings.custom_icon != blank -%}
+                        <span class="sales-icon">{{ block.settings.custom_icon }}</span>
+                      {%- endif -%}
+                      <span class="sales-text">
+                        {{ block.settings.text_template | replace: '[count]', satis_adedi }}
+                      </span>
+                    </div>
+                  {%- endif -%}
                   {%- when 'trust_badge' -%}
                   <style>
                     .product-trust-badge {
-                      display: inline-flex;
+                      display: flex;
                       align-items: center;
-                      gap: 8px;
-                      padding: 6px 12px;
+                      gap: 12px;
+                      padding: 12px 16px;
                       border-radius: 8px;
                       margin-bottom: 15px;
-                      width: fit-content;
                       font-size: 13px;
                       font-weight: 500;
+                      font-family: var(--font-body-family), sans-serif;
                     }
                     .product-trust-badge .trust-icon {
                       display: flex;
                       align-items: center;
                       justify-content: center;
+                      width: 26px;
+                      height: 26px;
+                      flex-shrink: 0;
                     }
                     .product-trust-badge .trust-icon svg {
-                      width: 16px;
-                      height: 16px;
+                      width: 20px;
+                      height: 20px;
+                    }
+                    .product-trust-badge .trust-text {
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: center;
+                    }
+                    .product-trust-badge .trust-text p {
+                      margin: 0;
+                      display: block;
+                      line-height: 1.2;
+                    }
+                    .product-trust-badge .trust-text a {
+                      color: {{ block.settings.link_color | default: block.settings.text_color }};
+                      text-decoration: underline;
+                      font-weight: 600;
+                      vertical-align: baseline;
+                    }
+                    .product-trust-badge .trust-text a:hover {
+                      opacity: 0.8;
                     }
                   </style>
-                  <div class="product-trust-badge" {{ block.shopify_attributes }} style="background-color: {{ block.settings.bg_color }}; color: {{ block.settings.text_color }}; border: 1px solid {{ block.settings.border_color }};">
+                  <div class="product-trust-badge" {{ block.shopify_attributes }} style="background-color: {{ block.settings.bg_color }}; color: {{ block.settings.text_color }}; border: 1px solid {{ block.settings.border_color }}; border-left: 4px solid #3B6D11;">
                     {%- if block.settings.icon != blank -%}
                       <span class="trust-icon">{{ block.settings.icon }}</span>
                     {%- endif -%}
-                    <span class="trust-text">{{ block.settings.text }}</span>
+                    <div class="trust-text">{{ block.settings.text | replace: '<a ', '<a style="vertical-align: baseline;" target="_blank" ' }}</div>
+                  </div>
+                  {%- when 'cod_message' -%}
+                  <style>
+                    .product-cod-message {
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      background-color: {{ block.settings.bg_color }};
+                      border: 1px solid {{ block.settings.border_color }};
+                      border-left: 4px solid {{ block.settings.border_left_color }};
+                      padding: 12px 16px;
+                      border-radius: 8px;
+                      margin-bottom: 15px;
+                      font-family: var(--font-body-family), sans-serif;
+                    }
+                    .product-cod-message .cod-left {
+                      display: flex;
+                      align-items: center;
+                      gap: 12px;
+                    }
+                    .product-cod-message .cod-icon {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      width: 26px;
+                      height: 26px;
+                      border-radius: 50%;
+                      background-color: {{ block.settings.icon_bg_color }};
+                      flex-shrink: 0;
+                    }
+                    .product-cod-message .cod-icon svg {
+                      width: 14px;
+                      height: 14px;
+                      fill: none;
+                      stroke: {{ block.settings.icon_stroke_color }};
+                      stroke-width: 1.5;
+                      stroke-linecap: round;
+                      stroke-linejoin: round;
+                    }
+                    .product-cod-message .cod-text-wrap {
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: center;
+                    }
+                    .product-cod-message .cod-title {
+                      font-size: 14px;
+                      font-weight: 600;
+                      color: {{ block.settings.title_color }};
+                      line-height: 1.2;
+                      margin-bottom: 2px;
+                      white-space: nowrap;
+                    }
+                    .product-cod-message .cod-subtitle {
+                      font-size: 12px;
+                      font-weight: 500;
+                      color: {{ block.settings.subtitle_color }};
+                      line-height: 1.2;
+                    }
+                    .product-cod-message .cod-right .cod-badge {
+                      background-color: transparent;
+                      color: {{ block.settings.badge_bg_color }};
+                      border: 1px solid {{ block.settings.badge_bg_color }};
+                      font-size: 10px;
+                      font-weight: 500;
+                      padding: 2px 8px;
+                      border-radius: 4px;
+                      letter-spacing: 0.5px;
+                      white-space: nowrap;
+                    }
+                  </style>
+                  <div class="product-cod-message" {{ block.shopify_attributes }}>
+                    <div class="cod-left">
+                      <div class="cod-icon">
+                        <svg viewBox="0 0 24 24">
+                          <rect x="3" y="8" width="18" height="12" rx="2" ry="2"></rect>
+                          <path d="M12 8v12"></path>
+                          <path d="M8 14h8"></path>
+                          <path d="M16 8V6a2 2 0 0 0-2-2H10a2 2 0 0 0-2 2v2"></path>
+                        </svg>
+                      </div>
+                      <div class="cod-text-wrap">
+                        <span class="cod-title">{{ block.settings.title }}</span>
+                        <span class="cod-subtitle">{{ block.settings.sub_message }}</span>
+                      </div>
+                    </div>
+                    <div class="cod-right">
+                      <span class="cod-badge">Ücretsiz</span>
+                    </div>
                   </div>
                   {%- when 'inventory' -%}
                   <div class="product-inventory{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} hidden{% endif %}" {{ block.shopify_attributes }} id="Inventory-{{ section.id }}" role="status">
@@ -230,6 +374,27 @@
       </div>
                     {% endif %}
                   </div>
+                  {%- if block.settings.countdown_enabled and block.settings.countdown_end_date != blank -%}
+                    {%- assign cd_today = 'now' | date: '%Y-%m-%d' -%}
+                    {%- assign cd_today_ts = cd_today | date: '%s' | plus: 0 -%}
+                    {%- assign cd_end_ts = block.settings.countdown_end_date | date: '%s' | plus: 0 -%}
+                    {%- assign cd_diff = cd_end_ts | minus: cd_today_ts -%}
+                    {%- assign cd_days = cd_diff | divided_by: 86400 -%}
+                    {%- if cd_days >= 0 -%}
+                      <div class="price-countdown"
+                           data-end-date="{{ block.settings.countdown_end_date }}"
+                           style="color: {{ block.settings.countdown_text_color }};">
+                        <span class="countdown-icon">{{ block.settings.countdown_icon }}</span>
+                        <span class="countdown-text">
+                          {%- if cd_days == 0 -%}
+                            {{ block.settings.countdown_message | replace: '[days] gün', 'gün' | replace: '[days]', '' }}  
+                          {%- else -%}
+                            {{ block.settings.countdown_message | replace: '[days]', cd_days }}
+                          {%- endif -%}
+                        </span>
+                      </div>
+                    {%- endif -%}
+                  {%- endif -%}
                   
                   {%- when 'short_description' -%}
                   <div class="product-description" {{ block.shopify_attributes }}>
@@ -258,6 +423,30 @@
                       {% if product.selected_or_first_available_variant.quantity_rule.max != null %} data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" {% endif %} step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}" value="{{ product.selected_or_first_available_variant.quantity_rule.min }}" label="quantity" form="{{ product_form_id }}"/>
                     <button class="qty-bt" name="plus" type="button">+</button>
                   </qty-box>
+                  {%- comment -%}Mobilde adet seçicinin yanında geri sayım{%- endcomment -%}
+                  {%- for inner_block in section.blocks -%}
+                    {%- if inner_block.type == 'product_price' and inner_block.settings.countdown_enabled and inner_block.settings.countdown_end_date != blank -%}
+                      {%- assign mcd_today = 'now' | date: '%Y-%m-%d' -%}
+                      {%- assign mcd_today_ts = mcd_today | date: '%s' | plus: 0 -%}
+                      {%- assign mcd_end = inner_block.settings.countdown_end_date | date: '%s' | plus: 0 -%}
+                      {%- assign mcd_diff = mcd_end | minus: mcd_today_ts -%}
+                      {%- assign mcd_days = mcd_diff | divided_by: 86400 -%}
+                      {%- if mcd_days >= 0 -%}
+                        <div class="qty-countdown-mobile"
+                             data-end-date="{{ inner_block.settings.countdown_end_date }}"
+                             style="color: {{ inner_block.settings.countdown_text_color }};">
+                          <span class="countdown-icon">{{ inner_block.settings.countdown_icon }}</span>
+                          <span class="countdown-text">
+                            {%- if mcd_days == 0 -%}
+                              {{ inner_block.settings.countdown_message | replace: '[days] gün', 'gün' | replace: '[days]', '' }}
+                            {%- else -%}
+                              {{ inner_block.settings.countdown_message | replace: '[days]', mcd_days }}
+                            {%- endif -%}
+                          </span>
+                        </div>
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
                   <div class="quantity__rules caption">
                     {%- if product.selected_or_first_available_variant.quantity_rule.increment > 1 -%}
                       <span class="divider">
@@ -554,6 +743,31 @@
         hiddenInput.value = event.currentTarget.value;
       });
     });
+    /* Geri sayım: cache durumunda doğru gün hesaplama */
+    (function() {
+      var countdowns = document.querySelectorAll('.price-countdown, .qty-countdown-mobile');
+      countdowns.forEach(function(el) {
+        var endDate = el.getAttribute('data-end-date');
+        if (!endDate) return;
+        var now = new Date();
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var parts = endDate.split('-');
+        var end = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        var diff = Math.round((end - today) / (1000 * 60 * 60 * 24));
+        if (diff < 0) {
+          el.style.display = 'none';
+        } else {
+          var textEl = el.querySelector('.countdown-text');
+          if (textEl) {
+            if (diff === 0) {
+              textEl.textContent = textEl.textContent.replace(/son\s*\d+\s*gün/, 'son gün').replace(/\d+\s*gün/, 'gün');
+            } else {
+              textEl.textContent = textEl.textContent.replace(/\d+/, diff);
+            }
+          }
+        }
+      });
+    })();
   </script>
 </section>
 {% schema %}
@@ -733,10 +947,10 @@
     "name": "Trust Badge",
     "settings": [
       {
-        "type": "text",
+        "type": "richtext",
         "id": "text",
         "label": "Badge Text",
-        "default": "Pazaryeri komisyonu yok — bu fiyata sadece primegurme.com'da"
+        "default": "<p>Pazaryeri komisyonu yok — bu fiyata sadece primegurme.com'da</p>"
       },
       {
         "type": "textarea",
@@ -761,14 +975,162 @@
         "id": "border_color",
         "label": "Border Color",
         "default": "transparent"
+      },
+      {
+        "type": "color",
+        "id": "link_color",
+        "label": "Link Color",
+        "default": "#2b5a19"
       }
     ]
   },
-  
+  {
+    "type": "sales_count",
+    "name": "Satış Adedi Rozeti",
+    "limit": 1,
+    "settings": [
+      {
+        "type": "text",
+        "id": "text_template",
+        "label": "Metin Şablonu",
+        "default": "🛍 Bu ay [count] kişi satın aldı",
+        "info": "Satış rakamının görünmesini istediğiniz yere [count] yazın."
+      },
+      {
+        "type": "number",
+        "id": "min_count",
+        "label": "Minimum Gösterim Adedi",
+        "default": 5,
+        "info": "Sadece bu rakam ve üzerindeyse gösterilir."
+      },
+      {
+        "type": "textarea",
+        "id": "custom_icon",
+        "label": "Özel İkon (SVG)",
+        "info": "İsteğe bağlı: Kendi SVG ikonunuzu buraya yapıştırabilirsiniz."
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Yazı Rengi",
+        "default": "#555555"
+      }
+    ]
+  },
+  {
+    "type": "cod_message",
+    "name": "Kapıda Ödeme Mesajı",
+    "limit": 1,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Başlık",
+        "default": "İstanbul'a Kapıda Ödeme"
+      },
+      {
+        "type": "text",
+        "id": "sub_message",
+        "label": "Alt Mesaj",
+        "default": "Nakit veya kart, kapınızda"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Arka Plan",
+        "default": "#FAEEDA"
+      },
+      {
+        "type": "color",
+        "id": "border_left_color",
+        "label": "Sol Aksan Çizgisi",
+        "default": "#BA7517"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "İnce Kenar",
+        "default": "#FAC775"
+      },
+      {
+        "type": "color",
+        "id": "icon_bg_color",
+        "label": "İkon Daire Arka Planı",
+        "default": "#854F0B"
+      },
+      {
+        "type": "color",
+        "id": "icon_stroke_color",
+        "label": "İkon Çizgi Rengi",
+        "default": "#FAC775"
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Başlık Yazısı",
+        "default": "#633806"
+      },
+      {
+        "type": "color",
+        "id": "subtitle_color",
+        "label": "Alt Yazı",
+        "default": "#854F0B"
+      },
+      {
+        "type": "color",
+        "id": "badge_bg_color",
+        "label": "Ücretsiz Etiket Arka Planı",
+        "default": "#854F0B"
+      },
+      {
+        "type": "color",
+        "id": "badge_text_color",
+        "label": "Ücretsiz Etiket Yazısı",
+        "default": "#FAC775"
+      }
+    ]
+  },
   {
     "type": "product_price",
     "name": "Product price",
-    "limit": 1
+    "limit": 1,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Geri Sayım Mesajı"
+      },
+      {
+        "type": "checkbox",
+        "id": "countdown_enabled",
+        "label": "Geri Sayımı Göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "countdown_message",
+        "label": "Mesaj Şablonu",
+        "default": "Bu fiyat ile son [days] gün!",
+        "info": "[days] otomatik hesaplanır"
+      },
+      {
+        "type": "text",
+        "id": "countdown_end_date",
+        "label": "Son Geçerli Gün (YYYY-MM-DD)",
+        "info": "Bu fiyatın geçerli olduğu son gün. Örn: 2025-05-31 girerseniz 31 Mayıs son gün olur, 1 Haziran'da mesaj kaybolur."
+      },
+      {
+        "type": "color",
+        "id": "countdown_text_color",
+        "label": "Metin Rengi",
+        "default": "#C0392B"
+      },
+      {
+        "type": "text",
+        "id": "countdown_icon",
+        "label": "Emoji / İkon",
+        "default": "⏳"
+      }
+    ]
   },
   {
     "type": "short_description",
