@@ -301,6 +301,58 @@
   margin-top: 15px;
 }
 
+/* Fiyat altı geri sayım (Desktop) */
+.price-countdown {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.price-countdown .countdown-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Mobil: adet seçicinin yanındaki geri sayım */
+.qty-countdown-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  /* Desktop: geri sayım alanı ekstra yer kapladığı için varyant üst boşluğunu azalt */
+  .product_details_info .pro-detail-action {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Desktop geri sayımı mobilde gizle */
+  .price-countdown {
+    display: none;
+  }
+
+  /* Mobil: adet seçicinin yanında göster */
+  .qty-countdown-mobile {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .qty-countdown-mobile .countdown-icon {
+    font-size: 13px;
+    line-height: 1;
+  }
+}
+
 /* product select variant css */
 .product_details_info .pro-detail-action {
   margin-top: 30px;
