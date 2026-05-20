@@ -265,8 +265,23 @@
   margin-top: 15px;
 }
 
+/* Sadece Desktop (Masaüstü) için güncellemeler */
+@media (min-width: 768px) {
+  .product_details_info .pro-price-label {
+    margin-top: 25px;
+  }
+
+  .product_details_info .pro-price-label .price-box .new-price,
+  .product_details_info .pro-price-label .price-box #ProductPrice {
+    color: #1a2e4a !important;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+  }
+}
+
 .product_details_info .pro-price-label .price-box .old-price {
-  margin-inline-start: 5px;
+  margin-inline-start: 10px;
 }
 
 .product_details_info .pro-price-label .price-box .unit-price {
@@ -576,12 +591,12 @@
     scrollbar-width: none;
     max-width: 100vw;
   }
-  
+
   .product_details_info .pr-option .option-block::-webkit-scrollbar {
     display: none;
   }
-  
-  .product_details_info .pr-option .option-block > * {
+
+  .product_details_info .pr-option .option-block>* {
     flex-shrink: 0;
   }
 }
