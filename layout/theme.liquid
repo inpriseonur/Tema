@@ -500,6 +500,30 @@
         }
 
       }
+
+      /* =====================================================
+         ÜRÜN SAYFASI — MOBİL FOOTER SADELEŞTİRME
+         Footer menü bloğunu (ANA MENÜ, KURUMSAL, newsletter)
+         ve alt sticky nav'ı gizle, sadece copyright barı kalsın.
+         Copyright barının sticky satın alma barının altında
+         kalmaması için body'ye alt padding ekle.
+         ===================================================== */
+      @media screen and (max-width: 749px) {
+        /* Footer üst bloğu gizle (ANA MENÜ, KURUMSAL, newsletter) */
+        body.template-product .footer-top-area {
+          display: none !important;
+        }
+
+        /* Mobil alt sticky menü (Home/Search/Wishlist/Account) gizle */
+        body.template-product .mobile-sticky-menu {
+          display: none !important;
+        }
+
+        /* Copyright barı sticky satın alma barının arkasında kalmasın */
+        body.template-product {
+          padding-bottom: 130px;
+        }
+      }
     </style>
 
 

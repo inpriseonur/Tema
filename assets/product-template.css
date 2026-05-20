@@ -394,31 +394,88 @@
   line-height: 1;
 }
 
-.product_details_info .product-checkout-image {
-  margin-top: 15px;
-}
-
-.product_details_info .share-icons {
-  display: flex;
-  align-self: center;
-  margin-top: 15px;
-}
-
-.product_details_info .wishlist {
+/* ── Trust Footer — Ödeme ikonları + Favoriler tek satır ── */
+.product-trust-footer {
   display: flex;
   align-items: center;
-  margin-top: 15px;
-  margin-inline-end: 15px;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ededed;
+  gap: 12px;
+}
 
+.product-trust-footer__payments {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.product-trust-footer__payments .payment-icon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+}
+
+.product-trust-footer__payments .payment-icon svg {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.product-trust-footer__payments .payment-icon svg:hover {
+  opacity: 1;
+}
+
+.trust-footer__wishlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #ededed;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
   font-weight: 500;
+  color: var(--color-body);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  line-height: 1;
 }
 
-.product_details_info .wishlist i {
-  font-size: 16px;
+.trust-footer__wishlist:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
-.product_details_info .wishlist span {
-  margin-inline-start: 10px;
+.trust-footer__wishlist.active-wishlist {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.trust-footer__wishlist.active-wishlist i:before {
+  content: "\f004";
+}
+
+.trust-footer__wishlist i {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.trust-footer__wishlist-text {
+  font-size: 12px;
+}
+
+@media (max-width: 767px) {
+  .trust-footer__wishlist {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .trust-footer__wishlist-text {
+    font-size: 11px;
+  }
 }
 
 .product_details_info .share-icons ul {
