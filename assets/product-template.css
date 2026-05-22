@@ -1004,3 +1004,176 @@
     transform-origin: bottom right;
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   DESKTOP CTA BUTON İYİLEŞTİRME
+   Kapsam: Yalnızca masaüstü (min-width: 768px)
+   Mobil görünüme hiçbir etkisi yoktur.
+   ═══════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+
+  /* ── 1. Buton Container: full-width layout ── */
+  .product_details_info .pr-form-button {
+    margin-left: 0;
+    padding-top: 25px;
+  }
+
+  /* ── 2. CTA Buton: boyut, font, gradient, border-radius ── */
+  .product_details_info .pr-form-button .ajax-cart-btn {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    height: 54px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1a2e5a 0%, #243b6e 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 14px rgba(16, 24, 40, 0.10);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── 3. Buton Yazısı: bold, uppercase, letter-spacing ── */
+  .product_details_info .pr-form-button .ajax-cart-btn .cart-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── 4. Hover Efekti: lift + shadow + parlak gradient ── */
+  .product_details_info .pr-form-button .ajax-cart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(26, 46, 90, 0.35);
+    background: linear-gradient(135deg, #1e3468 0%, #2a4580 100%);
+  }
+
+  /* ── 5. Active/Click Efekti ── */
+  .product_details_info .pr-form-button .ajax-cart-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(26, 46, 90, 0.25);
+  }
+
+  /* ── 6. Disabled (Sold Out) durumu — gradient kaldır ── */
+  .product_details_info .pr-form-button .ajax-cart-btn[disabled] {
+    background: #9ca3af;
+    border-color: transparent;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ── 7. Shopify Dynamic Checkout varsa yan yana düzen koru ── */
+  .product_details_info .pr-form-button .shopify-payment-button {
+    width: 100%;
+    max-width: 100%;
+    margin: 12px 0 0 0;
+  }
+
+  /* ── 8. Desktop CTA Güven Metni ── */
+  .desktop-cta-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 16px;
+    font-size: 12px;
+    color: #6b7280;
+    letter-spacing: 0.2px;
+    line-height: 1;
+  }
+
+  .desktop-cta-trust .trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .desktop-cta-trust .trust-item .trust-icon {
+    font-style: normal;
+    line-height: 1;
+  }
+
+  .desktop-cta-trust .trust-separator {
+    color: #d1d5db;
+    font-size: 10px;
+    line-height: 1;
+  }
+}
+
+/* Mobilde desktop güven metnini gizle */
+@media (max-width: 767px) {
+  .desktop-cta-trust {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   FAVORİLERE EKLE BUTONU — Desktop + Mobil Ortak Stil
+   CTA + güven metninin hemen altında, ortalanmış,
+   minimal text-link görünümü.
+   ═══════════════════════════════════════════════════════ */
+.product_details_info button.wishlist.form-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.product_details_info button.wishlist.form-btn i {
+  font-size: 15px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.product_details_info button.wishlist.form-btn span {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.product_details_info button.wishlist.form-btn:hover {
+  color: #e74c3c;
+}
+
+.product_details_info button.wishlist.form-btn:hover i {
+  transform: scale(1.15);
+}
+
+/* Favorilere eklenmiş durumu */
+.product_details_info button.wishlist.form-btn.active-wishlist {
+  color: #e74c3c;
+}
+
+.product_details_info button.wishlist.form-btn.active-wishlist i:before {
+  content: "\f004";
+}
+
+/* Mobilde biraz daha kompakt */
+@media (max-width: 767px) {
+  .product_details_info button.wishlist.form-btn {
+    margin-top: 10px;
+    font-size: 12px;
+    justify-content: flex-start;
+  }
+
+  .product_details_info button.wishlist.form-btn i {
+    font-size: 14px;
+  }
+
+  .product_details_info button.wishlist.form-btn span {
+    font-size: 12px;
+  }
+}

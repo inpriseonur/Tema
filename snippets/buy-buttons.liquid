@@ -31,6 +31,35 @@
           {{ form | payment_button }}
         {%- endif -%}
       </div>
+      {%- comment -%}Desktop CTA altı güven metni — tema ayarlarından dinamik{%- endcomment -%}
+      {%- if settings.desktop_cta_trust_enable -%}
+        <div class="desktop-cta-trust">
+          {%- if settings.desktop_cta_badge_1_text != blank -%}
+            <span class="trust-item">
+              <span class="trust-icon">{{ settings.desktop_cta_badge_1_icon }}</span>
+              <span>{{ settings.desktop_cta_badge_1_text }}</span>
+            </span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_1_text != blank and settings.desktop_cta_badge_2_text != blank -%}
+            <span class="trust-separator">·</span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_2_text != blank -%}
+            <span class="trust-item">
+              <span class="trust-icon">{{ settings.desktop_cta_badge_2_icon }}</span>
+              <span>{{ settings.desktop_cta_badge_2_text }}</span>
+            </span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_2_text != blank and settings.desktop_cta_badge_3_text != blank -%}
+            <span class="trust-separator">·</span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_3_text != blank -%}
+            <span class="trust-item">
+              <span class="trust-icon">{{ settings.desktop_cta_badge_3_icon }}</span>
+              <span>{{ settings.desktop_cta_badge_3_text }}</span>
+            </span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
     {%- endform -%}
   </cart-action>
   {%- else -%}
