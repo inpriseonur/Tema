@@ -212,7 +212,7 @@
                 </div>
             </ajax-items>
             {%- if section.settings.kurumsal_fatura_enable and cart != empty -%}
-            {%- render 'kurumsal-fatura-modal', kf_button_text: section.settings.kf_button_text, kf_saved_text: section.settings.kf_saved_text, kf_modal_title: section.settings.kf_modal_title -%}
+            {%- render 'kurumsal-fatura-modal', kf_button_text: section.settings.kf_button_text, kf_saved_text: section.settings.kf_saved_text -%}
             {%- endif -%}
             {%- if cart != empty -%}
             <div class="cart-comp-section" id="cart-comp-section" style="display:none;">
@@ -628,20 +628,14 @@
     {
       "type": "text",
       "id": "kf_button_text",
-      "label": "Buton Metni",
-      "default": "🧾 Kurumsal fatura bilgisi ekle"
+      "label": "Checkbox Metni",
+      "default": "Kurumsal fatura istiyorum"
     },
     {
       "type": "text",
       "id": "kf_saved_text",
-      "label": "Kayıt Sonrası Buton Metni",
+      "label": "Kayıt Sonrası Metin",
       "default": "✅ Kurumsal fatura bilgisi eklendi"
-    },
-    {
-      "type": "text",
-      "id": "kf_modal_title",
-      "label": "Modal Başlık",
-      "default": "Kurumsal Fatura Bilgileri"
     },
     {
       "type": "header",

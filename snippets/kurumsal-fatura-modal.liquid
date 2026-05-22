@@ -1,162 +1,289 @@
 {%- comment -%}
-  Kurumsal Fatura Bilgisi — Modal Snippet
+  Kurumsal Fatura Bilgisi — Checkbox + Inline/Bottom-sheet Form Snippet
   cart-section.liquid içinden render edilir.
-  Gerekli değişkenler: kf_button_text, kf_saved_text, kf_modal_title
+  Desktop: inline slide-down form
+  Mobile: bottom-sheet overlay
+  Gerekli değişkenler: kf_button_text, kf_saved_text
 {%- endcomment -%}
 
 <div id="kurumsal-fatura-area" class="kf-area">
-  <button type="button" id="kf-trigger-btn" class="kf-trigger-btn" aria-haspopup="dialog">
-    <span class="kf-btn-icon">🧾</span>
-    <span class="kf-btn-text" id="kf-btn-text">{{ kf_button_text }}</span>
-  </button>
+  {%- comment -%} Checkbox trigger {%- endcomment -%}
+  <label class="kf-checkbox-label" for="kf-checkbox" id="kf-checkbox-label">
+    <input type="checkbox" id="kf-checkbox" class="kf-checkbox-input">
+    <span class="kf-checkbox-custom"></span>
+    <span class="kf-checkbox-text" id="kf-checkbox-text">{{ kf_button_text }}</span>
+  </label>
+
+  {%- comment -%} Desktop: Inline Form (slides down) {%- endcomment -%}
+  <div id="kf-form-wrapper" class="kf-form-wrapper kf-desktop-only">
+    <div class="kf-form-inner">
+      <div class="kf-form-row kf-form-row--half">
+        <div class="kf-field">
+          <label for="kf-ad" class="kf-label">Ad <span class="kf-required">*</span></label>
+          <input type="text" id="kf-ad" class="kf-input kf-field-input" data-kf-key="ad" placeholder="Ad" autocomplete="given-name">
+        </div>
+        <div class="kf-field">
+          <label for="kf-soyad" class="kf-label">Soyad <span class="kf-required">*</span></label>
+          <input type="text" id="kf-soyad" class="kf-input kf-field-input" data-kf-key="soyad" placeholder="Soyad" autocomplete="family-name">
+        </div>
+      </div>
+
+      <div class="kf-field">
+        <label for="kf-firma-adi" class="kf-label">Firma Unvanı <span class="kf-required">*</span></label>
+        <input type="text" id="kf-firma-adi" class="kf-input kf-field-input" data-kf-key="firma" placeholder="Örn: ABC Gıda A.Ş." autocomplete="organization">
+      </div>
+
+      <div class="kf-form-row kf-form-row--half">
+        <div class="kf-field">
+          <label for="kf-vergi-no" class="kf-label">Vergi Numarası <span class="kf-required">*</span></label>
+          <input type="text" id="kf-vergi-no" class="kf-input kf-field-input" data-kf-key="vergi" placeholder="Maks. 10 haneli" inputmode="numeric" maxlength="10" autocomplete="off">
+          <span class="kf-hint">Sadece rakam, en fazla 10 karakter</span>
+        </div>
+        <div class="kf-field">
+          <label for="kf-vergi-dairesi" class="kf-label">Vergi Dairesi <span class="kf-required">*</span></label>
+          <input type="text" id="kf-vergi-dairesi" class="kf-input kf-field-input" data-kf-key="daire" placeholder="Örn: Kadıköy">
+        </div>
+      </div>
+
+      <div class="kf-field">
+        <label for="kf-adres" class="kf-label">Adres <span class="kf-required">*</span></label>
+        <textarea id="kf-adres" class="kf-input kf-textarea kf-field-input" data-kf-key="adres" placeholder="Açık adres" rows="2" autocomplete="street-address"></textarea>
+      </div>
+
+      <div class="kf-form-row kf-form-row--half">
+        <div class="kf-field">
+          <label for="kf-ilce" class="kf-label">İlçe <span class="kf-required">*</span></label>
+          <input type="text" id="kf-ilce" class="kf-input kf-field-input" data-kf-key="ilce" placeholder="İlçe">
+        </div>
+        <div class="kf-field">
+          <label for="kf-il" class="kf-label">İl <span class="kf-required">*</span></label>
+          <input type="text" id="kf-il" class="kf-input kf-field-input" data-kf-key="il" placeholder="İl">
+        </div>
+      </div>
+
+      <div id="kf-validation-msg" class="kf-validation-msg" style="display:none;">
+        Lütfen tüm alanları doldurun.
+      </div>
+
+      <div class="kf-form-actions">
+        <button type="button" id="kf-save-btn" class="kf-btn kf-btn--save">Kaydet</button>
+        <button type="button" id="kf-clear-btn" class="kf-btn kf-btn--clear" style="display:none;">Bilgileri Temizle</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-{%- comment -%} Modal — fixed pozisyon, DOM konumu önemsiz {%- endcomment -%}
-<div id="kf-overlay" class="kf-overlay" role="dialog" aria-modal="true" aria-label="{{ kf_modal_title }}" style="display:none;">
-  <div class="kf-modal">
-    <div class="kf-modal__header">
-      <h3 class="kf-modal__title">{{ kf_modal_title }}</h3>
-      <button type="button" class="kf-modal__close" id="kf-close-btn" aria-label="Kapat">&times;</button>
+{%- comment -%} Mobile: Bottom-sheet overlay {%- endcomment -%}
+<div id="kf-mobile-overlay" class="kf-mobile-overlay" style="display:none;">
+  <div class="kf-mobile-sheet">
+    <div class="kf-mobile-sheet__header">
+      <span class="kf-mobile-sheet__title">Kurumsal Fatura Bilgileri</span>
+      <button type="button" id="kf-mobile-close" class="kf-mobile-sheet__close" aria-label="Kapat">&times;</button>
     </div>
-    <div class="kf-modal__body">
+    <div class="kf-mobile-sheet__body">
       <div class="kf-field">
-        <label for="kf-firma-unvani" class="kf-label">Firma Unvanı</label>
-        <input type="text" id="kf-firma-unvani" class="kf-input" placeholder="Örn: ABC Gıda A.Ş." autocomplete="organization">
+        <label for="kf-m-ad" class="kf-label">Ad <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-ad" class="kf-input kf-m-field-input" data-kf-key="ad" placeholder="Ad" autocomplete="given-name">
       </div>
       <div class="kf-field">
-        <label for="kf-vergi-numarasi" class="kf-label">Vergi Numarası</label>
-        <input type="text" id="kf-vergi-numarasi" class="kf-input" placeholder="Maks. 10 haneli" inputmode="numeric" maxlength="10" autocomplete="off">
+        <label for="kf-m-soyad" class="kf-label">Soyad <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-soyad" class="kf-input kf-m-field-input" data-kf-key="soyad" placeholder="Soyad" autocomplete="family-name">
+      </div>
+      <div class="kf-field">
+        <label for="kf-m-firma-adi" class="kf-label">Firma Unvanı <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-firma-adi" class="kf-input kf-m-field-input" data-kf-key="firma" placeholder="Örn: ABC Gıda A.Ş." autocomplete="organization">
+      </div>
+      <div class="kf-field">
+        <label for="kf-m-vergi-no" class="kf-label">Vergi Numarası <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-vergi-no" class="kf-input kf-m-field-input" data-kf-key="vergi" placeholder="Maks. 10 haneli" inputmode="numeric" maxlength="10" autocomplete="off">
         <span class="kf-hint">Sadece rakam, en fazla 10 karakter</span>
       </div>
       <div class="kf-field">
-        <label for="kf-vergi-dairesi" class="kf-label">Vergi Dairesi</label>
-        <input type="text" id="kf-vergi-dairesi" class="kf-input" placeholder="Örn: Kadıköy">
+        <label for="kf-m-vergi-dairesi" class="kf-label">Vergi Dairesi <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-vergi-dairesi" class="kf-input kf-m-field-input" data-kf-key="daire" placeholder="Örn: Kadıköy">
+      </div>
+      <div class="kf-field">
+        <label for="kf-m-adres" class="kf-label">Adres <span class="kf-required">*</span></label>
+        <textarea id="kf-m-adres" class="kf-input kf-textarea kf-m-field-input" data-kf-key="adres" placeholder="Açık adres" rows="2" autocomplete="street-address"></textarea>
+      </div>
+      <div class="kf-field">
+        <label for="kf-m-ilce" class="kf-label">İlçe <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-ilce" class="kf-input kf-m-field-input" data-kf-key="ilce" placeholder="İlçe">
+      </div>
+      <div class="kf-field">
+        <label for="kf-m-il" class="kf-label">İl <span class="kf-required">*</span></label>
+        <input type="text" id="kf-m-il" class="kf-input kf-m-field-input" data-kf-key="il" placeholder="İl">
+      </div>
+
+      <div id="kf-m-validation-msg" class="kf-validation-msg" style="display:none;">
+        Lütfen tüm alanları doldurun.
       </div>
     </div>
-    <div class="kf-modal__footer">
-      <button type="button" id="kf-save-btn" class="kf-btn kf-btn--save">Kaydet</button>
-      <button type="button" id="kf-cancel-btn" class="kf-btn kf-btn--cancel">Vazgeç</button>
+    <div class="kf-mobile-sheet__footer">
+      <button type="button" id="kf-m-save-btn" class="kf-btn kf-btn--save">Kaydet</button>
+      <button type="button" id="kf-m-clear-btn" class="kf-btn kf-btn--clear" style="display:none;">Bilgileri Temizle</button>
     </div>
   </div>
 </div>
 
 <style>
-  /* ── Buton Alanı — indirim kutusunun altında ── */
+  /* ══════════════════════════════════════
+     ANA ALAN
+     ══════════════════════════════════════ */
   .kf-area {
     margin-top: 20px;
   }
-  .kf-trigger-btn {
+
+  /* ══════════════════════════════════════
+     CHECKBOX LABEL
+     ══════════════════════════════════════ */
+  .kf-checkbox-label {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 12px 20px;
-    border: 1.5px dashed #ccc;
-    border-radius: 8px;
+    gap: 10px;
+    padding: 14px 18px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
     background: #fafafa;
-    color: #444;
-    font-size: 14px;
-    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: inherit;
-    line-height: 1.4;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .kf-trigger-btn:hover {
-    border-color: #999;
-    background: #f0f0f0;
+  .kf-checkbox-label:hover {
+    border-color: #bbb;
+    background: #f5f5f5;
   }
-  .kf-trigger-btn.kf-saved {
-    border-style: solid;
+
+  /* Gerçek checkbox gizle */
+  .kf-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* Özel checkbox kutusu */
+  .kf-checkbox-custom {
+    position: relative;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #bbb;
+    border-radius: 4px;
+    background: #fff;
+    transition: all 0.2s ease;
+  }
+  .kf-checkbox-custom::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s ease;
+  }
+
+  /* Checkbox checked durumu */
+  .kf-checkbox-input:checked ~ .kf-checkbox-custom {
+    background: var(--font-color-header, #1a2b4c);
+    border-color: var(--font-color-header, #1a2b4c);
+  }
+  .kf-checkbox-input:checked ~ .kf-checkbox-custom::after {
+    transform: rotate(45deg) scale(1);
+  }
+
+  /* Label saved durumu */
+  .kf-checkbox-label.kf-saved {
     border-color: #4caf50;
     background: #f2fdef;
+  }
+
+  /* Checkbox text */
+  .kf-checkbox-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+    line-height: 1.4;
+    font-family: inherit;
+  }
+  .kf-checkbox-label.kf-saved .kf-checkbox-text {
     color: #2e7d32;
   }
-  .kf-trigger-btn.kf-saved:hover {
-    background: #e8f5e2;
-  }
-  .kf-btn-icon { font-size: 17px; line-height: 1; }
-  .kf-btn-edit { margin-left: 4px; font-size: 14px; opacity: 0.7; }
 
-  /* ── Overlay ── */
-  .kf-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    animation: kfFadeIn 0.2s ease;
+  /* ══════════════════════════════════════
+     DESKTOP: INLINE FORM (slide-down)
+     ══════════════════════════════════════ */
+  .kf-form-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease,
+                margin-top 0.3s ease;
+    opacity: 0;
+    margin-top: 0;
   }
-  @keyframes kfFadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  /* ── Modal ── */
-  .kf-modal {
-    background: #fff;
-    border-radius: 14px;
-    width: 100%;
-    max-width: 420px;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    animation: kfSlideUp 0.25s ease;
-  }
-  @keyframes kfSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .kf-form-wrapper.kf-open {
+    max-height: 800px;
+    opacity: 1;
+    margin-top: 14px;
   }
 
-  /* ── Header ── */
-  .kf-modal__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 22px 14px;
-    border-bottom: 1px solid #eee;
+  .kf-form-inner {
+    border: 1.5px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 20px;
+    background: #fefefe;
   }
-  .kf-modal__title {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--font-color-header, #1a2b4c);
-    margin: 0;
-    line-height: 1.3;
-  }
-  .kf-modal__close {
-    background: none;
-    border: none;
-    font-size: 26px;
-    color: #999;
-    cursor: pointer;
-    padding: 0 4px;
-    line-height: 1;
-    transition: color 0.15s;
-  }
-  .kf-modal__close:hover { color: #333; }
 
-  /* ── Body ── */
-  .kf-modal__body { padding: 20px 22px; }
-  .kf-field { margin-bottom: 16px; }
-  .kf-field:last-child { margin-bottom: 0; }
+  /* ── Form Row (yan yana alanlar) ── */
+  .kf-form-row--half {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* ══════════════════════════════════════
+     FORM ALANLARI (Ortak stiller)
+     ══════════════════════════════════════ */
+  .kf-field {
+    margin-bottom: 14px;
+  }
+  .kf-field:last-child {
+    margin-bottom: 0;
+  }
+  .kf-form-row--half .kf-field {
+    margin-bottom: 0;
+  }
+  .kf-form-row--half {
+    margin-bottom: 14px;
+  }
+
   .kf-label {
     display: block;
     font-size: 13px;
     font-weight: 600;
     color: #444;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
+  }
+  .kf-required {
+    color: #e53935;
+    font-weight: 700;
   }
   .kf-input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 10px 12px;
     border: 1.5px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
     color: #333;
     background: #fff;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     box-sizing: border-box;
   }
   .kf-input:focus {
@@ -164,19 +291,44 @@
     border-color: var(--font-color-header, #1a2b4c);
     box-shadow: 0 0 0 3px rgba(26, 43, 76, 0.08);
   }
-  .kf-input::placeholder { color: #bbb; }
-  .kf-hint { display: block; font-size: 11px; color: #999; margin-top: 4px; }
+  .kf-input::placeholder {
+    color: #bbb;
+  }
+  .kf-input.kf-invalid {
+    border-color: #e53935;
+  }
+  .kf-textarea {
+    resize: vertical;
+    min-height: 50px;
+  }
+  .kf-hint {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+  }
 
-  /* ── Footer ── */
-  .kf-modal__footer {
+  /* ── Validasyon mesajı ── */
+  .kf-validation-msg {
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    background: #fff5f5;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    color: #c62828;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* ── Form Actions ── */
+  .kf-form-actions {
+    margin-top: 6px;
     display: flex;
-    gap: 10px;
-    padding: 14px 22px 20px;
-    border-top: 1px solid #eee;
+    flex-direction: column;
+    gap: 8px;
   }
   .kf-btn {
-    flex: 1;
-    padding: 11px 16px;
+    padding: 11px 24px;
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -185,116 +337,432 @@
     cursor: pointer;
     transition: all 0.15s ease;
     line-height: 1.3;
+    text-align: center;
   }
-  .kf-btn--save { background: var(--font-color-header, #1a1a2e); color: #fff; }
-  .kf-btn--save:hover { opacity: 0.9; }
-  .kf-btn--save:disabled { opacity: 0.6; cursor: not-allowed; }
-  .kf-btn--save.kf-success { background: #4caf50; }
-  .kf-btn--cancel { background: #f0f0f0; color: #555; }
-  .kf-btn--cancel:hover { background: #e4e4e4; }
+  .kf-btn--save {
+    background: var(--font-color-header, #1a1a2e);
+    color: #fff;
+    width: 100%;
+  }
+  .kf-btn--save:hover {
+    opacity: 0.9;
+  }
+  .kf-btn--save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .kf-btn--save.kf-success {
+    background: #4caf50;
+  }
+  .kf-btn--clear {
+    background: transparent;
+    color: #e53935;
+    border: 1px solid #e5393533;
+    width: 100%;
+    font-size: 13px;
+    padding: 9px 24px;
+  }
+  .kf-btn--clear:hover {
+    background: #fff5f5;
+    border-color: #e53935;
+  }
 
-  /* ── Mobil ── */
+  /* ══════════════════════════════════════
+     MOBILE: BOTTOM-SHEET OVERLAY
+     ══════════════════════════════════════ */
+  .kf-mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: kfFadeIn 0.2s ease;
+  }
+  @keyframes kfFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .kf-mobile-sheet {
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: kfSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes kfSlideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .kf-mobile-sheet__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .kf-mobile-sheet__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--font-color-header, #1a2b4c);
+  }
+  .kf-mobile-sheet__close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+  }
+  .kf-mobile-sheet__close:hover {
+    color: #333;
+  }
+
+  .kf-mobile-sheet__body {
+    padding: 18px 20px;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .kf-mobile-sheet__footer {
+    padding: 14px 20px 20px;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ══════════════════════════════════════
+     RESPONSIVE: Desktop-only / Mobile-only
+     ══════════════════════════════════════ */
+
+  /* Desktop: inline form göster, overlay gizle */
+  .kf-desktop-only {
+    display: block;
+  }
+  .kf-mobile-overlay {
+    /* JS ile display kontrol edilecek, sadece mobile'da gösterilecek */
+  }
+
   @media (max-width: 767px) {
-    .kf-modal { max-width: 92vw; border-radius: 12px; }
-    .kf-modal__header { padding: 16px 18px 12px; }
-    .kf-modal__body { padding: 16px 18px; }
-    .kf-modal__footer { padding: 12px 18px 16px; }
-    .kf-modal__title { font-size: 16px; }
-    .kf-trigger-btn { font-size: 13px; padding: 11px 16px; }
+    /* Mobilde inline form her zaman gizli */
+    .kf-desktop-only {
+      display: none !important;
+    }
+    .kf-checkbox-label {
+      padding: 12px 14px;
+    }
+    .kf-checkbox-text {
+      font-size: 13px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    /* Desktop'ta mobile overlay hiçbir zaman gösterilmez */
+    .kf-mobile-overlay {
+      display: none !important;
+    }
   }
 </style>
 
 <script>
 (function() {
   'use strict';
-  var ATTR_KEYS = { firma: 'Firma Unvani', vergi: 'Vergi Numarasi', daire: 'Vergi Dairesi' };
-  var SAVED_TEXT = {{ kf_saved_text | json }};
+
+  /* ── Key tanımları — Hesap programının beklediği name değerleri ── */
+  var ATTR_KEYS = {
+    ad:    'kfb_ad',
+    soyad: 'kfb_soyad',
+    firma: 'kfb_firma_adi',
+    vergi: 'kfb_vergi_no',
+    daire: 'kfb_vergi_dairesi',
+    adres: 'kfb_adres',
+    ilce:  'kfb_ilce',
+    il:    'kfb_il'
+  };
+  var KEY_ORDER = ['ad', 'soyad', 'firma', 'vergi', 'daire', 'adres', 'ilce', 'il'];
+
+  /* Eski key isimleri — temizlenecek */
+  var OLD_KEYS = ['Firma Unvani', 'Vergi Numarasi', 'Vergi Dairesi'];
+
+  var SAVED_TEXT  = {{ kf_saved_text | json }};
   var DEFAULT_TEXT = {{ kf_button_text | json }};
 
-  var triggerBtn, btnText, overlay, closeBtn, saveBtn, cancelBtn;
-  var inputFirma, inputVergi, inputDaire;
+  /* ── State ── */
+  var dataSaved = false; /* Veri daha önce kaydedilmiş mi */
+  var currentValues = {}; /* Her zaman son bilinen değerler */
 
-  /* Son kaydedilen değerler — vazgeçte bunlara geri dönülür */
-  var savedValues = { firma: '', vergi: '', daire: '' };
+  /* ── DOM refs ── */
+  var checkbox, checkboxText, checkboxLabel, formWrapper;
+  var saveBtn, clearBtn, validationMsg;
+  var mobileOverlay, mobileSheet, mobileCloseBtn, mSaveBtn, mClearBtn, mValidationMsg;
+
+  /* Desktop ve mobile input'ları ayrı tutuyoruz */
+  var desktopInputs = {};
+  var mobileInputs = {};
+
+  function isMobile() {
+    return window.innerWidth <= 767;
+  }
 
   function init() {
-    triggerBtn = document.getElementById('kf-trigger-btn');
-    btnText    = document.getElementById('kf-btn-text');
-    overlay    = document.getElementById('kf-overlay');
-    closeBtn   = document.getElementById('kf-close-btn');
-    saveBtn    = document.getElementById('kf-save-btn');
-    cancelBtn  = document.getElementById('kf-cancel-btn');
-    inputFirma = document.getElementById('kf-firma-unvani');
-    inputVergi = document.getElementById('kf-vergi-numarasi');
-    inputDaire = document.getElementById('kf-vergi-dairesi');
-    if (!triggerBtn || !overlay) return;
+    checkbox      = document.getElementById('kf-checkbox');
+    checkboxText  = document.getElementById('kf-checkbox-text');
+    checkboxLabel = document.getElementById('kf-checkbox-label');
+    formWrapper   = document.getElementById('kf-form-wrapper');
+    saveBtn       = document.getElementById('kf-save-btn');
+    clearBtn      = document.getElementById('kf-clear-btn');
+    validationMsg = document.getElementById('kf-validation-msg');
 
-    /* Vergi numarası: sadece rakam */
-    inputVergi.addEventListener('input', function() {
-      this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
-    });
-    inputVergi.addEventListener('paste', function() {
-      var self = this;
-      setTimeout(function() { self.value = self.value.replace(/[^0-9]/g, '').slice(0, 10); }, 0);
+    mobileOverlay  = document.getElementById('kf-mobile-overlay');
+    mobileSheet    = mobileOverlay ? mobileOverlay.querySelector('.kf-mobile-sheet') : null;
+    mobileCloseBtn = document.getElementById('kf-mobile-close');
+    mSaveBtn       = document.getElementById('kf-m-save-btn');
+    mClearBtn      = document.getElementById('kf-m-clear-btn');
+    mValidationMsg = document.getElementById('kf-m-validation-msg');
+
+    if (!checkbox || !formWrapper) return;
+
+    /* Desktop inputlarını topla */
+    document.querySelectorAll('.kf-field-input').forEach(function(el) {
+      desktopInputs[el.getAttribute('data-kf-key')] = el;
     });
 
-    triggerBtn.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', cancelAndClose);
-    cancelBtn.addEventListener('click', cancelAndClose);
-    overlay.addEventListener('click', function(e) { if (e.target === overlay) cancelAndClose(); });
+    /* Mobile inputlarını topla */
+    document.querySelectorAll('.kf-m-field-input').forEach(function(el) {
+      mobileInputs[el.getAttribute('data-kf-key')] = el;
+    });
+
+    /* Vergi numarası: sadece rakam (desktop + mobile) */
+    [desktopInputs.vergi, mobileInputs.vergi].forEach(function(inp) {
+      if (!inp) return;
+      inp.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+      });
+      inp.addEventListener('paste', function() {
+        var self = this;
+        setTimeout(function() { self.value = self.value.replace(/[^0-9]/g, '').slice(0, 10); }, 0);
+      });
+    });
+
+    /* Tüm inputlarda yazdıkça invalid sınıfını kaldır */
+    var allInputSets = [desktopInputs, mobileInputs];
+    allInputSets.forEach(function(inputSet) {
+      KEY_ORDER.forEach(function(key) {
+        if (inputSet[key]) {
+          inputSet[key].addEventListener('input', function() {
+            if (this.value.trim()) this.classList.remove('kf-invalid');
+          });
+        }
+      });
+    });
+
+    /* ── Checkbox: native change'i engelle, tüm kontrol label click'te ── */
+    checkbox.addEventListener('click', function(e) {
+      e.preventDefault();
+    });
+
+    checkboxLabel.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (isFormOpen()) {
+        /* Form zaten açık → kapat (veri silinmez) */
+        closeForm();
+      } else {
+        /* Form kapalı → aç */
+        openForm();
+      }
+    });
+
+    /* Desktop butonları */
+    saveBtn.addEventListener('click', function() { handleSave(desktopInputs, validationMsg, saveBtn); });
+    clearBtn.addEventListener('click', handleClear);
+
+    /* Mobile butonları */
+    if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', closeMobileSheet);
+    if (mSaveBtn) mSaveBtn.addEventListener('click', function() { handleSave(mobileInputs, mValidationMsg, mSaveBtn); });
+    if (mClearBtn) mClearBtn.addEventListener('click', handleClear);
+
+    /* Mobile overlay dışına tıklama */
+    if (mobileOverlay) {
+      mobileOverlay.addEventListener('click', function(e) {
+        if (e.target === mobileOverlay) closeMobileSheet();
+      });
+    }
+
+    /* Escape tuşu */
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && overlay.style.display !== 'none') cancelAndClose();
+      if (e.key === 'Escape' && mobileOverlay && mobileOverlay.style.display !== 'none') {
+        closeMobileSheet();
+      }
     });
-    saveBtn.addEventListener('click', handleSave);
+
+    /* Sayfa yüklendiğinde mevcut verileri kontrol et */
     loadCartAttributes();
   }
 
-  function openModal() {
-    overlay.style.display = 'flex';
+  /* ── Form Açma/Kapama ── */
+  function isFormOpen() {
+    if (isMobile()) {
+      return mobileOverlay && mobileOverlay.style.display !== 'none';
+    }
+    return formWrapper.classList.contains('kf-open');
+  }
+
+  function openForm() {
+    if (isMobile()) {
+      openMobileSheet();
+    } else {
+      formWrapper.classList.add('kf-open');
+      updateClearBtnVisibility(clearBtn);
+    }
+  }
+
+  function closeForm() {
+    if (isMobile()) {
+      closeMobileSheet();
+    } else {
+      formWrapper.classList.remove('kf-open');
+      validationMsg.style.display = 'none';
+    }
+  }
+
+  function openMobileSheet() {
+    if (!mobileOverlay) return;
+    /* Verileri mobile inputlara senkronize et */
+    syncInputs(desktopInputs, mobileInputs);
+    mobileOverlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    inputFirma.focus();
+    updateClearBtnVisibility(mClearBtn);
   }
 
-  function closeModal() {
-    overlay.style.display = 'none';
+  function closeMobileSheet() {
+    if (!mobileOverlay) return;
+    mobileOverlay.style.display = 'none';
     document.body.style.overflow = '';
+    if (mValidationMsg) mValidationMsg.style.display = 'none';
   }
 
-  /* Vazgeç: inputları son kaydedilen değerlere geri döndür */
-  function cancelAndClose() {
-    inputFirma.value = savedValues.firma;
-    inputVergi.value = savedValues.vergi;
-    inputDaire.value = savedValues.daire;
-    closeModal();
+  /* ── Input senkronizasyonu ── */
+  function syncInputs(from, to) {
+    KEY_ORDER.forEach(function(key) {
+      if (from[key] && to[key]) {
+        to[key].value = from[key].value;
+      }
+    });
   }
 
+  function fillInputsFromValues(inputSet) {
+    KEY_ORDER.forEach(function(key) {
+      if (inputSet[key]) {
+        inputSet[key].value = currentValues[key] || '';
+      }
+    });
+  }
+
+  function readInputsToValues(inputSet) {
+    KEY_ORDER.forEach(function(key) {
+      if (inputSet[key]) {
+        currentValues[key] = inputSet[key].value.trim();
+      }
+    });
+  }
+
+  function updateClearBtnVisibility(btn) {
+    if (btn) {
+      btn.style.display = dataSaved ? 'block' : 'none';
+    }
+  }
+
+  /* ── Cart Attributes Yükleme ── */
   function loadCartAttributes() {
     fetch('/cart.js', { credentials: 'same-origin' })
       .then(function(r) { return r.json(); })
       .then(function(cart) {
         var a = cart.attributes || {};
-        savedValues.firma = a[ATTR_KEYS.firma] || '';
-        savedValues.vergi = a[ATTR_KEYS.vergi] || '';
-        savedValues.daire = a[ATTR_KEYS.daire] || '';
-        inputFirma.value = savedValues.firma;
-        inputVergi.value = savedValues.vergi;
-        inputDaire.value = savedValues.daire;
-        if (savedValues.firma || savedValues.vergi || savedValues.daire) setSavedState();
+        var hasData = false;
+
+        KEY_ORDER.forEach(function(key) {
+          var val = a[ATTR_KEYS[key]] || '';
+          currentValues[key] = val;
+          if (val) hasData = true;
+        });
+
+        /* Desktop ve mobile inputlarını doldur */
+        fillInputsFromValues(desktopInputs);
+        fillInputsFromValues(mobileInputs);
+
+        if (hasData) {
+          checkbox.checked = true;
+          dataSaved = true;
+
+          /* Tüm alanlar doluysa saved state göster */
+          if (allFieldsFilled(desktopInputs)) {
+            setSavedState();
+          }
+          /* Form KAPALI gelir — kullanıcı tıklayarak açar */
+          /* formWrapper.classList.add('kf-open') → yapmıyoruz */
+        }
       })
       .catch(function(e) { console.warn('[KurumsalFatura]', e); });
   }
 
-  function handleSave() {
-    var firma = inputFirma.value.trim();
-    var vergi = inputVergi.value.trim();
-    var daire = inputDaire.value.trim();
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Kaydediliyor\u2026';
+  /* ── Validasyon ── */
+  function allFieldsFilled(inputSet) {
+    for (var i = 0; i < KEY_ORDER.length; i++) {
+      if (!inputSet[KEY_ORDER[i]] || !inputSet[KEY_ORDER[i]].value.trim()) return false;
+    }
+    return true;
+  }
+
+  function validateForm(inputSet) {
+    var valid = true;
+    KEY_ORDER.forEach(function(key) {
+      if (!inputSet[key] || !inputSet[key].value.trim()) {
+        if (inputSet[key]) inputSet[key].classList.add('kf-invalid');
+        valid = false;
+      } else {
+        if (inputSet[key]) inputSet[key].classList.remove('kf-invalid');
+      }
+    });
+    return valid;
+  }
+
+  /* ── Kaydet ── */
+  function handleSave(inputSet, valMsg, btn) {
+    if (!validateForm(inputSet)) {
+      if (valMsg) valMsg.style.display = 'block';
+      /* İlk boş alana focus */
+      for (var i = 0; i < KEY_ORDER.length; i++) {
+        if (inputSet[KEY_ORDER[i]] && !inputSet[KEY_ORDER[i]].value.trim()) {
+          inputSet[KEY_ORDER[i]].focus();
+          break;
+        }
+      }
+      return;
+    }
+
+    if (valMsg) valMsg.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Kaydediliyor\u2026';
+
+    /* Inputlardan değerleri al */
+    readInputsToValues(inputSet);
 
     var body = { attributes: {} };
-    body.attributes[ATTR_KEYS.firma] = firma;
-    body.attributes[ATTR_KEYS.vergi] = vergi;
-    body.attributes[ATTR_KEYS.daire] = daire;
+    KEY_ORDER.forEach(function(key) {
+      body.attributes[ATTR_KEYS[key]] = currentValues[key];
+    });
+
+    /* Eski key'leri temizle */
+    OLD_KEYS.forEach(function(k) { body.attributes[k] = ''; });
 
     fetch('/cart/update.js', {
       method: 'POST',
@@ -304,36 +772,70 @@
     })
     .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(function() {
-      /* Başarılı kayıt — savedValues güncelle */
-      savedValues.firma = firma;
-      savedValues.vergi = vergi;
-      savedValues.daire = daire;
+      dataSaved = true;
+      checkbox.checked = true;
 
-      saveBtn.textContent = '\u2713 Kaydedildi';
-      saveBtn.classList.add('kf-success');
-      if (firma || vergi || daire) setSavedState(); else setDefaultState();
+      /* Diğer inputları da senkronize et */
+      fillInputsFromValues(desktopInputs);
+      fillInputsFromValues(mobileInputs);
+
+      btn.textContent = '\u2713 Kaydedildi';
+      btn.classList.add('kf-success');
+      setSavedState();
+
       setTimeout(function() {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Kaydet';
-        saveBtn.classList.remove('kf-success');
-        closeModal();
-      }, 800);
+        btn.disabled = false;
+        btn.textContent = 'Kaydet';
+        btn.classList.remove('kf-success');
+        closeForm();
+      }, 1000);
     })
     .catch(function(err) {
       console.error('[KurumsalFatura]', err);
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Hata! Tekrar dene';
-      setTimeout(function() { saveBtn.textContent = 'Kaydet'; }, 2000);
+      btn.disabled = false;
+      btn.textContent = 'Hata! Tekrar dene';
+      setTimeout(function() { btn.textContent = 'Kaydet'; }, 2000);
     });
   }
 
-  function setSavedState() {
-    triggerBtn.classList.add('kf-saved');
-    btnText.innerHTML = SAVED_TEXT + ' <span class="kf-btn-edit">\u270E</span>';
+  /* ── Temizle ── */
+  function handleClear() {
+    /* Tüm inputları temizle */
+    KEY_ORDER.forEach(function(key) {
+      currentValues[key] = '';
+      if (desktopInputs[key]) { desktopInputs[key].value = ''; desktopInputs[key].classList.remove('kf-invalid'); }
+      if (mobileInputs[key])  { mobileInputs[key].value = '';  mobileInputs[key].classList.remove('kf-invalid'); }
+    });
+
+    /* Cart attributes'ları temizle */
+    var body = { attributes: {} };
+    KEY_ORDER.forEach(function(key) {
+      body.attributes[ATTR_KEYS[key]] = '';
+    });
+    OLD_KEYS.forEach(function(k) { body.attributes[k] = ''; });
+
+    fetch('/cart/update.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(body)
+    }).catch(function(e) { console.warn('[KurumsalFatura] Temizleme hatası:', e); });
+
+    dataSaved = false;
+    checkbox.checked = false;
+    setDefaultState();
+    closeForm();
   }
+
+  /* ── State yönetimi ── */
+  function setSavedState() {
+    checkboxLabel.classList.add('kf-saved');
+    checkboxText.textContent = SAVED_TEXT;
+  }
+
   function setDefaultState() {
-    triggerBtn.classList.remove('kf-saved');
-    btnText.textContent = DEFAULT_TEXT;
+    checkboxLabel.classList.remove('kf-saved');
+    checkboxText.textContent = DEFAULT_TEXT;
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
