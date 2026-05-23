@@ -585,28 +585,56 @@
   margin-right: 5px;
 }
 
+/* ── CTA BUTON (Hemen Satın Al) & SHOPIFY PAYMENT ── */
 .product_details_info .pr-form-button {
   display: flex;
   flex-wrap: wrap;
-  margin: -15px 0 0 -15px;
-  padding-top: 30px;
+  margin: 0;
+  padding-top: 25px;
+  gap: 12px;
 }
 
 .product_details_info .pr-form-button .ajax-cart-btn {
-  width: calc(50% - 15px);
-  margin: 15px 0 0 15px;
+  width: 100%;
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  border-radius: 3px;
-  height: 45px;
-  background-color: var(--color-primary);
+  border-radius: 8px;
+  height: 54px;
+  background: linear-gradient(135deg, #1a2e5a 0%, #243b6e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.10);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
+}
+
+.product_details_info .pr-form-button .ajax-cart-btn .cart-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .product_details_info .pr-form-button .ajax-cart-btn:hover {
-  background-color: var(--color-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 46, 90, 0.35);
+  background: linear-gradient(135deg, #1e3468 0%, #2a4580 100%);
+}
+
+.product_details_info .pr-form-button .ajax-cart-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(26, 46, 90, 0.25);
+}
+
+.product_details_info .pr-form-button .ajax-cart-btn[disabled] {
+  background: #9ca3af;
+  border-color: transparent;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .product_details_info .pr-form-button .ajax-cart-btn .ajax-loader {
@@ -635,8 +663,8 @@
 }
 
 .product_details_info .pr-form-button .shopify-payment-button {
-  width: calc(50% - 15px);
-  margin: 15px 0 0 15px;
+  width: 100%;
+  margin: 0;
 }
 
 .product_details_info .pr-form-button .shopify-payment-button button {
@@ -645,9 +673,12 @@
   justify-content: center;
   background-color: var(--color-secondary);
   color: #fff;
-  border-radius: 3px;
-  height: 45px;
-  font-weight: 400;
+  border-radius: 8px;
+  height: 54px;
+  font-weight: 600;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .product_details_info .pr-form-button .shopify-payment-button button:hover {
@@ -1005,108 +1036,47 @@
   }
 }
 
-/* ═══════════════════════════════════════════════════════
-   DESKTOP CTA BUTON İYİLEŞTİRME
-   Kapsam: Yalnızca masaüstü (min-width: 768px)
-   Mobil görünüme hiçbir etkisi yoktur.
-   ═══════════════════════════════════════════════════════ */
-@media (min-width: 768px) {
-
-  /* ── 1. Buton Container: full-width layout ── */
-  .product_details_info .pr-form-button {
-    margin-left: 0;
-    padding-top: 25px;
-  }
-
-  /* ── 2. CTA Buton: boyut, font, gradient, border-radius ── */
-  .product_details_info .pr-form-button .ajax-cart-btn {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    height: 54px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #1a2e5a 0%, #243b6e 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 14px rgba(16, 24, 40, 0.10);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* ── 3. Buton Yazısı: bold, uppercase, letter-spacing ── */
-  .product_details_info .pr-form-button .ajax-cart-btn .cart-title {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-
-  /* ── 4. Hover Efekti: lift + shadow + parlak gradient ── */
-  .product_details_info .pr-form-button .ajax-cart-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(26, 46, 90, 0.35);
-    background: linear-gradient(135deg, #1e3468 0%, #2a4580 100%);
-  }
-
-  /* ── 5. Active/Click Efekti ── */
-  .product_details_info .pr-form-button .ajax-cart-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(26, 46, 90, 0.25);
-  }
-
-  /* ── 6. Disabled (Sold Out) durumu — gradient kaldır ── */
-  .product_details_info .pr-form-button .ajax-cart-btn[disabled] {
-    background: #9ca3af;
-    border-color: transparent;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  /* ── 7. Shopify Dynamic Checkout varsa yan yana düzen koru ── */
-  .product_details_info .pr-form-button .shopify-payment-button {
-    width: 100%;
-    max-width: 100%;
-    margin: 12px 0 0 0;
-  }
-
-  /* ── 8. Desktop CTA Güven Metni ── */
-  .desktop-cta-trust {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    width: 100%;
-    margin-top: 16px;
-    font-size: 12px;
-    color: #6b7280;
-    letter-spacing: 0.2px;
-    line-height: 1;
-  }
-
-  .desktop-cta-trust .trust-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-  }
-
-  .desktop-cta-trust .trust-item .trust-icon {
-    font-style: normal;
-    line-height: 1;
-  }
-
-  .desktop-cta-trust .trust-separator {
-    color: #d1d5db;
-    font-size: 10px;
-    line-height: 1;
-  }
+/* ── CTA Güven Metni (Desktop & Mobile) ── */
+.desktop-cta-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #6b7280;
+  letter-spacing: 0.2px;
+  line-height: 1;
 }
 
-/* Mobilde desktop güven metnini gizle */
+.desktop-cta-trust .trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.desktop-cta-trust .trust-item .trust-icon {
+  font-style: normal;
+  line-height: 1;
+}
+
+.desktop-cta-trust .trust-separator {
+  color: #d1d5db;
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Mobilde güven metni biraz küçülsün, yan yana sığması için */
 @media (max-width: 767px) {
   .desktop-cta-trust {
-    display: none !important;
+    font-size: 10px;
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .desktop-cta-trust .trust-item {
+    gap: 2px;
   }
 }
 
