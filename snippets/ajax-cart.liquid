@@ -93,13 +93,7 @@
                     -%}
                       <div class="item-option">
                         {%- if item.product.has_only_default_variant == false -%}
-                          {%- for option in item.options_with_values -%}
-                            <div class="swatch-item">
-                              <span class="heading">{{ option.name }}:</span>
-                              {{ option.value -}}
-                              {%- unless forloop.last %}, {% endunless %}
-                            </div>
-                          {%- endfor -%}
+                          {{ item.options_with_values | map: "value" | join: " " }}
                         {%- endif -%}
                         {%- for property in item.properties -%}
                           {%- assign property_first_char = property.first | slice: 0 -%}
