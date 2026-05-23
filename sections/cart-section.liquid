@@ -362,43 +362,7 @@
                   </div>
                 </div>
               </div>
-              <div class="mobile-sticky-cart sticky d-md-none">
-                {% liquid 
-                  assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
-                  assign ist_value_left = ist_threshold | minus: cart.total_price 
-                  assign ist_procent = cart.total_price | times: 100 | divided_by: ist_threshold | at_most: 100
-                  assign ist_value_left_money = ist_value_left | money
-                  assign ist_promote_txt = settings.istanbul_promote_free_shipping_txt | default: 'İstanbul ücretsiz özel teslimata <b>[value]</b> kaldı'
-                  assign ist_unlocked_txt = settings.istanbul_unlocked_free_shipping_txt | default: 'İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!'
-                %}
-                <div class="ship-bar-bg"><div class="ship-bar-fill" style="width:{{ ist_procent }}%"></div></div>
-                {% if ist_value_left <= 0 %}
-                  <p class="ship-text">{{ ist_unlocked_txt }}</p>
-                {% else %}
-                  <p class="ship-text">{{ ist_promote_txt | replace: '[value]', ist_value_left_money }}</p>
-                {% endif %}
-                <div class="total-row js-contents-subtotal">
-                  <span class="total-label">Ara toplam</span>
-                  <span class="total-price">{{ cart.total_price | money }}</span>
-                </div>
-                <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
-                <div class="trust-badges">
-                  <span class="trust-badge">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L2 3v3c0 2.5 1.8 4.3 4 5 2.2-.7 4-2.5 4-5V3L6 1z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
-                    Vergiler dahil
-                  </span>
-                  <span class="trust-dot"></span>
-                  <span class="trust-badge">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="5" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3 5V3.5a3 3 0 0 1 6 0V5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-                    Güvenli ödeme
-                  </span>
-                  <span class="trust-dot"></span>
-                  <span class="trust-badge">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M3 1h6M2 4l1 7h6l1-7" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Ücretsiz kargo
-                  </span>
-                </div>
-              </div>
+
               {%- if section.settings.delivery_enable -%}
               <div class="cart-delivery-info d-none d-md-flex">
                 <div class="cart-delivery-info__icon">
@@ -412,6 +376,43 @@
               {%- endif -%}
             </div>
           </div>
+        </div>
+      </div>
+      <div class="col-12 mobile-sticky-cart sticky d-md-none">
+        {% liquid 
+          assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
+          assign ist_value_left = ist_threshold | minus: cart.total_price 
+          assign ist_procent = cart.total_price | times: 100 | divided_by: ist_threshold | at_most: 100
+          assign ist_value_left_money = ist_value_left | money
+          assign ist_promote_txt = settings.istanbul_promote_free_shipping_txt | default: 'İstanbul ücretsiz özel teslimata <b>[value]</b> kaldı'
+          assign ist_unlocked_txt = settings.istanbul_unlocked_free_shipping_txt | default: 'İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!'
+        %}
+        <div class="ship-bar-bg"><div class="ship-bar-fill" style="width:{{ ist_procent }}%"></div></div>
+        {% if ist_value_left <= 0 %}
+          <p class="ship-text">{{ ist_unlocked_txt }}</p>
+        {% else %}
+          <p class="ship-text">{{ ist_promote_txt | replace: '[value]', ist_value_left_money }}</p>
+        {% endif %}
+        <div class="total-row js-contents-subtotal">
+          <span class="total-label">Ara toplam</span>
+          <span class="total-price">{{ cart.total_price | money }}</span>
+        </div>
+        <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
+        <div class="trust-badges">
+          <span class="trust-badge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L2 3v3c0 2.5 1.8 4.3 4 5 2.2-.7 4-2.5 4-5V3L6 1z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
+            Vergiler dahil
+          </span>
+          <span class="trust-dot"></span>
+          <span class="trust-badge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="5" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3 5V3.5a3 3 0 0 1 6 0V5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            Güvenli ödeme
+          </span>
+          <span class="trust-dot"></span>
+          <span class="trust-badge">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M3 1h6M2 4l1 7h6l1-7" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ücretsiz kargo
+          </span>
         </div>
       </div>
     </div>
@@ -911,7 +912,7 @@
       bottom: 0;
       z-index: 99;
       box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-      margin: 0 -15px;
+      margin: 0;
     }
     .mobile-sticky-cart .ship-bar-bg { height: 3px; background: #f0f0f0; border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
     .mobile-sticky-cart .ship-bar-fill { height: 100%; background: #2a7a4b; border-radius: 2px; }
