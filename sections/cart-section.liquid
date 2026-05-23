@@ -378,6 +378,7 @@
           </div>
         </div>
       </div>
+      {%- if cart != empty -%}
       <div class="col-12 mobile-sticky-cart sticky d-md-none">
         {% liquid 
           assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
@@ -415,6 +416,7 @@
           </span>
         </div>
       </div>
+      {%- endif -%}
     </div>
   </div>
 </section>
@@ -719,6 +721,29 @@
                 const cartTotalHtml = htmlDocument.documentElement.querySelector('.cart-body-total').innerHTML;
                 if (cartTotalHtml && document.querySelector('.cart-body-total')) {
                   document.querySelector('.cart-body-total').innerHTML = cartTotalHtml;
+                }
+                
+                const isCartEmpty = htmlDocument.documentElement.querySelector('.cart-body') && htmlDocument.documentElement.querySelector('.cart-body').classList.contains('is-empty');
+                
+                var kfWrapper = document.getElementById('kurumsal-fatura-area');
+                var mobileSticky = document.querySelector('.mobile-sticky-cart');
+                
+                if (isCartEmpty) {
+                  if (kfWrapper) kfWrapper.style.display = 'none';
+                  if (mobileSticky) mobileSticky.style.display = 'none';
+                } else {
+                  if (kfWrapper) kfWrapper.style.display = '';
+                  if (mobileSticky) mobileSticky.style.display = '';
+                  
+                  const mobileStickyCartHtml = htmlDocument.documentElement.querySelector('.mobile-sticky-cart') ? htmlDocument.documentElement.querySelector('.mobile-sticky-cart').innerHTML : null;
+                  if (mobileStickyCartHtml && mobileSticky) {
+                    mobileSticky.innerHTML = mobileStickyCartHtml;
+                  }
+                  
+                  const desktopShippingHtml = htmlDocument.documentElement.querySelector('.kf-ist-shipping-desktop') ? htmlDocument.documentElement.querySelector('.kf-ist-shipping-desktop').innerHTML : null;
+                  if (desktopShippingHtml && document.querySelector('.kf-ist-shipping-desktop')) {
+                    document.querySelector('.kf-ist-shipping-desktop').innerHTML = desktopShippingHtml;
+                  }
                 }
                 
                 /* Sepet bosaldiysa trending goster ve slider'i guncelle */

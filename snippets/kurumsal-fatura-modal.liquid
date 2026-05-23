@@ -7,12 +7,37 @@
 {%- endcomment -%}
 
 <div id="kurumsal-fatura-area" class="kf-area">
-  {%- comment -%} Checkbox trigger {%- endcomment -%}
-  <label class="kf-checkbox-label" for="kf-checkbox" id="kf-checkbox-label">
-    <input type="checkbox" id="kf-checkbox" class="kf-checkbox-input">
-    <span class="kf-checkbox-custom"></span>
-    <span class="kf-checkbox-text" id="kf-checkbox-text">{{ kf_button_text }}</span>
-  </label>
+  {%- comment -%} Header Row: Checkbox + Shipping Bar (Desktop) {%- endcomment -%}
+  <div class="kf-header-row">
+    <label class="kf-checkbox-label" for="kf-checkbox" id="kf-checkbox-label">
+      <input type="checkbox" id="kf-checkbox" class="kf-checkbox-input">
+      <span class="kf-checkbox-custom"></span>
+      <span class="kf-checkbox-text" id="kf-checkbox-text">{{ kf_button_text }}</span>
+    </label>
+
+    {%- if cart != empty -%}
+    <div class="kf-ist-shipping-desktop d-none d-md-block">
+      {% liquid 
+        assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
+        assign ist_value_left = ist_threshold | minus: cart.total_price 
+        assign ist_procent = cart.total_price | times: 100 | divided_by: ist_threshold | at_most: 100
+        assign ist_value_left_money = ist_value_left | money
+        assign ist_promote_txt = settings.istanbul_promote_free_shipping_txt | default: 'İstanbul ücretsiz özel teslimata <b>[value]</b> kaldı'
+        assign ist_unlocked_txt = settings.istanbul_unlocked_free_shipping_txt | default: 'İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!'
+      %}
+      <div class="ist-shipping-bar-desktop-inner">
+        <div class="ship-bar-bg">
+          <div class="ship-bar-fill" style="width:{{ ist_procent }}%;"></div>
+        </div>
+        {% if ist_value_left <= 0 %}
+          <p class="ship-text">{{ ist_unlocked_txt }}</p>
+        {% else %}
+          <p class="ship-text">{{ ist_promote_txt | replace: '[value]', ist_value_left_money }}</p>
+        {% endif %}
+      </div>
+    </div>
+    {%- endif -%}
+  </div>
 
   {%- comment -%} Desktop: Inline Form (slides down) {%- endcomment -%}
   <div id="kf-form-wrapper" class="kf-form-wrapper kf-desktop-only">
@@ -135,8 +160,13 @@
   }
 
   /* ══════════════════════════════════════
-     CHECKBOX LABEL
+     CHECKBOX LABEL & HEADER ROW
      ══════════════════════════════════════ */
+  .kf-header-row {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
   .kf-checkbox-label {
     display: flex;
     align-items: center;
@@ -467,6 +497,48 @@
     /* Desktop'ta mobile overlay hiçbir zaman gösterilmez */
     .kf-mobile-overlay {
       display: none !important;
+    }
+    .kf-header-row {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 20px;
+    }
+    .kf-checkbox-label {
+      width: max-content;
+      flex-shrink: 0;
+    }
+    .kf-ist-shipping-desktop {
+      flex: 1;
+      display: flex;
+    }
+    .ist-shipping-bar-desktop-inner {
+      width: 100%;
+      height: 80%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 0; /* Butonun üst ve alt sınırlarına hizalanıp araya boşluk eklendi */
+    }
+    .ist-shipping-bar-desktop-inner .ship-bar-bg {
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      width: 100%;
+    }
+    .ist-shipping-bar-desktop-inner .ship-bar-fill {
+      height: 100%;
+      background: #2a7a4b;
+      transition: width 0.3s ease;
+    }
+    .ist-shipping-bar-desktop-inner .ship-text {
+      margin: 0;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.2;
+    }
+    .ist-shipping-bar-desktop-inner .ship-text b {
+      color: #2a7a4b;
     }
   }
 </style>
