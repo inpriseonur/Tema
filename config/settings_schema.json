@@ -622,6 +622,20 @@
         "id": "istanbul_free_shipping_threshold",
         "label": "Istanbul Free Shipping Threshold (TL)",
         "default": 5000
+      },
+      {
+        "type": "text",
+        "id": "istanbul_promote_free_shipping_txt",
+        "label": "Istanbul Free Shipping Promotion Text",
+        "default": "İstanbul ücretsiz özel teslimata <b>[value]</b> kaldı",
+        "info": "Kalan tutarı göstermek için [value] kullanın. HTML etiketleri (örn: <b>kalın</b>) kullanılabilir."
+      },
+      {
+        "type": "text",
+        "id": "istanbul_unlocked_free_shipping_txt",
+        "label": "Istanbul Free Shipping Success Message",
+        "default": "İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!",
+        "info": "HTML etiketleri kullanılabilir."
       }
     ]
   },

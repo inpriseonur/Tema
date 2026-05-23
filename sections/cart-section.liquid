@@ -367,19 +367,21 @@
                   assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
                   assign ist_value_left = ist_threshold | minus: cart.total_price 
                   assign ist_procent = cart.total_price | times: 100 | divided_by: ist_threshold | at_most: 100
+                  assign ist_value_left_money = ist_value_left | money
+                  assign ist_promote_txt = settings.istanbul_promote_free_shipping_txt | default: 'İstanbul ücretsiz özel teslimata <b>[value]</b> kaldı'
+                  assign ist_unlocked_txt = settings.istanbul_unlocked_free_shipping_txt | default: 'İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!'
                 %}
                 <div class="ship-bar-bg"><div class="ship-bar-fill" style="width:{{ ist_procent }}%"></div></div>
                 {% if ist_value_left <= 0 %}
-                  <p class="ship-text">İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!</p>
+                  <p class="ship-text">{{ ist_unlocked_txt }}</p>
                 {% else %}
-                  <p class="ship-text">İstanbul ücretsiz özel teslimata <b>{{ ist_value_left | money }}</b> kaldı</p>
+                  <p class="ship-text">{{ ist_promote_txt | replace: '[value]', ist_value_left_money }}</p>
                 {% endif %}
                 <div class="total-row js-contents-subtotal">
-                  <div class="total-left">
-                    <span class="total-label">Ara toplam</span>
-                    <span class="total-price">{{ cart.total_price | money }}</span>
-                  </div>
+                  <span class="total-label">Ara toplam</span>
+                  <span class="total-price">{{ cart.total_price | money }}</span>
                 </div>
+                <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
                 <div class="trust-badges">
                   <span class="trust-badge">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L2 3v3c0 2.5 1.8 4.3 4 5 2.2-.7 4-2.5 4-5V3L6 1z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
@@ -396,7 +398,6 @@
                     Ücretsiz kargo
                   </span>
                 </div>
-                <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
               </div>
               {%- if section.settings.delivery_enable -%}
               <div class="cart-delivery-info d-none d-md-flex">
@@ -916,11 +917,10 @@
     .mobile-sticky-cart .ship-bar-fill { height: 100%; background: #2a7a4b; border-radius: 2px; }
     .mobile-sticky-cart .ship-text { font-size: 11px; color: #666; margin-bottom: 8px; line-height: 1.2; }
     .mobile-sticky-cart .ship-text b { color: #2a7a4b; }
-    .mobile-sticky-cart .total-row { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 8px; }
-    .mobile-sticky-cart .total-left { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
-    .mobile-sticky-cart .total-label { font-size: 12px; color: #666; }
+    .mobile-sticky-cart .total-row { display: flex; flex-direction: row; align-items: baseline; justify-content: space-between; margin-bottom: 10px; margin-top: 4px; }
+    .mobile-sticky-cart .total-label { font-size: 14px; color: #666; font-weight: 500; }
     .mobile-sticky-cart .total-price { font-size: 20px; font-weight: 600; color: #1a2b4c; }
-    .mobile-sticky-cart .trust-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+    .mobile-sticky-cart .trust-badges { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 10px; margin-bottom: 0; }
     .mobile-sticky-cart .trust-badge { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #666; }
     .mobile-sticky-cart .trust-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
     .mobile-sticky-cart .checkout-btn-mobile { width: 100%; padding: 14px; background: #1a1a2e; color: #fff; font-size: 15px; font-weight: 600; border: none; border-radius: 10px; cursor: pointer; display: block; text-align: center; text-decoration: none; }
@@ -948,11 +948,15 @@
     qty-box {
       grid-column: 1;
       grid-row: 2;
+      margin-left: 60px;
+      transform: scale(0.85);
+      transform-origin: left center;
     }
     .cart-item-totals .item-price {
       grid-column: 2;
       grid-row: 2;
-      text-align: center;
+      text-align: right;
+      padding-right: 15px;
       margin: 0 !important;
     }
     delpro-btn {
