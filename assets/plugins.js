@@ -851,11 +851,20 @@ if (!customElements.get('cart-action')) {
     }
     triggerSendHand(evt) {
       evt.preventDefault();
-      if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
+      if (this.submitButton.getAttribute('aria-disabled') === 'true' || this.submitButton.classList.contains('success')) return;
       this.stHandErrorTxt();
       this.submitButton.setAttribute('aria-disabled', true);
       this.submitButton.classList.add('loading');
       this.querySelector('.ajax-loader').classList.remove('hidden');
+
+      const btnTextSpan = this.submitButton.querySelector('span.cart-title') || this.submitButton.querySelector('span');
+      if (btnTextSpan && !this.originalBtnText) {
+        this.originalBtnText = btnTextSpan.textContent;
+      }
+      if (btnTextSpan) {
+        btnTextSpan.textContent = 'Ekleniyor...';
+      }
+
       const config = stFetchConfig('javascript');
       config.headers['X-Requested-With'] = 'XMLHttpRequest';
       delete config.headers['Content-Type'];
@@ -872,36 +881,68 @@ if (!customElements.get('cart-action')) {
           if (response.status) {
             this.stHandErrorTxt(response.description);
             const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+            if (btnTextSpan && this.originalBtnText) {
+              btnTextSpan.textContent = this.originalBtnText;
+            }
             if (!soldOutMessage) return;
             this.submitButton.setAttribute('aria-disabled', true);
             this.submitButton.querySelector('span').classList.add('hidden');
             soldOutMessage.classList.remove('hidden');
             this.error = true;
             return;
-          } else if (!this.cart) {
-            window.location = window.routes.cart_url;
+          }
+          
+          this.isSuccess = true;
+          this.submitButton.classList.remove('loading');
+          this.submitButton.classList.add('success');
+          this.querySelector('.ajax-loader').classList.add('hidden');
+          if (btnTextSpan) {
+            btnTextSpan.textContent = 'Sepete eklendi, yönleniyor...';
+          }
+
+          if (!this.cart) {
+            setTimeout(() => {
+              window.location = window.routes.cart_url;
+            }, 800);
             return;
           }
           if (!this.error) live(SP_OBJECT.ajxcartRefresh, {source: 'cart-action'});
           this.error = false;
           const quickAddModal = this.closest('popup-view');
-          if (quickAddModal) {
-            document.body.addEventListener('modalClosed', () => {
-              setTimeout(() => { this.cart.renderContents(response) });
-            }, { once: true });
-            quickAddModal.hide(true);
-          } else {
-            this.cart.renderContents(response);
-          }
+          
+          setTimeout(() => {
+            if (quickAddModal) {
+              document.body.addEventListener('modalClosed', () => {
+                setTimeout(() => { this.cart.renderContents(response) });
+              }, { once: true });
+              quickAddModal.hide(true);
+            } else {
+              this.cart.renderContents(response);
+            }
+            
+            setTimeout(() => {
+              this.isSuccess = false;
+              this.submitButton.classList.remove('success');
+              if (btnTextSpan && this.originalBtnText) {
+                 btnTextSpan.textContent = this.originalBtnText;
+              }
+              this.submitButton.removeAttribute('aria-disabled');
+            }, 1000);
+          }, 800);
         })
         .catch((e) => {
           console.error(e);
         })
         .finally(() => {
-          this.submitButton.classList.remove('loading');
-          if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
-          if (!this.error) this.submitButton.removeAttribute('aria-disabled');
-          this.querySelector('.ajax-loader').classList.add('hidden');
+          if (!this.isSuccess) {
+            this.submitButton.classList.remove('loading');
+            if (btnTextSpan && this.originalBtnText) {
+              btnTextSpan.textContent = this.originalBtnText;
+            }
+            if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
+            if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+            this.querySelector('.ajax-loader').classList.add('hidden');
+          }
         });
     }
     stHandErrorTxt(errorMessage = false) {
