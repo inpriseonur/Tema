@@ -1290,6 +1290,12 @@ product grid css
   }
 }
 
+@media (max-width: 767px) {
+  .single-product-wrap .product-image .product-action {
+    display: none !important;
+  }
+}
+
 
 
 .shop-product-wrap ul.product-view {
@@ -1768,6 +1774,7 @@ content main title css
   }
   .quickview-block .product-details .detail-wrap .product_details{
     width: 100%;
+    margin: 0 !important;
   }
   .quickview-block .product-details .detail-wrap .product_details.detail-info {
     width: 100%;

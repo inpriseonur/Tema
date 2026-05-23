@@ -400,20 +400,30 @@
         </div>
         <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
         <div class="trust-badges">
+          {%- if settings.desktop_cta_badge_1_text != blank -%}
           <span class="trust-badge">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L2 3v3c0 2.5 1.8 4.3 4 5 2.2-.7 4-2.5 4-5V3L6 1z" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>
-            Vergiler dahil
+            {{ settings.desktop_cta_badge_1_icon }}
+            {{ settings.desktop_cta_badge_1_text }}
           </span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_1_text != blank and settings.desktop_cta_badge_2_text != blank -%}
           <span class="trust-dot"></span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_2_text != blank -%}
           <span class="trust-badge">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="5" width="10" height="6" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M3 5V3.5a3 3 0 0 1 6 0V5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-            Güvenli ödeme
+            {{ settings.desktop_cta_badge_2_icon }}
+            {{ settings.desktop_cta_badge_2_text }}
           </span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_2_text != blank and settings.desktop_cta_badge_3_text != blank -%}
           <span class="trust-dot"></span>
+          {%- endif -%}
+          {%- if settings.desktop_cta_badge_3_text != blank -%}
           <span class="trust-badge">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4h10M3 1h6M2 4l1 7h6l1-7" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Ücretsiz kargo
+            {{ settings.desktop_cta_badge_3_icon }}
+            {{ settings.desktop_cta_badge_3_text }}
           </span>
+          {%- endif -%}
         </div>
       </div>
       {%- endif -%}
@@ -937,7 +947,9 @@
       bottom: 0;
       z-index: 99;
       box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
-      margin: 0;
+      width: 100vw !important;
+      margin: 0 !important;
+      margin-left: calc(-50vw + 50%) !important;
     }
     .mobile-sticky-cart .ship-bar-bg { height: 3px; background: #f0f0f0; border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
     .mobile-sticky-cart .ship-bar-fill { height: 100%; background: #2a7a4b; border-radius: 2px; }

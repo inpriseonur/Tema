@@ -351,6 +351,14 @@
     font-size: 13px;
     line-height: 1;
   }
+
+  /* Quick view exception: use desktop layout for countdown on mobile quick view */
+  .quickview-block .price-countdown {
+    display: flex !important;
+  }
+  .quickview-block .qty-countdown-mobile {
+    display: none !important;
+  }
 }
 
 /* product select variant css */

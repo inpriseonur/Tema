@@ -1,43 +1,56 @@
 <ul class="grid-wrap">
+  {%- assign current_url = request.path -%}
   {% for block in section.blocks %}
   {%- case block.type -%}
   {%- when 'icon_custom' -%}
   <li class="grid-wrapper">
-    <a class="icon-block" href="{{ block.settings.custom_url }}">
+    <a class="icon-block {% if current_url == block.settings.custom_url %}active{% endif %}" href="{{ block.settings.custom_url }}">
       <span class="icon">{{ block.settings.custom_icon }}</span>
       <span class="title">{{ block.settings.custom_title }}</span>
     </a>
   </li>
-  {%- when 'icon_user' -%}
+  {%- when 'icon_search' -%}
   <li class="grid-wrapper">
-    <a class="icon-block" {% if customer and shop.customer_accounts_enabled %}href="{{ routes.account_url }}"{% else %} {% if settings.account_popup_enable %} href="#accountmodal" data-bs-toggle="modal"{% else %} href="{{ routes.account_url }}" {% endif %}{% endif %} class="acc-ti">
-      <span class="icon">{% if customer %}<i class="icon-user"></i>{% else %}<i class="icon-user"></i>{% endif %}</span>
-      <span class="title">{{ block.settings.user_title }}</span>
+    <a class="icon-block search-popup" href="#searchmodal" data-bs-toggle="modal">
+      <span class="icon"><i class="icon-magnifier"></i></span>
+      <span class="title">{{ block.settings.search_title }}</span>
+    </a>
+  </li>
+  {%- when 'icon_cart' -%}
+  <li class="grid-wrapper">
+    <a class="icon-block cart-dominant {% if current_url == routes.cart_url %}active{% endif %}" href="{{ routes.cart_url }}">
+      <span class="icon cart-icon-wrapper">
+        <i class="icon-handbag"></i>
+        {% if cart.item_count > 0 %}
+          <span class="cart-counter">{{ cart.item_count }}</span>
+        {% endif %}
+      </span>
+      <span class="title">{{ block.settings.cart_title }}</span>
     </a>
   </li>
   {%- when 'icon_wishlist' -%}
   <li class="grid-wrapper">
-    <a class="icon-block" href="{{ settings.wishlist_page_url }}">
+    <a class="icon-block {% if current_url == settings.wishlist_page_url %}active{% endif %}" href="{{ settings.wishlist_page_url }}">
       <span class="icon"><i class="icon-heart"></i><span class="wishlist-counter"></span></span>
       <span class="title">{{ block.settings.wishlist_title }}</span>
     </a>
   </li>
-  {%- when 'icon_search' -%}
+  {%- when 'icon_user' -%}
   <li class="grid-wrapper">
-    <a class="icon-block" href="#searchmodal" class="search-popup" data-bs-toggle="modal">
-      <span class="icon"><i class="icon-magnifier"></i></span>
-      <span class="title">{{ block.settings.search_title }}</span>
+    <a class="icon-block {% if current_url == routes.account_url %}active{% endif %}" {% if customer and shop.customer_accounts_enabled %}href="{{ routes.account_url }}"{% else %} {% if settings.account_popup_enable %} href="#accountmodal" data-bs-toggle="modal"{% else %} href="{{ routes.account_url }}" {% endif %}{% endif %} class="acc-ti">
+      <span class="icon">{% if customer %}<i class="icon-user"></i>{% else %}<i class="icon-user"></i>{% endif %}</span>
+      <span class="title">{{ block.settings.user_title }}</span>
     </a>
   </li>
   {%- endcase -%}
   {% endfor %}
 </ul>
+
 {% schema %}
 {
   "name": "Mobile sticky menu",
   "class": "mobile-sticky-menu",
-  "settings": [
-  ],
+  "settings": [],
   "blocks": [
     {
       "type": "icon_custom",
@@ -78,6 +91,19 @@
       ]
     },
     {
+      "type": "icon_cart",
+      "name": "Icon Cart",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "cart_title",
+          "label": "Cart title",
+          "default": "Sepetim"
+        }
+      ]
+    },
+    {
       "type": "icon_wishlist",
       "name": "Icon Wishlist",
       "limit": 1,
@@ -111,54 +137,131 @@
   ]
 }
 {% endschema %}
+
 <style>
 .mobile-sticky-menu {
   display: none;
-  position: sticky;
+  position: fixed;
   bottom: 0;
-  z-index: 8;
-  background-color: #fff;
-  box-shadow: 0 0 30px 0 rgba(0,0,0,10%);
+  left: 0;
+  width: 100%;
+  z-index: 99;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 .mobile-sticky-menu ul.grid-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .mobile-sticky-menu ul.grid-wrap li.grid-wrapper {
-  width: 25%;
+  flex: 1;
   padding: 10px 0;
-  border-right: 1px solid rgba(0,0,0,10%);
+  border-right: none;
 }
 .mobile-sticky-menu a.icon-block {
   display: flex;
   align-items: center;
   flex-direction: column;
   line-height: 1;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  justify-content: center;
 }
 .mobile-sticky-menu a.icon-block span.icon {
   font-size: 20px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
 }
 .mobile-sticky-menu a.icon-block span.title {
-  font-size: 12px;
-  padding-top: 5px;
+  font-size: 11px;
+  font-weight: 500;
 }
-.mobile-sticky-menu a.icon-block span.icon .wishlist-counter {
-    font-size: 12px;
-    color: #fff;
-    border-radius: 50px;
-    height: 20px;
-    width: 20px;
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    margin: 0;
-    display: flex;
-    background-color: var(--font-color-header);
-    align-items: center;
-    justify-content: center;
+
+/* Active State */
+.mobile-sticky-menu a.icon-block.active {
+  color: #1A2B4C;
 }
+.mobile-sticky-menu a.icon-block.active span.icon {
+  color: #1A2B4C;
+}
+.mobile-sticky-menu a.icon-block.active span.title {
+  font-weight: 600;
+}
+
+/* Cart Dominant Center Button */
+.mobile-sticky-menu a.icon-block.cart-dominant {
+  position: relative;
+}
+.mobile-sticky-menu a.icon-block.cart-dominant span.cart-icon-wrapper {
+  background-color: #1A2B4C;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -35px;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  font-size: 22px;
+  margin-bottom: 0;
+  transition: transform 0.2s ease;
+}
+.mobile-sticky-menu a.icon-block.cart-dominant span.title {
+  padding-top: 25px;
+}
+.mobile-sticky-menu a.icon-block.cart-dominant.active span.cart-icon-wrapper {
+  transform: scale(1.05);
+}
+.mobile-sticky-menu a.icon-block.cart-dominant.active span.title {
+  color: #1A2B4C;
+}
+
+/* Badges */
+.mobile-sticky-menu a.icon-block span.icon .wishlist-counter,
+.mobile-sticky-menu a.icon-block span.icon .cart-counter {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d1121b;
+  background-color: #fff;
+  border: 1px solid #d1121b;
+  border-radius: 50px;
+  height: 18px;
+  min-width: 18px;
+  padding: 0 4px;
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-sticky-menu a.icon-block.cart-dominant span.icon .cart-counter {
+  background-color: #e50010;
+  color: #fff;
+  border: 2px solid #fff;
+  top: 0px;
+  right: -5px;
+  height: 20px;
+  min-width: 20px;
+}
+
 @media(max-width: 600px){
   .mobile-sticky-menu {
     display: block;
