@@ -1111,18 +1111,27 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   FAVORİLERE EKLE BUTONU — Desktop + Mobil Ortak Stil
-   CTA + güven metninin hemen altında, ortalanmış,
-   minimal text-link görünümü.
+   FAVORİLER + WHATSAPP SATIRI — Desktop + Mobil Ortak
+   Sol: ♡ Favorime Ekle  |  Sağ: WhatsApp'tan Sor
    ═══════════════════════════════════════════════════════ */
-.product_details_info button.wishlist.form-btn {
+.product-action-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  justify-content: space-between;
   width: 100%;
   margin-top: 14px;
-  padding: 8px 0;
+  padding: 6px 0;
+  gap: 12px;
+}
+
+/* ── Favoriler Butonu (sol) ── */
+.product_details_info .product-action-row button.wishlist.form-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: auto;
+  margin: 0;
+  padding: 6px 0;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -1133,47 +1142,89 @@
   line-height: 1;
 }
 
-.product_details_info button.wishlist.form-btn i {
+.product_details_info .product-action-row button.wishlist.form-btn i {
   font-size: 15px;
   line-height: 1;
   transition: all 0.2s ease;
 }
 
-.product_details_info button.wishlist.form-btn span {
+.product_details_info .product-action-row button.wishlist.form-btn span {
   font-size: 13px;
   line-height: 1;
 }
 
-.product_details_info button.wishlist.form-btn:hover {
+.product_details_info .product-action-row button.wishlist.form-btn:hover {
   color: #e74c3c;
 }
 
-.product_details_info button.wishlist.form-btn:hover i {
+.product_details_info .product-action-row button.wishlist.form-btn:hover i {
   transform: scale(1.15);
 }
 
 /* Favorilere eklenmiş durumu */
-.product_details_info button.wishlist.form-btn.active-wishlist {
+.product_details_info .product-action-row button.wishlist.form-btn.active-wishlist {
   color: #e74c3c;
 }
 
-.product_details_info button.wishlist.form-btn.active-wishlist i:before {
+.product_details_info .product-action-row button.wishlist.form-btn.active-wishlist i:before {
   content: "\f004";
 }
 
-/* Mobilde biraz daha kompakt */
+/* ── WhatsApp Linki (sağ) ── */
+.product-whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #25D366;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.product-whatsapp-link i {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.product-whatsapp-link span {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.product-whatsapp-link:hover {
+  color: #1FAD55;
+}
+
+.product-whatsapp-link:hover i {
+  transform: scale(1.15);
+}
+
+/* ── Mobil ince ayar ── */
 @media (max-width: 767px) {
-  .product_details_info button.wishlist.form-btn {
+  .product-action-row {
     margin-top: 10px;
-    font-size: 12px;
-    justify-content: flex-start;
+    gap: 8px;
   }
 
-  .product_details_info button.wishlist.form-btn i {
+  .product_details_info .product-action-row button.wishlist.form-btn,
+  .product_details_info .product-action-row button.wishlist.form-btn span {
+    font-size: 12px;
+  }
+
+  .product_details_info .product-action-row button.wishlist.form-btn i {
     font-size: 14px;
   }
 
-  .product_details_info button.wishlist.form-btn span {
+  .product-whatsapp-link,
+  .product-whatsapp-link span {
     font-size: 12px;
+  }
+
+  .product-whatsapp-link i {
+    font-size: 16px;
   }
 }

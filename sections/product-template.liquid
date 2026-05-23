@@ -478,12 +478,18 @@
                   {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
                   
                   {%- when 'product_wishlist' -%}
-                  <button class="wishlist wishlist-custom-action form-btn"  data-handle="{{ product.handle }}" aria-label="{{ product.handle }}" {{ block.shopify_attributes }}>
-                    <i class="fa fa-heart-o"></i>
-                    {% if block.settings.wishlist_title %}
-                    <span>{{ block.settings.wishlist_title }}</span>
-                    {% endif %}
-                  </button>
+                  <div class="product-action-row" {{ block.shopify_attributes }}>
+                    <button class="wishlist wishlist-custom-action form-btn"  data-handle="{{ product.handle }}" aria-label="{{ product.handle }}">
+                      <i class="fa fa-heart-o"></i>
+                      {% if block.settings.wishlist_title %}
+                      <span>{{ block.settings.wishlist_title }}</span>
+                      {% endif %}
+                    </button>
+                    <a href="https://wa.me/905412450690" target="_blank" rel="noopener noreferrer" class="product-whatsapp-link">
+                      <i class="fa fa-whatsapp"></i>
+                      <span>WhatsApp'tan Sor</span>
+                    </a>
+                  </div>
                   {%- when 'product_sku' -%}
                   {%- if current_variant.sku.size > 0 -%}
                   <div class="product-sku" {{ block.shopify_attributes }}>
