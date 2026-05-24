@@ -33,7 +33,7 @@
       </div>
       {%- comment -%}Desktop CTA altı güven metni — tema ayarlarından dinamik{%- endcomment -%}
       {%- if settings.desktop_cta_trust_enable -%}
-        <div class="desktop-cta-trust">
+        <div class="desktop-cta-trust d-none d-md-flex">
           {%- if settings.desktop_cta_badge_1_text != blank -%}
             <span class="trust-item">
               <span class="trust-icon">{{ settings.desktop_cta_badge_1_icon }}</span>

@@ -411,6 +411,35 @@
                   <div class="pro-detail-action" {{ block.shopify_attributes }}>
                    {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %} 
                   </div>
+                  {%- comment -%}Mobil CTA altı güven metni — varyantların altına taşındı{%- endcomment -%}
+                  {%- if settings.desktop_cta_trust_enable -%}
+                    <div class="desktop-cta-trust d-flex d-md-none" style="margin-top: 10px;">
+                      {%- if settings.desktop_cta_badge_1_text != blank -%}
+                        <span class="trust-item">
+                          <span class="trust-icon">{{ settings.desktop_cta_badge_1_icon }}</span>
+                          <span>{{ settings.desktop_cta_badge_1_text }}</span>
+                        </span>
+                      {%- endif -%}
+                      {%- if settings.desktop_cta_badge_1_text != blank and settings.desktop_cta_badge_2_text != blank -%}
+                        <span class="trust-separator">·</span>
+                      {%- endif -%}
+                      {%- if settings.desktop_cta_badge_2_text != blank -%}
+                        <span class="trust-item">
+                          <span class="trust-icon">{{ settings.desktop_cta_badge_2_icon }}</span>
+                          <span>{{ settings.desktop_cta_badge_2_text }}</span>
+                        </span>
+                      {%- endif -%}
+                      {%- if settings.desktop_cta_badge_2_text != blank and settings.desktop_cta_badge_3_text != blank -%}
+                        <span class="trust-separator">·</span>
+                      {%- endif -%}
+                      {%- if settings.desktop_cta_badge_3_text != blank -%}
+                        <span class="trust-item">
+                          <span class="trust-icon">{{ settings.desktop_cta_badge_3_icon }}</span>
+                          <span>{{ settings.desktop_cta_badge_3_text }}</span>
+                        </span>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
                   {%- when 'quantity_selector' -%}
                   <div id="Quantity-Form-{{ section.id }}" class="product-qty" {{ block.shopify_attributes }}>
                   {%- assign cart_qty = cart | item_count_for_variant: product.selected_or_first_available_variant.id -%}

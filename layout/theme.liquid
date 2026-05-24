@@ -376,37 +376,10 @@
 
         .sticky-top-row {
           display: flex;
-          align-items: stretch;
-          justify-content: space-between;
+          align-items: center;
+          justify-content: center;
           width: 100%;
           gap: 5px;
-        }
-
-        .mobile-sticky-badges {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          max-width: 160px;
-          padding: 2px 0;
-          gap: 4px;
-        }
-
-        .sticky-badge-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 4px;
-          font-size: 10px;
-          line-height: 1;
-        }
-        .sticky-badge-item span {
-          color: var(--color-text-secondary, #6b7280);
-        }
-        .sticky-badge-item svg {
-          width: 12px;
-          height: 12px;
-          margin-top: 1px;
-          flex-shrink: 0;
-          color: #4a8c3f;
         }
 
 
@@ -581,34 +554,32 @@
           .slider-big .big-button { display: none !important; }
           .mobile-sticky-price {
             display: flex;
-            flex-direction: column;
             justify-content: center;
-            flex: 0 0 50%;
-            max-width: 50%;
-            gap: 2px;
+            width: 100%;
           }
           .mobile-sticky-price .price-box { 
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 8px;
           }
           .mobile-sticky-price .new-price {
-            flex: 0 0 100%;
-            font-size: 16px !important;
+            font-size: 18px !important;
             font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 2px;
+            line-height: 1;
+            margin: 0 !important;
+            color: #1a2b4c;
           }
           .mobile-sticky-price .old-price {
-            font-size: 11px !important;
+            font-size: 13px !important;
             margin: 0 !important;
             line-height: 1;
           }
           .mobile-sticky-price .product-label {
             margin: 0 !important;
-            transform: scale(0.85);
-            transform-origin: left center;
+            transform: scale(0.9);
+            transform-origin: center;
           }
         }
         @media screen and (min-width: 750px) { .sticky-top-row, .mobile-sticky-price { display: none !important; } }
@@ -642,30 +613,7 @@
           topRow.className = 'sticky-top-row';
           topRow.appendChild(wrapper); // Fiyat kutusunu ekle
 
-          // Dinamik güven rozetlerini ekle
-          var badgesHtml = `
-            <div class="mobile-sticky-badges">
-              {%- if settings.desktop_cta_badge_1_text != blank -%}
-              <div class="sticky-badge-item">
-                {{ settings.desktop_cta_badge_1_icon }}
-                <span>{{ settings.desktop_cta_badge_1_text }}</span>
-              </div>
-              {%- endif -%}
-              {%- if settings.desktop_cta_badge_2_text != blank -%}
-              <div class="sticky-badge-item">
-                {{ settings.desktop_cta_badge_2_icon }}
-                <span>{{ settings.desktop_cta_badge_2_text }}</span>
-              </div>
-              {%- endif -%}
-              {%- if settings.desktop_cta_badge_3_text != blank -%}
-              <div class="sticky-badge-item">
-                {{ settings.desktop_cta_badge_3_icon }}
-                <span>{{ settings.desktop_cta_badge_3_text }}</span>
-              </div>
-              {%- endif -%}
-            </div>
-          `;
-          topRow.insertAdjacentHTML('beforeend', badgesHtml);
+
 
           // Hazırlanan üst satırı butondan önceye ekle
           btn.prepend(topRow);
