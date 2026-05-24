@@ -1,0 +1,126 @@
+{%- if section.settings.campaign_popup_enable -%}
+<div class="campaign-popup-wrapper {{ section.settings.campaign_popup_style }} {{ section.settings.campaign_popup_trigger_class }}" 
+     id="campaign-popup"
+     style="
+      --cp-border-color: {{ section.settings.campaign_popup_border_color }};
+      --cp-accent-color: {{ section.settings.campaign_popup_accent_color }};
+      --cp-bg-color: {{ section.settings.campaign_popup_bg_color }};
+     ">
+  
+  <div class="cp-inner">
+    <div class="cp-success-icon" style="display: none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#2b5a19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    
+    <div class="cp-content">
+      <div class="cp-header">
+        <h4 class="cp-title" data-default="{{ section.settings.campaign_popup_title | escape }}" data-applied="{{ section.settings.campaign_popup_applied_title | escape }}">
+          {{ section.settings.campaign_popup_title }}
+        </h4>
+        {%- if section.settings.campaign_popup_style == 'style_c' -%}
+          <span class="cp-badge">{{ section.settings.campaign_popup_badge_text }}</span>
+        {%- endif -%}
+      </div>
+      
+      {%- if section.settings.campaign_popup_subtitle != blank -%}
+      <p class="cp-subtitle" data-default="{{ section.settings.campaign_popup_subtitle | escape }}" data-applied="{{ section.settings.campaign_popup_applied_subtitle | escape }}">
+        {{ section.settings.campaign_popup_subtitle }}
+      </p>
+      {%- endif -%}
+    </div>
+  </div>
+  
+  <button type="button" class="cp-button">
+    {%- if section.settings.campaign_popup_style == 'style_a' -%}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 12 20 22 4 22 4 12"></polyline>
+      <rect x="2" y="7" width="20" height="5"></rect>
+      <line x1="12" y1="22" x2="12" y2="7"></line>
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+    </svg>
+    {%- endif -%}
+    <span>{{ section.settings.campaign_popup_btn_text }}</span>
+  </button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const popupWrapper = document.getElementById('campaign-popup');
+  if (!popupWrapper) return;
+
+  const titleEl = popupWrapper.querySelector('.cp-title');
+  const subtitleEl = popupWrapper.querySelector('.cp-subtitle');
+  
+  // Kutuyu "uygulandı" durumuna getiren fonksiyon
+  const applyCouponState = () => {
+    popupWrapper.classList.add('applied');
+    if (titleEl && titleEl.dataset.applied) {
+      titleEl.textContent = titleEl.dataset.applied;
+    }
+    if (subtitleEl && subtitleEl.dataset.applied) {
+      subtitleEl.textContent = subtitleEl.dataset.applied;
+    }
+  };
+
+  // Sepette herhangi bir indirim olup olmadığını kontrol eden fonksiyon
+  const checkCartForDiscount = () => {
+    fetch('/cart.js?t=' + Date.now())
+      .then(r => r.json())
+      .then(cart => {
+        const hasCartDiscount = 
+          (cart.cart_level_discount_applications && cart.cart_level_discount_applications.length > 0) || 
+          (cart.total_discount > 0);
+          
+        const hasCookieDiscount = document.cookie.includes('discount_code=') || document.cookie.includes('gokwik');
+
+        let hasKwikAIState = false;
+        try {
+          const kpInfoStr = sessionStorage.getItem('KP_MARKETING_POPUP_INFO');
+          if (kpInfoStr) {
+            const kpInfo = JSON.parse(kpInfoStr);
+            if (kpInfo.timesPopupOpened && kpInfo.timesPopupOpened >= parseInt(kpInfo.globalLimit || 1)) {
+              hasKwikAIState = true;
+            }
+          }
+          if (sessionStorage.getItem('TRIGGERED_MAKETING_POPUPS') || localStorage.getItem('autoload-popup-id')) {
+            hasKwikAIState = true;
+          }
+        } catch(e) {}
+
+        if (hasCartDiscount || hasCookieDiscount || hasKwikAIState) {
+          applyCouponState();
+        }
+      })
+      .catch(err => console.error("Sepet kontrol hatası:", err));
+  };
+
+  checkCartForDiscount();
+
+  const cpButton = popupWrapper.querySelector('.cp-button');
+  if (cpButton) {
+    cpButton.addEventListener('click', () => {
+      let checks = 0;
+      const interval = setInterval(() => {
+        checkCartForDiscount();
+        checks++;
+        if (checks >= 45 || popupWrapper.classList.contains('applied')) {
+          clearInterval(interval);
+        }
+      }, 2000);
+    });
+  }
+
+  window.addEventListener('message', function(event) {
+    if (event.data && (typeof event.data === 'string' && event.data.includes('coupon') || event.data.action === 'coupon_applied' || event.data.type === 'KwikAI_Success')) {
+      setTimeout(() => checkCartForDiscount(), 1000);
+    }
+  });
+  document.addEventListener('KwikAI:Success', checkCartForDiscount);
+  document.addEventListener('KwikAI:CouponApplied', checkCartForDiscount);
+});
+</script>
+{%- endif -%}

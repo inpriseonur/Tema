@@ -1227,3 +1227,172 @@
     font-size: 16px;
   }
 }
+
+/* --- KAMPANYA POPUP KUTUSU (Masaüstü Sütun Sağ Üst) --- */
+.campaign-popup-wrapper {
+  margin-bottom: 25px; /* Altındaki kutunun negatif marjı (-15px) yüzünden 10px gerçek boşluk kalır */
+  border-radius: 8px;
+  background-color: var(--cp-bg-color, #FFF9EC);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Masaüstü gizleme/gösterme kontrolü */
+@media (max-width: 991px) {
+  .campaign-popup-wrapper {
+    display: none !important;
+  }
+}
+
+/* Stil A (Koyu Lacivert) */
+.campaign-popup-wrapper.style_a {
+  background-color: #1a2a40;
+  color: #fff;
+  padding: 12px;
+  border: 1px solid #1a2a40;
+}
+.campaign-popup-wrapper.style_a .cp-inner {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+.campaign-popup-wrapper.style_a .cp-title {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+}
+.campaign-popup-wrapper.style_a .cp-subtitle {
+  color: #b0c4de;
+  font-size: 11px;
+  margin: 0;
+}
+.campaign-popup-wrapper.style_a .cp-button {
+  background-color: #f7a822;
+  color: #1a2a40;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.campaign-popup-wrapper.style_a .cp-button:hover {
+  background-color: #e69a1f;
+}
+.campaign-popup-wrapper.style_a .cp-button svg {
+  width: 18px;
+  height: 18px;
+  stroke: #1a2a40;
+}
+
+/* Stil C (Minimal Kart) */
+.campaign-popup-wrapper.style_c {
+  background-color: var(--cp-bg-color);
+  border: 1px solid var(--cp-border-color);
+  border-left: 4px solid var(--cp-accent-color);
+  padding: 12px;
+}
+.campaign-popup-wrapper.style_c .cp-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.campaign-popup-wrapper.style_c .cp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.campaign-popup-wrapper.style_c .cp-title {
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+}
+.campaign-popup-wrapper.style_c .cp-badge {
+  background-color: var(--cp-accent-color);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.campaign-popup-wrapper.style_c .cp-subtitle {
+  color: var(--color-secondary, #666);
+  font-size: 11px;
+  margin: 0;
+}
+.campaign-popup-wrapper.style_c .cp-button {
+  background-color: var(--cp-accent-color);
+  color: #fff;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.campaign-popup-wrapper.style_c .cp-button:hover {
+  opacity: 0.9;
+}
+
+/* Uygulanmış (Applied) Durum */
+.campaign-popup-wrapper.applied {
+  cursor: default;
+}
+.campaign-popup-wrapper.applied .cp-button {
+  display: none !important;
+}
+.campaign-popup-wrapper.applied .cp-success-icon {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+.campaign-popup-wrapper.applied .cp-inner {
+  margin-bottom: 0 !important; /* Button disappears, no margin needed */
+}
+
+/* Stil A Applied */
+.campaign-popup-wrapper.style_a.applied {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+.campaign-popup-wrapper.style_a.applied .cp-title {
+  color: #166534;
+}
+.campaign-popup-wrapper.style_a.applied .cp-subtitle {
+  color: #15803d;
+}
+
+/* Stil C Applied */
+.campaign-popup-wrapper.style_c.applied {
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  border-left-color: #22c55e !important;
+}
+.campaign-popup-wrapper.style_c.applied .cp-title {
+  color: #166534;
+}
+.campaign-popup-wrapper.style_c.applied .cp-subtitle {
+  color: #15803d;
+}
+.campaign-popup-wrapper.style_c.applied .cp-badge {
+  display: none;
+}

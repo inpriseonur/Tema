@@ -2,7 +2,7 @@
 <section class="main-content-wrap product-details-page" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
   <div class="product-details">
     <div class="container">
-      <div class="grid-wrap {% if section.settings.service_enable %} service-wrap{% endif %} ">
+      <div class="grid-wrap {% if section.settings.service_enable or section.settings.campaign_popup_enable %} service-wrap{% endif %} ">
         <div class="grid-wrapper pro-wrapper">
           <div class="detail-wrap">
             <div class="product_details">
@@ -623,8 +623,14 @@
             </div>
           </div>
         </div>
-        {% if section.settings.service_enable %}
+        {% if section.settings.service_enable or section.settings.campaign_popup_enable %}
         <div class="grid-wrapper ser-wrapper">
+          
+          {%- if section.settings.campaign_popup_enable -%}
+            {% render 'campaign-popup' %}
+          {%- endif -%}
+
+          {% if section.settings.service_enable %}
           <ul class="pr-sr-wrap">
             {% if section.settings.service_icon1 != empty or section.settings.service_title1 != empty or section.settings.service_text1 != empty %}
             <li class="pr-sr-wrapper">
@@ -672,6 +678,7 @@
             </li>
             {% endif %}
           </ul>
+          {% endif %}
         </div>
         {% endif %}
       </div>
@@ -861,6 +868,93 @@
     ],
     "default": "adapt",
     "label": "Image shape"
+  },
+  {
+    "type": "header",
+    "content": "Kampanya Popup"
+  },
+  {
+    "type": "checkbox",
+    "id": "campaign_popup_enable",
+    "label": "Kampanya Kutusunu Aktif Et",
+    "default": false
+  },
+  {
+    "type": "select",
+    "id": "campaign_popup_style",
+    "label": "Tasarım Seçeneği",
+    "options": [
+      {
+        "value": "style_a",
+        "label": "Seçenek A (Koyu Lacivert)"
+      },
+      {
+        "value": "style_c",
+        "label": "Seçenek C (Minimal Kart)"
+      }
+    ],
+    "default": "style_c"
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_trigger_class",
+    "label": "Tetikleyici Sınıf Adı",
+    "default": "campaign-popup-trigger",
+    "info": "KwikAI panelindeki Click Trigger alanına yazacağınız sınıf."
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_title",
+    "label": "Başlık Metni",
+    "default": "İlk siparişine özel fırsat"
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_subtitle",
+    "label": "Alt Başlık Metni",
+    "default": "Yeni üyelere özel — bir kez geçerli"
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_badge_text",
+    "label": "Kupon Değeri (Rozet - Seçenek C)",
+    "default": "100 TL"
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_btn_text",
+    "label": "Buton Metni",
+    "default": "İndirim kodunu al"
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_applied_title",
+    "label": "Kupon Uygulandı Başlığı",
+    "default": "100 TL indiriminiz eklendi"
+  },
+  {
+    "type": "text",
+    "id": "campaign_popup_applied_subtitle",
+    "label": "Kupon Uygulandı Alt Mesajı",
+    "default": "Ödeme adımında otomatik uygulanacak"
+  },
+  {
+    "type": "color",
+    "id": "campaign_popup_border_color",
+    "label": "Kenarlık Rengi (Seçenek C)",
+    "default": "#B8960C"
+  },
+  {
+    "type": "color",
+    "id": "campaign_popup_accent_color",
+    "label": "Sol Aksan Rengi",
+    "default": "#B8960C"
+  },
+  {
+    "type": "color",
+    "id": "campaign_popup_bg_color",
+    "label": "Arka Plan Rengi",
+    "default": "#FFF9EC"
   },
   {
     "type": "header",
