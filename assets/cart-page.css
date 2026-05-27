@@ -150,7 +150,7 @@
     padding-bottom: 6px;
 }
 .cart-page .cart-body .item-price span {
-    font-size: 10.5px;
+    font-size: 13px;
     color: var(--font-color-header);
     font-weight: 600;
 }
@@ -183,7 +183,7 @@
     margin-bottom: 2px;
 }
 .cart-page .cart-body .item-unit-price-mobile span {
-    font-size: 10.5px;
+    font-size: 13px;
     font-weight: 400;
 }
 .cart-page .cart-body .item-media .item-info .discounts-item{

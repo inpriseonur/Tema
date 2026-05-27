@@ -734,9 +734,7 @@
 }
 
 .product_details_info .pr-option .option-title .current-option {
-  font-weight: 400;
-  font-size: var(--font-size-body);
-  margin-inline-start: 15px;
+  display: none !important;
 }
 
 .product_details_info .pr-option .option-block {
@@ -789,7 +787,8 @@
   cursor: pointer;
   text-transform: uppercase;
   line-height: 1;
-  padding: 8px 10px;
+  padding: 6px 12px;
+  font-size: 13px;
   border: 1px solid transparent;
   background-color: #f7f7f7;
   transition: .2s ease-in;

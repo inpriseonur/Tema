@@ -154,14 +154,9 @@
                                         {%- endif -%}
                                       </div>
                                       <div class="item-price">
-                                        {%- if item.original_line_price != item.final_line_price -%}
-                                        <span class="price-item-sale">{{ item.original_line_price | money }}</span>
-                                        <span class="price-item-regular">{{ item.final_line_price | money }}</span>
-                                        {%- else -%}
                                         <span class="price-item price-item-regular">
-                                          {{ item.original_line_price | money }}
+                                          {{ item.final_line_price | money }}
                                         </span>
-                                        {%- endif -%}
                                       </div>
                                     </div>
                                     <delpro-btn id="Remove-{{ item.index | plus: 1 }}" data-index="{{ item.index | plus: 1 }}">
@@ -1011,6 +1006,7 @@
 
   /* Mesafeli Sozlesme Checkbox Alignment Fix */
   .mesafeli-sozlesme-app-wrapper {
+    margin-top: 15px;
     margin-bottom: 15px;
     width: 100%;
   }
