@@ -70,23 +70,6 @@
                     <a href="{{ item.url }}" class="card-title">
                       {{- item.product.title | escape -}}
                     </a>
-                    {%- if item.original_price != item.final_price -%}
-                      <div class="item-price">
-                        <span class="price-item-sale">
-                          {{- item.original_price | money -}}
-                        </span>
-                        <span class="price-item-regular">
-                          {{ item.final_price | money }}
-                        </span>
-                      </div>
-                    {%- else -%}
-                      <div class="item-price">
-                        <span>{{ item.original_price | money }}</span>
-                        {%- if item.variant.compare_at_price > item.variant.price -%}
-                        <span class="old-price" id="ComparePrice-ajax-{{ forloop.index }}">{{ item.variant.compare_at_price | money }}</span>
-                        {%- endif -%}
-                      </div>
-                    {%- endif -%}
                     {%- if item.product.has_only_default_variant == false
                       or item.properties.size != 0
                       or item.selling_plan_allocation != null
@@ -110,6 +93,23 @@
                             </span>
                           {%- endif -%}
                         {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                    {%- if item.original_price != item.final_price -%}
+                      <div class="item-price">
+                        <span class="price-item-sale">
+                          {{- item.original_price | money -}}
+                        </span>
+                        <span class="price-item-regular">
+                          {{ item.final_price | money }}
+                        </span>
+                      </div>
+                    {%- else -%}
+                      <div class="item-price">
+                        <span>{{ item.original_price | money }}</span>
+                        {%- if item.variant.compare_at_price > item.variant.price -%}
+                        <span class="old-price" id="ComparePrice-ajax-{{ forloop.index }}">{{ item.variant.compare_at_price | money }}</span>
+                        {%- endif -%}
                       </div>
                     {%- endif -%}
                     <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
@@ -208,9 +208,6 @@
             </button>
           </noscript>
           <a href="/cart" class="btn-style1">{{ 'sections.cart.view_cart' | t }}</a>
-          <button class="btn-style1 check-btn" type="submit" id="ajaxcart-checkout" name="checkout" form="ajaxcart-form">
-            {{ 'sections.cart.checkout' | t }}
-          </button>
         </div>
       </div>
     </div>

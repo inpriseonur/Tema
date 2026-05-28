@@ -857,13 +857,6 @@ if (!customElements.get('cart-action')) {
       this.submitButton.classList.add('loading');
       this.querySelector('.ajax-loader').classList.remove('hidden');
 
-      const btnTextSpan = this.submitButton.querySelector('span.cart-title') || this.submitButton.querySelector('span');
-      if (btnTextSpan && !this.originalBtnText) {
-        this.originalBtnText = btnTextSpan.textContent;
-      }
-      if (btnTextSpan) {
-        btnTextSpan.textContent = 'Ekleniyor...';
-      }
 
       const config = stFetchConfig('javascript');
       config.headers['X-Requested-With'] = 'XMLHttpRequest';
@@ -881,9 +874,6 @@ if (!customElements.get('cart-action')) {
           if (response.status) {
             this.stHandErrorTxt(response.description);
             const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
-            if (btnTextSpan && this.originalBtnText) {
-              btnTextSpan.textContent = this.originalBtnText;
-            }
             if (!soldOutMessage) return;
             this.submitButton.setAttribute('aria-disabled', true);
             this.submitButton.querySelector('span').classList.add('hidden');
@@ -891,14 +881,7 @@ if (!customElements.get('cart-action')) {
             this.error = true;
             return;
           }
-          
           this.isSuccess = true;
-          this.submitButton.classList.remove('loading');
-          this.submitButton.classList.add('success');
-          this.querySelector('.ajax-loader').classList.add('hidden');
-          if (btnTextSpan) {
-            btnTextSpan.textContent = 'Sepete eklendi, yönleniyor...';
-          }
 
           if (!this.cart) {
             setTimeout(() => {
@@ -910,25 +893,21 @@ if (!customElements.get('cart-action')) {
           this.error = false;
           const quickAddModal = this.closest('popup-view');
           
+          if (quickAddModal) {
+            document.body.addEventListener('modalClosed', () => {
+              setTimeout(() => { this.cart.renderContents(response) });
+            }, { once: true });
+            quickAddModal.hide(true);
+          } else {
+            this.cart.renderContents(response);
+          }
+          
           setTimeout(() => {
-            if (quickAddModal) {
-              document.body.addEventListener('modalClosed', () => {
-                setTimeout(() => { this.cart.renderContents(response) });
-              }, { once: true });
-              quickAddModal.hide(true);
-            } else {
-              this.cart.renderContents(response);
-            }
-            
-            setTimeout(() => {
-              this.isSuccess = false;
-              this.submitButton.classList.remove('success');
-              if (btnTextSpan && this.originalBtnText) {
-                 btnTextSpan.textContent = this.originalBtnText;
-              }
-              this.submitButton.removeAttribute('aria-disabled');
-            }, 1000);
-          }, 800);
+            this.submitButton.classList.remove('loading');
+            this.querySelector('.ajax-loader').classList.add('hidden');
+            this.isSuccess = false;
+            this.submitButton.removeAttribute('aria-disabled');
+          }, 300);
         })
         .catch((e) => {
           console.error(e);
@@ -936,9 +915,6 @@ if (!customElements.get('cart-action')) {
         .finally(() => {
           if (!this.isSuccess) {
             this.submitButton.classList.remove('loading');
-            if (btnTextSpan && this.originalBtnText) {
-              btnTextSpan.textContent = this.originalBtnText;
-            }
             if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
             if (!this.error) this.submitButton.removeAttribute('aria-disabled');
             this.querySelector('.ajax-loader').classList.add('hidden');
