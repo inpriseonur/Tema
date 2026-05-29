@@ -50,8 +50,14 @@ class ajaxCart extends HTMLElement {
     cartDrawerNote.parentElement.addEventListener('keyup', escClick);
   }
   renderContents(parsedState) {
-    this.querySelector('.drawer-inner').classList.contains('is-empty') && this.querySelector('.drawer-inner').classList.remove('is-empty');
     this.productId = parsedState.id;
+    const ajaxCartSection = parsedState.sections && parsedState.sections['ajax-cart'];
+    if (ajaxCartSection) {
+      const parsedCart = this.getSectionDOM(ajaxCartSection, 'ajax-cart');
+      this.classList.toggle('is-empty', parsedCart ? parsedCart.classList.contains('is-empty') : false);
+    } else {
+      this.classList.remove('is-empty');
+    }
     this.fetchSecToInclude().forEach((section => {
       const sectionElement = section.selector ? document.querySelector(section.selector) : document.getElementById(section.id);
       sectionElement.innerHTML =

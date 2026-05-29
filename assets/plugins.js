@@ -832,6 +832,15 @@ if (!customElements.get('popup-view')) {
     preventDuplicatedIDs() {
       const stScId = this.productElement.dataset.section;
       this.productElement.innerHTML = this.productElement.innerHTML.replaceAll(stScId, `quickadd-${ stScId }`);
+      const productTitle = this.productElement.querySelector('.product-title h1');
+      if (productTitle) {
+        const modalTitle = document.createElement('h2');
+        Array.from(productTitle.attributes).forEach(attribute => {
+          modalTitle.setAttribute(attribute.name, attribute.value);
+        });
+        modalTitle.innerHTML = productTitle.innerHTML;
+        productTitle.replaceWith(modalTitle);
+      }
       this.productElement.querySelectorAll('selects-box, pr-option, product-info').forEach((element) => {
         element.dataset.originalSection = stScId;
       });
@@ -891,6 +900,7 @@ if (!customElements.get('cart-action')) {
           }
           if (!this.error) live(SP_OBJECT.ajxcartRefresh, {source: 'cart-action'});
           this.error = false;
+          this.cart.classList.remove('is-empty');
           const quickAddModal = this.closest('popup-view');
           
           if (quickAddModal) {
