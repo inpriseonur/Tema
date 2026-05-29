@@ -739,6 +739,13 @@
           swiperOptions.thumbs = { swiper: swiper };
         }
 
+        {%- if current_variant.featured_media -%}
+          var selectedVariantMedia = document.querySelector('#slider-small-{{ product.id }} .swiper-slide[data-image-id="{{ current_variant.featured_media.id }}"]');
+          if (selectedVariantMedia) {
+            swiperOptions.initialSlide = Math.max(parseInt(selectedVariantMedia.getAttribute('data-index'), 10) - 1, 0);
+          }
+        {%- endif -%}
+
         var swiper2 = new Swiper(".slider-big-{{ product.id }}", swiperOptions);
         $(".option-block .op-lb").click(function(){
           var op_select = $(this).text();
