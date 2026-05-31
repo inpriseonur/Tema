@@ -379,16 +379,27 @@ class Swatchoption extends HTMLElement {
           }
         };
 
+        var quickViewSliderEl = document.querySelector("#slider-small-"+product_id);
+        var isQuickView = quickViewSliderEl && quickViewSliderEl.closest('.quickview-block');
+        var useVerticalThumbs = !isQuickView && window.innerWidth >= 1200;
+
         if (window.innerWidth > 749) {
           var swiper = new Swiper(".slider-small-"+product_id, {
-            spaceBetween: 15,
-            slidesPerView: 4,
-            mousewheel: true,
+            direction: useVerticalThumbs ? "vertical" : "horizontal",
+            spaceBetween: useVerticalThumbs ? 10 : 15,
+            slidesPerView: useVerticalThumbs ? 3 : 4,
+            mousewheel: useVerticalThumbs,
+            freeMode: useVerticalThumbs,
+            navigation: useVerticalThumbs ? {
+              nextEl: ".thumb-button-next",
+              prevEl: ".thumb-button-prev"
+            } : false,
             slideToClickedSlide: true,
             breakpoints: {
               0: { slidesPerView: 3 },
               320: { slidesPerView: 3 },
-              480: { slidesPerView: 4 }
+              480: { slidesPerView: 4 },
+              1200: { slidesPerView: useVerticalThumbs ? 3 : 4 }
             }
           });
           swiperOptions.thumbs = { swiper: swiper };
@@ -418,6 +429,9 @@ class Swatchoption extends HTMLElement {
           var swiper2 = new Swiper(".slider-big-"+product_id, swiperOptionsLoop);
         }else{
           var new_index = parseInt(mediaIndex) - 1;
+          if (swiper) {
+            swiper.slideTo(Math.max(new_index - 1, 0), 500, true);
+          }
           swiper2.slideTo(new_index,500, true);
       }
       }

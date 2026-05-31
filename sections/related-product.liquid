@@ -102,6 +102,24 @@
     padding-top: {{ section.settings.section_padding_top }}px;
     padding-bottom: {{ section.settings.section_padding_bottom }}px;
   }
+
+  .related-product .section-title h2 {
+    text-transform: none;
+  }
+
+  @media (min-width: 1200px) {
+    .related-product .section-title h2 {
+      font-size: 24px;
+      margin-bottom: 22px;
+    }
+
+    .related-product .single-product-wrap .product-image {
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
   @media(max-width: 1199px){
     .related-product {
       padding-top: {{ section.settings.section_padding_top_xs }}px;

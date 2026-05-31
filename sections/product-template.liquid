@@ -1,5 +1,5 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
-<section class="main-content-wrap product-details-page" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
+<section class="main-content-wrap product-details-page product-main-template" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
   <div class="product-details">
     <div class="container">
       <div class="grid-wrap {% if section.settings.service_enable or section.settings.campaign_popup_enable %} service-wrap{% endif %} ">
@@ -35,6 +35,9 @@
                   </div>
                 </div>
                 <div class="pro-slider">
+                  <button type="button" class="thumb-button thumb-button-prev" aria-label="Önceki görsel">
+                    <i class="ti ti-angle-up"></i>
+                  </button>
                   <div class="slider-small swiper slider-small-{{ product.id }}" id="slider-small-{{ product.id }}" {% if settings.enable_rtl %}dir="rtl"{% endif %} data-slides-per-view="4">
                     <div class="swiper-wrapper">
                       {% for media in product.media %}
@@ -77,6 +80,9 @@
                       {% endfor %}
                     </div>
                   </div>
+                  <button type="button" class="thumb-button thumb-button-next" aria-label="Sonraki görsel">
+                    <i class="ti ti-angle-down"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -87,7 +93,9 @@
                   {%- for block in section.blocks -%}
                   {%- case block.type -%}
                   {%- when '@app' -%}
-                  {% render block %}
+                  <div class="product-app-block" {{ block.shopify_attributes }}>
+                    {% render block %}
+                  </div>
                   {%- when 'text' -%}
                   {{- block.settings.text -}}
                   {%- when 'title_wrap' -%}
@@ -95,7 +103,7 @@
                     <h1>{{ product.title }}</h1>
                   </div>
                   {%- if settings.show_rating -%}
-                    <div class="product-grid-rating">
+                    <div class="product-grid-rating product-social-proof">
                       {% if product.metafields.judgeme.badge %}
                       <div class='jdgm-widget jdgm-preview-badge'>
                         {{ product.metafields.judgeme.badge }}
@@ -106,34 +114,17 @@
                         <span class="jdgm-prev-badge__text">No reviews</span>
                       </div>
                       {% endif %}
+                      {%- assign social_satis_adedi = product.metafields.custom.satis_adedi | default: 0 | plus: 0 -%}
+                      {%- if social_satis_adedi > 0 -%}
+                        <span class="product-social-proof__separator">·</span>
+                        <span class="product-social-proof__sales">Bu ay {{ social_satis_adedi }} adet satın alındı</span>
+                      {%- endif -%}
                     </div>
                     {%- endif -%}
                   {%- when 'sales_count' -%}
                   {%- assign satis_adedi = product.metafields.custom.satis_adedi | default: 0 | plus: 0 -%}
                   {%- if satis_adedi >= block.settings.min_count -%}
-                    <style>
-                      .product-sales-badge {
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 6px;
-                        margin-bottom: 15px;
-                        width: fit-content;
-                        font-size: 13px;
-                        font-weight: 400;
-                        font-family: var(--font-body-family), sans-serif;
-                      }
-                      .product-sales-badge .sales-icon {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        line-height: 1;
-                      }
-                      .product-sales-badge .sales-icon svg {
-                        width: 14px;
-                        height: 14px;
-                      }
-                    </style>
-                    <div class="product-sales-badge" {{ block.shopify_attributes }} style="color: {{ block.settings.text_color }};">
+                    <div class="product-sales-badge product-social-proof-sales" {{ block.shopify_attributes }} style="color: {{ block.settings.text_color }};">
                       {%- if block.settings.custom_icon != blank -%}
                         <span class="sales-icon">{{ block.settings.custom_icon }}</span>
                       {%- endif -%}
@@ -279,6 +270,64 @@
                     </div>
 
                   </div>
+                  {%- when 'purchase_trust_messages' -%}
+                  {%- liquid
+                    assign has_purchase_trust_message = false
+                    for message_index in (1..3)
+                      assign enabled_key = 'message_' | append: message_index | append: '_enabled'
+                      assign title_key = 'message_' | append: message_index | append: '_title'
+                      if block.settings[enabled_key] and block.settings[title_key] != blank
+                        assign has_purchase_trust_message = true
+                      endif
+                    endfor
+                  -%}
+                  {%- if has_purchase_trust_message -%}
+                    <div
+                      class="purchase-trust-messages purchase-trust-messages--{{ block.settings.layout_style }}{% unless block.settings.show_desktop %} purchase-trust-messages--hide-desktop{% endunless %}{% unless block.settings.show_mobile %} purchase-trust-messages--hide-mobile{% endunless %}{% unless block.settings.mobile_show_subtitles %} purchase-trust-messages--mobile-hide-subtitles{% endunless %}"
+                      {{ block.shopify_attributes }}
+                    >
+                      {%- for message_index in (1..3) -%}
+                        {%- liquid
+                          assign enabled_key = 'message_' | append: message_index | append: '_enabled'
+                          assign title_key = 'message_' | append: message_index | append: '_title'
+                          assign subtitle_key = 'message_' | append: message_index | append: '_subtitle'
+                          assign icon_key = 'message_' | append: message_index | append: '_icon'
+                          assign tone_key = 'message_' | append: message_index | append: '_tone'
+                          assign message_enabled = block.settings[enabled_key]
+                          assign message_title = block.settings[title_key]
+                          assign message_subtitle = block.settings[subtitle_key]
+                          assign message_icon = block.settings[icon_key]
+                          assign message_tone = block.settings[tone_key]
+                        -%}
+                        {%- if message_enabled and message_title != blank -%}
+                          <div class="purchase-trust-message purchase-trust-message--{{ message_tone }}">
+                            <span class="purchase-trust-message__icon" aria-hidden="true">
+                              {%- case message_icon -%}
+                                {%- when 'shipping' -%}
+                                  <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z"></path><path d="M14 10h4l3 3v4h-7z"></path><circle cx="7" cy="17" r="2"></circle><circle cx="18" cy="17" r="2"></circle></svg>
+                                {%- when 'clock' -%}
+                                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+                                {%- when 'payment' -%}
+                                  <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M3 10h18"></path><path d="M7 15h4"></path></svg>
+                                {%- when 'secure' -%}
+                                  <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+                                {%- when 'support' -%}
+                                  <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0"></path><path d="M4 12v4a2 2 0 0 0 2 2h2v-6H4z"></path><path d="M20 12v4a2 2 0 0 1-2 2h-2v-6h4z"></path><path d="M9 20h3"></path></svg>
+                                {%- else -%}
+                                  <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+                              {%- endcase -%}
+                            </span>
+                            <span class="purchase-trust-message__text">
+                              <span class="purchase-trust-message__title">{{ message_title }}</span>
+                              {%- if message_subtitle != blank -%}
+                                <span class="purchase-trust-message__subtitle">{{ message_subtitle }}</span>
+                              {%- endif -%}
+                            </span>
+                          </div>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
                   {%- when 'inventory' -%}
                   <div class="product-inventory{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} hidden{% endif %}" {{ block.shopify_attributes }} id="Inventory-{{ section.id }}" role="status">
                     <h6>{{ block.settings.availability_title }}</h6>
@@ -393,7 +442,15 @@
                       </div>
                     {%- endif -%}
                   {%- endif -%}
-                  
+                  {%- if block.settings.price_advantage_enabled and block.settings.price_advantage_message != blank -%}
+                    <div class="price-advantage-message" style="color: {{ block.settings.price_advantage_text_color }};">
+                      {%- if block.settings.price_advantage_icon != blank -%}
+                        <span class="price-advantage-message__icon">{{ block.settings.price_advantage_icon }}</span>
+                      {%- endif -%}
+                      <span class="price-advantage-message__text">{{ block.settings.price_advantage_message }}</span>
+                    </div>
+                  {%- endif -%}
+                   
                   {%- when 'short_description' -%}
                   <div class="product-description" {{ block.shopify_attributes }}>
                     <p>{{ block.settings.short_description }}</p>
@@ -450,15 +507,21 @@
                       {% if product.selected_or_first_available_variant.quantity_rule.max != null %} data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" {% endif %} step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}" value="{{ product.selected_or_first_available_variant.quantity_rule.min }}" label="quantity" form="{{ product_form_id }}"/>
                     <button class="qty-bt" name="plus" type="button">+</button>
                   </qty-box>
-                  {%- comment -%}Mobilde adet seçicinin yanında geri sayım{%- endcomment -%}
+                  {%- comment -%}Mobilde adet seçicinin yanında geri sayım; geri sayım yoksa fiyat avantajı mesajı{%- endcomment -%}
                   {%- for inner_block in section.blocks -%}
-                    {%- if inner_block.type == 'product_price' and inner_block.settings.countdown_enabled and inner_block.settings.countdown_end_date != blank -%}
-                      {%- assign mcd_today = 'now' | date: '%Y-%m-%d' -%}
-                      {%- assign mcd_today_ts = mcd_today | date: '%s' | plus: 0 -%}
-                      {%- assign mcd_end = inner_block.settings.countdown_end_date | date: '%s' | plus: 0 -%}
-                      {%- assign mcd_diff = mcd_end | minus: mcd_today_ts -%}
-                      {%- assign mcd_days = mcd_diff | divided_by: 86400 -%}
-                      {%- if mcd_days >= 0 -%}
+                    {%- if inner_block.type == 'product_price' -%}
+                      {%- assign mobile_countdown_visible = false -%}
+                      {%- if inner_block.settings.countdown_enabled and inner_block.settings.countdown_end_date != blank -%}
+                        {%- assign mcd_today = 'now' | date: '%Y-%m-%d' -%}
+                        {%- assign mcd_today_ts = mcd_today | date: '%s' | plus: 0 -%}
+                        {%- assign mcd_end = inner_block.settings.countdown_end_date | date: '%s' | plus: 0 -%}
+                        {%- assign mcd_diff = mcd_end | minus: mcd_today_ts -%}
+                        {%- assign mcd_days = mcd_diff | divided_by: 86400 -%}
+                        {%- if mcd_days >= 0 -%}
+                          {%- assign mobile_countdown_visible = true -%}
+                        {%- endif -%}
+                      {%- endif -%}
+                      {%- if mobile_countdown_visible -%}
                         <div class="qty-countdown-mobile"
                              data-end-date="{{ inner_block.settings.countdown_end_date }}"
                              style="color: {{ inner_block.settings.countdown_text_color }};">
@@ -470,6 +533,21 @@
                               {{ inner_block.settings.countdown_message | replace: '[days]', mcd_days }}
                             {%- endif -%}
                           </span>
+                        </div>
+                        {%- if inner_block.settings.price_advantage_enabled and inner_block.settings.price_advantage_message != blank -%}
+                          <div class="qty-countdown-mobile price-advantage-mobile price-advantage-mobile--stacked price-advantage-mobile--fallback" style="display: none; color: {{ inner_block.settings.price_advantage_text_color }};">
+                            {%- if inner_block.settings.price_advantage_icon != blank -%}
+                              <span class="countdown-icon">{{ inner_block.settings.price_advantage_icon }}</span>
+                            {%- endif -%}
+                            <span class="countdown-text">{{ inner_block.settings.price_advantage_message }}</span>
+                          </div>
+                        {%- endif -%}
+                      {%- elsif inner_block.settings.price_advantage_enabled and inner_block.settings.price_advantage_message != blank -%}
+                        <div class="qty-countdown-mobile price-advantage-mobile price-advantage-mobile--stacked" style="color: {{ inner_block.settings.price_advantage_text_color }};">
+                          {%- if inner_block.settings.price_advantage_icon != blank -%}
+                            <span class="countdown-icon">{{ inner_block.settings.price_advantage_icon }}</span>
+                          {%- endif -%}
+                          <span class="countdown-text">{{ inner_block.settings.price_advantage_message }}</span>
                         </div>
                       {%- endif -%}
                     {%- endif -%}
@@ -726,25 +804,40 @@
           }
         };
 
+        var selectedVariantInitialSlide = 0;
+        {%- if current_variant.featured_media -%}
+          var selectedVariantMedia = document.querySelector('#slider-small-{{ product.id }} .swiper-slide[data-image-id="{{ current_variant.featured_media.id }}"]');
+          if (selectedVariantMedia) {
+            selectedVariantInitialSlide = Math.max(parseInt(selectedVariantMedia.getAttribute('data-index'), 10) - 1, 0);
+            swiperOptions.initialSlide = selectedVariantInitialSlide;
+          }
+        {%- endif -%}
+
+        var quickViewSliderEl = document.querySelector('#slider-small-{{ product.id }}');
+        var isQuickView = quickViewSliderEl && quickViewSliderEl.closest('.quickview-block');
+        var useVerticalThumbs = !isQuickView && window.innerWidth >= 1200;
+
         if (window.innerWidth > 749) {
           var swiper = new Swiper(".slider-small-{{ product.id }}", {
-            spaceBetween: 15,
-            slidesPerView: 5,
+            direction: useVerticalThumbs ? "vertical" : "horizontal",
+            spaceBetween: useVerticalThumbs ? 10 : 15,
+            slidesPerView: useVerticalThumbs ? 3 : 5,
+            initialSlide: selectedVariantInitialSlide,
+            mousewheel: useVerticalThumbs,
+            freeMode: useVerticalThumbs,
+            navigation: useVerticalThumbs ? {
+              nextEl: ".thumb-button-next",
+              prevEl: ".thumb-button-prev"
+            } : false,
             breakpoints: {
               0: { slidesPerView: 3 },
               320: { slidesPerView: 3 },
-              480: { slidesPerView: 4 }
+              480: { slidesPerView: 4 },
+              1200: { slidesPerView: useVerticalThumbs ? 3 : 4 }
             }
           });
           swiperOptions.thumbs = { swiper: swiper };
         }
-
-        {%- if current_variant.featured_media -%}
-          var selectedVariantMedia = document.querySelector('#slider-small-{{ product.id }} .swiper-slide[data-image-id="{{ current_variant.featured_media.id }}"]');
-          if (selectedVariantMedia) {
-            swiperOptions.initialSlide = Math.max(parseInt(selectedVariantMedia.getAttribute('data-index'), 10) - 1, 0);
-          }
-        {%- endif -%}
 
         var swiper2 = new Swiper(".slider-big-{{ product.id }}", swiperOptions);
         $(".option-block .op-lb").click(function(){
@@ -803,7 +896,15 @@
         var diff = Math.round((end - today) / (1000 * 60 * 60 * 24));
         if (diff < 0) {
           el.style.display = 'none';
+          var fallbackEl = el.nextElementSibling;
+          if (fallbackEl && fallbackEl.classList.contains('price-advantage-mobile--fallback')) {
+            fallbackEl.style.display = 'flex';
+          }
         } else {
+          var hiddenFallbackEl = el.nextElementSibling;
+          if (hiddenFallbackEl && hiddenFallbackEl.classList.contains('price-advantage-mobile--fallback')) {
+            hiddenFallbackEl.style.display = 'none';
+          }
           var textEl = el.querySelector('.countdown-text');
           if (textEl) {
             if (diff === 0) {
@@ -1072,6 +1173,192 @@
     ]
   },
   {
+    "type": "purchase_trust_messages",
+    "name": "Satın Alma Güvenceleri",
+    "limit": 1,
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_desktop",
+        "label": "Desktop'ta göster",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_mobile",
+        "label": "Mobilde göster",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "mobile_show_subtitles",
+        "label": "Mobilde alt mesajları göster",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "layout_style",
+        "label": "Görünüm",
+        "options": [
+          {
+            "value": "list",
+            "label": "Kompakt liste"
+          },
+          {
+            "value": "compact",
+            "label": "Tek satır rozetler"
+          },
+          {
+            "value": "cards",
+            "label": "Mini kartlar"
+          }
+        ],
+        "default": "list"
+      },
+      {
+        "type": "header",
+        "content": "Mesaj 1"
+      },
+      {
+        "type": "checkbox",
+        "id": "message_1_enabled",
+        "label": "Mesaj 1'i göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "message_1_title",
+        "label": "Ana mesaj",
+        "default": "İstanbul özel teslimat"
+      },
+      {
+        "type": "text",
+        "id": "message_1_subtitle",
+        "label": "Alt mesaj",
+        "default": "Kapıda ödeme seçeneği mevcut"
+      },
+      {
+        "type": "select",
+        "id": "message_1_icon",
+        "label": "İkon",
+        "options": [
+          { "value": "check", "label": "Onay" },
+          { "value": "shipping", "label": "Kargo" },
+          { "value": "clock", "label": "Saat" },
+          { "value": "payment", "label": "Ödeme" },
+          { "value": "secure", "label": "Güven" },
+          { "value": "support", "label": "Destek" }
+        ],
+        "default": "payment"
+      },
+      {
+        "type": "select",
+        "id": "message_1_tone",
+        "label": "Stil",
+        "options": [
+          { "value": "normal", "label": "Normal" },
+          { "value": "accent", "label": "Vurgulu" },
+          { "value": "quiet", "label": "Sade" }
+        ],
+        "default": "accent"
+      },
+      {
+        "type": "header",
+        "content": "Mesaj 2"
+      },
+      {
+        "type": "checkbox",
+        "id": "message_2_enabled",
+        "label": "Mesaj 2'yi göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "message_2_title",
+        "label": "Ana mesaj",
+        "default": "Ücretsiz kargo"
+      },
+      {
+        "type": "text",
+        "id": "message_2_subtitle",
+        "label": "Alt mesaj",
+        "default": "Tüm Türkiye'ye güvenli gönderim"
+      },
+      {
+        "type": "select",
+        "id": "message_2_icon",
+        "label": "İkon",
+        "options": [
+          { "value": "check", "label": "Onay" },
+          { "value": "shipping", "label": "Kargo" },
+          { "value": "clock", "label": "Saat" },
+          { "value": "payment", "label": "Ödeme" },
+          { "value": "secure", "label": "Güven" },
+          { "value": "support", "label": "Destek" }
+        ],
+        "default": "shipping"
+      },
+      {
+        "type": "select",
+        "id": "message_2_tone",
+        "label": "Stil",
+        "options": [
+          { "value": "normal", "label": "Normal" },
+          { "value": "accent", "label": "Vurgulu" },
+          { "value": "quiet", "label": "Sade" }
+        ],
+        "default": "normal"
+      },
+      {
+        "type": "header",
+        "content": "Mesaj 3"
+      },
+      {
+        "type": "checkbox",
+        "id": "message_3_enabled",
+        "label": "Mesaj 3'ü göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "message_3_title",
+        "label": "Ana mesaj",
+        "default": "Aynı gün kargo"
+      },
+      {
+        "type": "text",
+        "id": "message_3_subtitle",
+        "label": "Alt mesaj",
+        "default": "14:00'e kadar verilen siparişlerde"
+      },
+      {
+        "type": "select",
+        "id": "message_3_icon",
+        "label": "İkon",
+        "options": [
+          { "value": "check", "label": "Onay" },
+          { "value": "shipping", "label": "Kargo" },
+          { "value": "clock", "label": "Saat" },
+          { "value": "payment", "label": "Ödeme" },
+          { "value": "secure", "label": "Güven" },
+          { "value": "support", "label": "Destek" }
+        ],
+        "default": "clock"
+      },
+      {
+        "type": "select",
+        "id": "message_3_tone",
+        "label": "Stil",
+        "options": [
+          { "value": "normal", "label": "Normal" },
+          { "value": "accent", "label": "Vurgulu" },
+          { "value": "quiet", "label": "Sade" }
+        ],
+        "default": "quiet"
+      }
+    ]
+  },
+  {
     "type": "title_wrap",
     "name": "Product title",
     "limit": 1
@@ -1263,6 +1550,34 @@
         "id": "countdown_icon",
         "label": "Emoji / İkon",
         "default": "⏳"
+      },
+      {
+        "type": "header",
+        "content": "Fiyat Avantajı Mesajı"
+      },
+      {
+        "type": "checkbox",
+        "id": "price_advantage_enabled",
+        "label": "Fiyat avantajı mesajını göster",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "price_advantage_message",
+        "label": "Mesaj",
+        "default": "Pazaryeri komisyonu yok, direkt fiyat avantajı"
+      },
+      {
+        "type": "color",
+        "id": "price_advantage_text_color",
+        "label": "Metin Rengi",
+        "default": "#061F4F"
+      },
+      {
+        "type": "text",
+        "id": "price_advantage_icon",
+        "label": "Emoji / İkon",
+        "default": "✓"
       }
     ]
   },

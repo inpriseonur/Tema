@@ -246,6 +246,22 @@
 .product-description-tab .description-review-text {
   margin-top: 30px;
 }
+
+@media (min-width: 1200px) {
+  .product-description-tab .description-review-text {
+    width: 100%;
+  }
+
+  .product-description-tab .description-review-text #pro-dec,
+  .product-description-tab .description-review-text #pro-review {
+    max-width: none;
+  }
+
+  .product-description-tab .description-review-text #pro-dec > * {
+    max-width: 100% !important;
+  }
+}
+
 /* product description css */
 .product-description-tab .description-review-text h1,
 .product-description-tab .description-review-text h2,
