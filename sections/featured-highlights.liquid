@@ -1,0 +1,459 @@
+<section class="featured-highlights-section" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
+  <div class="container">
+    <div class="featured-highlights">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.title != blank or block.settings.text != blank -%}
+          <div class="featured-highlights__item" {{ block.shopify_attributes }}>
+            <span class="featured-highlights__icon featured-highlights__icon--{{ block.settings.tone }}" aria-hidden="true">
+              {%- case block.settings.icon -%}
+                {%- when 'tag' -%}
+                  <i class="ti ti-tag"></i>
+                {%- when 'package' -%}
+                  <i class="ti ti-package"></i>
+                {%- when 'truck' -%}
+                  <i class="ti ti-truck"></i>
+                {%- when 'card' -%}
+                  <i class="ti ti-credit-card"></i>
+                {%- when 'shield' -%}
+                  <i class="ti ti-shield"></i>
+                {%- when 'star' -%}
+                  <i class="ti ti-star"></i>
+                {%- else -%}
+                  <i class="ti ti-check"></i>
+              {%- endcase -%}
+            </span>
+            <span class="featured-highlights__content">
+              {%- if block.settings.title != blank -%}
+                <strong>{{ block.settings.title }}</strong>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <span>{{ block.settings.text }}</span>
+              {%- endif -%}
+            </span>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} .featured-highlights {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr));
+    border: 1px solid {{ section.settings.border_color }};
+    border-radius: {{ section.settings.border_radius }}px;
+    overflow: hidden;
+    background: {{ section.settings.background_color }};
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: {{ section.settings.item_padding_y }}px {{ section.settings.item_padding_x }}px;
+    border-right: 1px solid {{ section.settings.border_color }};
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__item:last-child {
+    border-right: 0;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__icon {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 {{ section.settings.icon_size }}px;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__icon i {
+    font-size: {{ section.settings.icon_font_size }}px;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__icon--green {
+    background: #eaf3de;
+    color: #3b6d11;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__icon--blue {
+    background: #e6f1fb;
+    color: #185fa5;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__icon--gold {
+    background: #faeeda;
+    color: #854f0b;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__icon--gray {
+    background: #f1f3f5;
+    color: #4f5b6b;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__content strong {
+    display: block;
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: {{ section.settings.title_color }};
+  }
+
+  #shopify-section-{{ section.id }} .featured-highlights__content span {
+    display: block;
+    font-size: {{ section.settings.text_size }}px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: {{ section.settings.text_color }};
+  }
+
+  @media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .featured-highlights {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__item {
+      gap: 9px;
+      padding: {{ section.settings.mobile_item_padding_y }}px {{ section.settings.mobile_item_padding_x }}px;
+      border-right: 1px solid {{ section.settings.border_color }};
+      border-bottom: 1px solid {{ section.settings.border_color }};
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__item:nth-child(2n) {
+      border-right: 0;
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__item:nth-last-child(-n+2) {
+      border-bottom: 0;
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__icon {
+      width: {{ section.settings.mobile_icon_size }}px;
+      height: {{ section.settings.mobile_icon_size }}px;
+      flex-basis: {{ section.settings.mobile_icon_size }}px;
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__icon i {
+      font-size: {{ section.settings.mobile_icon_font_size }}px;
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__content strong {
+      font-size: {{ section.settings.mobile_title_size }}px;
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__content span {
+      font-size: {{ section.settings.mobile_text_size }}px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Öne Çıkan Özellikler",
+  "tag": "section",
+  "class": "section-featured-highlights",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Yerleşim"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop kolon sayısı",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Arka plan",
+      "default": "#FFFEFB"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Çizgi rengi",
+      "default": "#ECECEC"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Köşe yuvarlaklığı",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Üst boşluk",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Alt boşluk",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Desktop"
+    },
+    {
+      "type": "range",
+      "id": "item_padding_x",
+      "label": "Yatay iç boşluk",
+      "min": 8,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "item_padding_y",
+      "label": "Dikey iç boşluk",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "İkon daire boyutu",
+      "min": 28,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_font_size",
+      "label": "İkon boyutu",
+      "min": 12,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Başlık boyutu",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Alt metin boyutu",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Mobil"
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_padding_x",
+      "label": "Mobil yatay iç boşluk",
+      "min": 6,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_padding_y",
+      "label": "Mobil dikey iç boşluk",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_size",
+      "label": "Mobil ikon daire boyutu",
+      "min": 24,
+      "max": 44,
+      "step": 2,
+      "unit": "px",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_font_size",
+      "label": "Mobil ikon boyutu",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_size",
+      "label": "Mobil başlık boyutu",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_size",
+      "label": "Mobil alt metin boyutu",
+      "min": 9,
+      "max": 15,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "header",
+      "content": "Renkler"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Başlık rengi",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Alt metin rengi",
+      "default": "#666666"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "highlight",
+      "name": "Özellik",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "İkon",
+          "options": [
+            { "value": "tag", "label": "Etiket" },
+            { "value": "package", "label": "Paket" },
+            { "value": "truck", "label": "Kamyon" },
+            { "value": "card", "label": "Kart" },
+            { "value": "shield", "label": "Kalkan" },
+            { "value": "star", "label": "Yıldız" },
+            { "value": "check", "label": "Tik" }
+          ],
+          "default": "tag"
+        },
+        {
+          "type": "select",
+          "id": "tone",
+          "label": "Renk tonu",
+          "options": [
+            { "value": "green", "label": "Yeşil" },
+            { "value": "blue", "label": "Mavi" },
+            { "value": "gold", "label": "Altın" },
+            { "value": "gray", "label": "Gri" }
+          ],
+          "default": "green"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Başlık",
+          "default": "Komisyonsuz fiyat"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Alt metin",
+          "default": "Pazaryeri farkı yok"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Öne Çıkan Özellikler",
+      "blocks": [
+        {
+          "type": "highlight",
+          "settings": {
+            "icon": "tag",
+            "tone": "green",
+            "title": "Komisyonsuz fiyat",
+            "text": "Pazaryeri farkı yok"
+          }
+        },
+        {
+          "type": "highlight",
+          "settings": {
+            "icon": "package",
+            "tone": "blue",
+            "title": "Korumalı paketleme",
+            "text": "Cam şişeye özel hazırlık"
+          }
+        },
+        {
+          "type": "highlight",
+          "settings": {
+            "icon": "truck",
+            "tone": "gold",
+            "title": "Ücretsiz kargo",
+            "text": "Tüm Türkiye'ye gönderim"
+          }
+        },
+        {
+          "type": "highlight",
+          "settings": {
+            "icon": "card",
+            "tone": "gold",
+            "title": "Kapıda ödeme",
+            "text": "İstanbul içi siparişlerde"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
