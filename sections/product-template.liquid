@@ -1,5 +1,5 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
-<section class="main-content-wrap product-details-page product-main-template" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
+<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
   <div class="product-details">
     <div class="container">
       <div class="grid-wrap {% if section.settings.service_enable or section.settings.campaign_popup_enable %} service-wrap{% endif %} ">
