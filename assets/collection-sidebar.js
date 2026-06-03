@@ -206,10 +206,16 @@ class stFacetFiltersForm extends HTMLElement {
     });
   }
   static stIncludeProCount(html) {
-    const count = new DOMParser().parseFromString(html, 'text/html').getElementById('pro-count').innerHTML
+    const parsedHTML = new DOMParser().parseFromString(html, 'text/html');
+    const count = parsedHTML.getElementById('pro-count').innerHTML
     const container = document.getElementById('pro-count');
     container.innerHTML = count;
     container.classList.remove('loading');
+    const toolbarCountSource = parsedHTML.getElementById('CollectionToolbarCount');
+    const toolbarCountContainer = document.getElementById('CollectionToolbarCount');
+    if (toolbarCountSource && toolbarCountContainer) {
+      toolbarCountContainer.innerHTML = toolbarCountSource.innerHTML;
+    }
   }
   static renderFilters(html, event) {
     const parsedHTML = new DOMParser().parseFromString(html, 'text/html');

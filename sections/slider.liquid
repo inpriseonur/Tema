@@ -242,7 +242,7 @@
           rows: 3,
           fill: 'row' | 'column',
         },
-        spaceBetween: 22
+        spaceBetween: 12
       }
     }
   });
@@ -437,8 +437,22 @@
 }
 
 @media (min-width: 1199px) {
+  .slider-content #slider-pro {
+    height: 100%;
+  }
+
+  .slider-content #slider-pro .swiper-wrapper {
+    height: 100%;
+  }
+
+  .slider-content #slider-pro .swiper-slide {
+    height: calc((100% - 24px) / 3) !important;
+  }
+
   .slider-content #slider-pro .single-product-wrap {
-    min-height: 142px;
+    height: 100%;
+    border-color: #edf0f4;
+    box-shadow: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
@@ -448,8 +462,8 @@
   }
 
   .slider-content #slider-pro .single-product-wrap .product-image {
-    width: 43%;
-    padding: 8px 0 8px 8px;
+    width: 41%;
+    padding: 4px 0 4px 8px;
   }
 
   .slider-content #slider-pro .single-product-wrap .product-image .ratio img {
@@ -466,8 +480,8 @@
   }
 
   .slider-content #slider-pro .single-product-wrap .product-content {
-    width: 57%;
-    padding: 0 16px 0 14px;
+    width: 59%;
+    padding: 0 12px 0 10px;
   }
 
   .slider-content #slider-pro .single-product-wrap .product-content .product-title a {
@@ -475,7 +489,7 @@
     min-height: 38px;
     overflow: hidden;
     color: #061f4f;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     line-height: 1.35;
     -webkit-box-orient: vertical;
@@ -483,23 +497,23 @@
   }
 
   .slider-content #slider-pro .single-product-wrap .product-content .price-box {
-    margin-top: 7px;
+    margin-top: 5px;
     line-height: 1.1;
   }
 
   .slider-content #slider-pro .single-product-wrap .price-box .new-price {
     display: block;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.1;
   }
 
   .slider-content #slider-pro .single-product-wrap .price-box .old-price {
     display: block;
-    margin-top: 3px;
+    margin-top: 2px;
     padding-left: 0;
     color: #8d8d8d;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.1;
   }
 }

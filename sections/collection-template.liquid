@@ -5,7 +5,7 @@
         <div class="pro-grli-wrapper{% if section.settings.sidebar_handle == 'left_sidebar_handle' %} left-side-wrap{% elsif section.settings.sidebar_handle == 'right_sidebar_handle' %} right-side-wrap{% endif %}">
           <div class="pro-grli-wrap product-grid">
             <div class="collection-img-wrap">
-              <h6 class="st-title">{{ collection.title }} ({{ collection.all_products_count }})</h6>
+              <h6 class="st-title">{{ collection.title }}</h6>
               {%- if section.settings.collection_info_enable -%}
               <div class="collection-info">
                 {%- if section.settings.banner_enable -%}
@@ -48,7 +48,7 @@
               {%- endif -%}
             </div>
             {%- if section.settings.tab_bar_enable or section.settings.short_by_enable -%}
-            {%- render 'collection-sorting' -%}
+            {%- render 'collection-sorting', results: collection -%}
             {%- endif -%}
             <div class="get-data-products">
               <div class="shop-grid">
