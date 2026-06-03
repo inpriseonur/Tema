@@ -13,9 +13,9 @@
           <div id="Details-HeaderMenu-{{ forloop.index }}" class="sub-menu">
             <a href="{{ link.url }}"
               id="HeaderMenu-{{ link.handle }}"
-              class="link-title"
+              class="link-title{% if link.active or link.current or link.child_active %} is-active{% endif %}"
             >
-              <span class="sp-link-title {% if link.child_active %} active{% endif %}">
+              <span class="sp-link-title {% if link.active or link.current or link.child_active %} active{% endif %}">
                 {{- link.title -}}
               </span>
               <span class="menu-arrow"><i class="fa fa-angle-down"></i></span>
@@ -77,12 +77,12 @@
           <a
             id="HeaderMenu-{{ link.handle }}"
             href="{{ link.url }}"
-            class="link-title"
+            class="link-title{% if link.active or link.current or link.child_active %} is-active{% endif %}"
             {% if link.current %}
               aria-current="page"
             {% endif %}
           >
-            <span class="sp-link-title {%- if link.current %} active{% endif %}">
+            <span class="sp-link-title {%- if link.active or link.current or link.child_active %} active{% endif %}">
               {{- link.title -}}
             </span>
           </a>

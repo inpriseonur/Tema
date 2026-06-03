@@ -107,6 +107,50 @@
     text-transform: none;
   }
 
+  .related-product .single-product-wrap .product-content {
+    text-align: left;
+  }
+
+  .related-product .single-product-wrap .product-content .product-title a {
+    display: -webkit-box;
+    height: 39px;
+    overflow: hidden;
+    color: #061f4f;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.38;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .related-product .single-product-wrap .product-content .price-box {
+    margin-top: 7px;
+    line-height: 1.1;
+  }
+
+  .related-product .single-product-wrap .price-box .new-price {
+    color: var(--color-secondary);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .related-product .single-product-wrap .price-box .old-price {
+    color: #8f8f8f;
+    font-size: 13px;
+    line-height: 1.1;
+  }
+
+  .related-product .single-product-wrap .product-image .product-label .sale-title {
+    min-width: 40px;
+    padding: 4px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+  }
+
   @media (min-width: 1200px) {
     .related-product .section-title h2 {
       font-size: 24px;
@@ -124,6 +168,31 @@
     .related-product {
       padding-top: {{ section.settings.section_padding_top_xs }}px;
       padding-bottom: {{ section.settings.section_padding_bottom_xs }}px;
+    }
+  }
+
+  @media(max-width: 767px){
+    .related-product .single-product-wrap .product-content .product-title a {
+      height: 38px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .related-product .single-product-wrap .price-box .new-price {
+      font-size: 18px;
+    }
+
+    .related-product .single-product-wrap .price-box .old-price {
+      display: block;
+      margin-top: 3px;
+      padding-left: 0;
+      font-size: 12px;
+    }
+
+    .related-product .single-product-wrap .product-image .product-label .sale-title {
+      min-width: 36px;
+      padding: 3px 8px;
+      font-size: 11px;
     }
   }
 </style>

@@ -27,9 +27,9 @@
           >
             <a href="{{ link.url }}"
               id="HeaderMenu-{{ link.handle }}"
-              class="link-title"
+              class="link-title{% if link.active or link.current or link.child_active %} is-active{% endif %}"
             >
-              <span class="sp-link-title {% if link.child_active %} active{% endif %}">
+              <span class="sp-link-title {% if link.active or link.current or link.child_active %} active{% endif %}">
                 {{- link.title -}}
               </span>
               {%- if mega_menu_block != '' or link.links.size > 0 -%}

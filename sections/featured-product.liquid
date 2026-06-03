@@ -286,54 +286,151 @@
   }
   .product-area ul.nav-tabs{
     margin-bottom: 30px;
+    justify-content: center;
+    border-bottom: 0;
+    gap: 10px 24px;
+  }
+  .product-area ul.nav-tabs li a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #8f8f8f;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
+  .product-area ul.nav-tabs li a.active,
+  .product-area ul.nav-tabs li a:hover {
+    color: #061f4f;
+    border-color: #061f4f;
+    background-color: #fff;
   }
   @media(max-width: 767px){
     .product-area ul.nav-tabs{
       margin-bottom: 20px;
+      gap: 8px;
     }
+    .product-area ul.nav-tabs li a {
+      min-height: 32px;
+      padding: 7px 10px;
+      font-size: 11px;
+    }
+  }
+
+  .product-area .single-product-wrap .product-content {
+    text-align: left;
+  }
+
+  .product-area .single-product-wrap .product-content .product-title a {
+    display: -webkit-box;
+    height: 39px;
+    overflow: hidden;
+    color: #061f4f;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.38;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .product-area .single-product-wrap .product-content .price-box {
+    margin-top: 7px;
+    line-height: 1.1;
+  }
+
+  .product-area .single-product-wrap .price-box .new-price {
+    color: var(--color-secondary);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .product-area .single-product-wrap .price-box .old-price {
+    color: #8f8f8f;
+    font-size: 13px;
+    line-height: 1.1;
+  }
+
+  .product-area .single-product-wrap .product-image .product-label .sale-title {
+    min-width: 40px;
+    padding: 4px 9px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
   }
 
   /*slider arrow*/
 .product-area .tab-content{
   position: relative;
 }
-.tab-content .button-prev,
-.tab-content .button-next{
+.product-area .tab-content .button-prev,
+.product-area .tab-content .button-next{
   position: absolute;
   bottom: 50%;
   top: auto;
   margin: 0;
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  color: #fff;
+  height: 28px;
+  width: 28px;
+  border: 1px solid rgba(6, 31, 79, 0.16);
+  border-radius: 4px;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-primary);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0px 4px 12px rgba(6, 31, 79, 0.08);
+  transition: all 0.2s ease-in-out 0s;
 } 
-.tab-content .button-prev{
-    left: -30px;
+.product-area .tab-content .button-prev{
+    left: -15px;
 }
-.tab-content .button-next{
-    right: -30px;
+.product-area .tab-content .button-next{
+    right: -15px;
 }
-.tab-content .button-prev:after{
+.product-area .tab-content .button-prev:after{
     content: "\f104";
-    font: normal normal normal 20px/1 FontAwesome;
+    font: normal normal normal 18px/1 FontAwesome;
 }
-.tab-content .button-next:after{
+.product-area .tab-content .button-next:after{
     content: "\f105";
-    font: normal normal normal 20px/1 FontAwesome;
+    font: normal normal normal 18px/1 FontAwesome;
 }
-.tab-content .button-next:hover,
-.tab-content .button-prev:hover{
-    color: var(--color-primary);
-    background-color: #fff;
-    box-shadow: 0px 0px 12px 0px rgb(0 0 0 / 10%);
+.product-area .tab-content .button-next:hover,
+.product-area .tab-content .button-prev:hover{
+    color: #fff;
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    box-shadow: 0px 6px 16px rgba(6, 31, 79, 0.12);
 }
 @media(max-width: 767px){
-  .tab-content .swiper-buttons{
+  .product-area .single-product-wrap .product-content .product-title a {
+    height: 38px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .product-area .single-product-wrap .price-box .new-price {
+    font-size: 18px;
+  }
+  .product-area .single-product-wrap .price-box .old-price {
+    display: block;
+    margin-top: 3px;
+    padding-left: 0;
+    font-size: 12px;
+  }
+  .product-area .single-product-wrap .product-image .product-label .sale-title {
+    min-width: 36px;
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+  .product-area .tab-content .swiper-buttons{
     display: none;
   }
 }
