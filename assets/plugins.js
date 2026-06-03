@@ -512,6 +512,8 @@ class Swatchoption extends HTMLElement {
       const source = html.getElementById(`price-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`);
       const skuSource = html.getElementById(`Sku-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`);
       const skuGoal = document.getElementById(`Sku-${this.dataset.section}`);
+      const productMetaSource = html.getElementById(`ProductMeta-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`);
+      const productMetaGoal = document.getElementById(`ProductMeta-${this.dataset.section}`);
       const inventorySource = html.getElementById(`Inventory-${this.dataset.originalSection ? this.dataset.originalSection : this.dataset.section}`);
       const invGoal = document.getElementById(`Inventory-${this.dataset.section}`);
       if (source && goal) goal.innerHTML = source.innerHTML;
@@ -520,9 +522,13 @@ class Swatchoption extends HTMLElement {
         skuGoal.innerHTML = skuSource.innerHTML;
         skuGoal.classList.toggle('visibility-hidden', skuSource.classList.contains('visibility-hidden'));
       }
+      if (productMetaSource && productMetaGoal) {
+        productMetaGoal.innerHTML = productMetaSource.innerHTML;
+        productMetaGoal.classList.toggle('visibility-hidden', productMetaSource.classList.contains('visibility-hidden'));
+      }
       const price = document.getElementById(`price-${this.dataset.section}`);
       if (price) price.classList.remove('visibility-hidden');
-      if (invGoal) invGoal.classList.toggle('visibility-hidden', inventorySource.innerText === '');
+      if (invGoal && inventorySource) invGoal.classList.toggle('visibility-hidden', inventorySource.innerText === '');
       const cartBtUpdated = html.getElementById(`ProductSubmitButton-${stScId}`);
       this.btAddButton(cartBtUpdated ? cartBtUpdated.hasAttribute('disabled') : true, window.stThemeString.Strsoldout);
       live(SP_OBJECT.swatchUpdate, {data: {
@@ -554,11 +560,13 @@ class Swatchoption extends HTMLElement {
     const price = document.getElementById(`price-${this.dataset.section}`);
     const inventory = document.getElementById(`Inventory-${this.dataset.section}`);
     const sku = document.getElementById(`Sku-${this.dataset.section}`);
+    const productMeta = document.getElementById(`ProductMeta-${this.dataset.section}`);
     if (!cartBt) return;
     cartBtText.textContent = window.stThemeString.Strunavailable;
     if (price) price.classList.add('visibility-hidden');
     if (inventory) inventory.classList.add('visibility-hidden');
     if (sku) sku.classList.add('visibility-hidden');
+    if (productMeta) productMeta.classList.add('visibility-hidden');
   }
   stSwatchDate() {
     this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);

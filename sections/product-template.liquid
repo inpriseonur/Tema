@@ -595,6 +595,47 @@
                       <span>WhatsApp'tan Sor</span>
                     </a>
                   </div>
+                  {%- when 'variant_product_info' -%}
+                  {%- liquid
+                    assign variant_skt = current_variant.metafields.custom.skt.value
+                    assign show_variant_sku = false
+                    assign show_variant_barcode = false
+                    assign show_variant_skt = false
+                    if block.settings.show_sku and current_variant.sku != blank
+                      assign show_variant_sku = true
+                    endif
+                    if block.settings.show_barcode and current_variant.barcode != blank
+                      assign show_variant_barcode = true
+                    endif
+                    if block.settings.show_skt and variant_skt != blank
+                      assign show_variant_skt = true
+                    endif
+                  -%}
+                  <div
+                    class="product-variant-info{% unless show_variant_sku or show_variant_barcode or show_variant_skt %} visibility-hidden{% endunless %}"
+                    id="ProductMeta-{{ section.id }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {%- if block.settings.show_skt -%}
+                      <span class="product-variant-info__item{% unless show_variant_skt %} visibility-hidden{% endunless %}" data-variant-info-item="skt">
+                        <span class="product-variant-info__label d-none d-md-inline">{{ block.settings.skt_label }}</span>
+                        <span class="product-variant-info__label d-inline d-md-none">SKT:</span>
+                        <span class="product-variant-info__value">{{ variant_skt }}</span>
+                      </span>
+                    {%- endif -%}
+                    {%- if block.settings.show_barcode -%}
+                      <span class="product-variant-info__item{% unless show_variant_barcode %} visibility-hidden{% endunless %}" data-variant-info-item="barcode">
+                        <span class="product-variant-info__label">{{ block.settings.barcode_label }}</span>
+                        <span class="product-variant-info__value">{{ current_variant.barcode }}</span>
+                      </span>
+                    {%- endif -%}
+                    {%- if block.settings.show_sku -%}
+                      <span class="product-variant-info__item{% unless show_variant_sku %} visibility-hidden{% endunless %}" data-variant-info-item="sku">
+                        <span class="product-variant-info__label">{{ block.settings.sku_label }}</span>
+                        <span class="product-variant-info__value">{{ current_variant.sku }}</span>
+                      </span>
+                    {%- endif -%}
+                  </div>
                   {%- when 'product_sku' -%}
                   {%- if current_variant.sku.size > 0 -%}
                   <div class="product-sku" {{ block.shopify_attributes }}>
@@ -1710,6 +1751,49 @@
         "id": "wishlist_title",
         "default": "Wishlist",
         "label": "Wishlist title"
+      }
+    ]
+  },
+  {
+    "type": "variant_product_info",
+    "name": "SKU / SKT bilgisi",
+    "limit": 1,
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_sku",
+        "label": "SKU göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "sku_label",
+        "label": "SKU etiketi",
+        "default": "SKU:"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_barcode",
+        "label": "Barkod göster",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "barcode_label",
+        "label": "Barkod etiketi",
+        "default": "Barkod:"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_skt",
+        "label": "SKT göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "skt_label",
+        "label": "SKT etiketi",
+        "default": "Son Kullanma Tarihi:"
       }
     ]
   },
