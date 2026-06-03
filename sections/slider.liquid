@@ -101,7 +101,7 @@
             {% assign product_limit = section.settings.select_product_limit %}
             {% for product in collections[section.settings.select_product].products limit: product_limit %}
             <div class="swiper-slide">
-              {% render 'product-list-item',product: product, section_id: section.id  %}
+              {% render 'product-list-item', product: product, section_id: section.id, show_full_title: true %}
             </div>
             {% else %}
             {% for i in (1..product_limit) %}
@@ -242,7 +242,7 @@
           rows: 3,
           fill: 'row' | 'column',
         },
-        spaceBetween: 30
+        spaceBetween: 22
       }
     }
   });
@@ -435,6 +435,75 @@
 .slider-content .home-slider .slide-image .mobile-img{
   display: none;
 }
+
+@media (min-width: 1199px) {
+  .slider-content #slider-pro .single-product-wrap {
+    min-height: 142px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .slider-content #slider-pro .single-product-wrap:hover {
+    border-color: rgba(6, 31, 79, 0.18);
+    box-shadow: 0 6px 18px rgba(6, 31, 79, 0.08);
+  }
+
+  .slider-content #slider-pro .single-product-wrap .product-image {
+    width: 43%;
+    padding: 8px 0 8px 8px;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .product-image .ratio img {
+    object-fit: contain;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .product-image .product-label .sale-title {
+    top: 8px;
+    right: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 3px 10px;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .product-content {
+    width: 57%;
+    padding: 0 16px 0 14px;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .product-content .product-title a {
+    display: -webkit-box;
+    min-height: 38px;
+    overflow: hidden;
+    color: #061f4f;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .product-content .price-box {
+    margin-top: 7px;
+    line-height: 1.1;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .price-box .new-price {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .slider-content #slider-pro .single-product-wrap .price-box .old-price {
+    display: block;
+    margin-top: 3px;
+    padding-left: 0;
+    color: #8d8d8d;
+    font-size: 14px;
+    line-height: 1.1;
+  }
+}
+
 .slider-content .home-slider .slide-image .slider-text-info{
   position: absolute;
   bottom: 50%;

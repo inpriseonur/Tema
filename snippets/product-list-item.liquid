@@ -57,7 +57,13 @@
   </div>
   <div class="product-content">
     <div class="product-title">
-      <a href="{{ product.url | within: collection }}" title="{{ product.title }}">{{ product.title | truncate: 30 }}</a>
+      <a href="{{ product.url | within: collection }}" title="{{ product.title }}">
+        {%- if show_full_title -%}
+          {{ product.title }}
+        {%- else -%}
+          {{ product.title | truncate: 30 }}
+        {%- endif -%}
+      </a>
     </div>
     <div class="price-box">
       <span class="new-price">{{ product.variants.first.price | money }}</span>
