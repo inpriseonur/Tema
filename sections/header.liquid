@@ -117,6 +117,9 @@
               render 'mega-menu'
             endif
           %}
+          {%- if section.settings.nav_trust_badge_enable -%}
+            {%- render 'nav-trust-badge' -%}
+          {%- endif -%}
         </div>
       </div>
     </div>
@@ -227,6 +230,58 @@
     "id" : "wishlist_checkbox",
     "label" : "Enable Wishlist",
     "default" : true
+  },
+  {
+    "type": "header",
+    "content": "Menu trust badge"
+  },
+  {
+    "type": "checkbox",
+    "id": "nav_trust_badge_enable",
+    "label": "Enable menu trust badge",
+    "default": true
+  },
+  {
+    "type": "html",
+    "id": "nav_trust_badge_icon",
+    "label": "Badge icon HTML",
+    "default": "<i class=\"ti-package\"></i>"
+  },
+  {
+    "type": "text",
+    "id": "nav_trust_badge_title",
+    "label": "Badge title",
+    "default": "Korumalı paketleme"
+  },
+  {
+    "type": "text",
+    "id": "nav_trust_badge_text",
+    "label": "Badge text",
+    "default": "Güvenli teslimat"
+  },
+  {
+    "type": "color",
+    "id": "nav_trust_badge_icon_color",
+    "label": "Badge icon color",
+    "default": "#b79659"
+  },
+  {
+    "type": "color",
+    "id": "nav_trust_badge_title_color",
+    "label": "Badge title color",
+    "default": "#142850"
+  },
+  {
+    "type": "color",
+    "id": "nav_trust_badge_text_color",
+    "label": "Badge text color",
+    "default": "#8d7543"
+  },
+  {
+    "type": "color",
+    "id": "menu_active_color",
+    "label": "Menu hover and active color",
+    "default": "#b79659"
   }
   ],
   "blocks": [
@@ -325,9 +380,13 @@
   }
   .main-menu-area {
     background-color: {{ section.settings.header_bottom_bgcolor }};
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
   .main-menu-area ul.main-menu li.menu-link a.link-title {
     color: {{ section.settings.header_text_color }};
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
   }
   @media (min-width: 1200px) {
     .header-area .header-main {
@@ -434,6 +493,91 @@
     .main-menu-area ul.main-menu li.menu-link a.link-title:hover::after,
     .main-menu-area ul.main-menu li.menu-link a.link-title.is-active::after {
       transform: scaleX(1);
+    }
+  }
+
+  .main-menu-area ul.main-menu li.menu-link a.link-title .sp-link-title {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .main-menu-area ul.main-menu li.menu-link a.link-title .sp-link-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -15px;
+    height: 2px;
+    background-color: {{ section.settings.menu_active_color }};
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  .main-menu-area ul.main-menu li.menu-link a.link-title:hover,
+  .main-menu-area ul.main-menu li.menu-link a.link-title:hover .sp-link-title,
+  .main-menu-area ul.main-menu li.menu-link a.link-title .sp-link-title.active {
+    color: {{ section.settings.menu_active_color }};
+  }
+  .main-menu-area ul.main-menu li.menu-link a.link-title:hover .sp-link-title::after,
+  .main-menu-area ul.main-menu li.menu-link a.link-title .sp-link-title.active::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  .main-menu-area .main-navigation {
+    min-height: 51px;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .main-menu-area .nav-trust-badge {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    height: 34px;
+    padding-left: 18px;
+    border-left: 1px solid rgba(183, 150, 89, 0.3);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .main-menu-area .nav-trust-badge__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ section.settings.nav_trust_badge_icon_color }};
+    font-size: 17px;
+    line-height: 1;
+  }
+  .main-menu-area .nav-trust-badge__content {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .main-menu-area .nav-trust-badge__title {
+    color: {{ section.settings.nav_trust_badge_title_color }};
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .main-menu-area .nav-trust-badge__text {
+    color: {{ section.settings.nav_trust_badge_text_color }};
+    font-size: 13px;
+    font-weight: 500;
+  }
+  @media (max-width: 1199px) {
+    .main-menu-area .nav-trust-badge {
+      display: none;
+    }
+  }
+  @media (min-width: 1200px) and (max-width: 1399px) {
+    .main-menu-area .nav-trust-badge {
+      gap: 7px;
+      padding-left: 14px;
+    }
+    .main-menu-area .nav-trust-badge__title {
+      font-size: 13px;
+    }
+    .main-menu-area .nav-trust-badge__text {
+      font-size: 12px;
     }
   }
 </style>

@@ -1,0 +1,23 @@
+{%- liquid
+  assign badge_icon = section.settings.nav_trust_badge_icon
+  assign badge_title = section.settings.nav_trust_badge_title
+  assign badge_text = section.settings.nav_trust_badge_text
+-%}
+
+{%- if badge_icon != blank or badge_title != blank or badge_text != blank -%}
+  <div class="nav-trust-badge" aria-label="{{ badge_title | append: ' ' | append: badge_text | strip_html | strip | escape }}">
+    {%- if badge_icon != blank -%}
+      <span class="nav-trust-badge__icon" aria-hidden="true">
+        {{ badge_icon }}
+      </span>
+    {%- endif -%}
+    <span class="nav-trust-badge__content">
+      {%- if badge_title != blank -%}
+        <span class="nav-trust-badge__title">{{ badge_title }}</span>
+      {%- endif -%}
+      {%- if badge_text != blank -%}
+        <span class="nav-trust-badge__text">{{ badge_text }}</span>
+      {%- endif -%}
+    </span>
+  </div>
+{%- endif -%}
