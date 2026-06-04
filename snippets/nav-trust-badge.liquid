@@ -2,6 +2,7 @@
   assign badge_icon = section.settings.nav_trust_badge_icon
   assign badge_title = section.settings.nav_trust_badge_title
   assign badge_text = section.settings.nav_trust_badge_text
+  assign badge_link = section.settings.nav_trust_badge_link
 -%}
 
 {%- if badge_icon != blank or badge_title != blank or badge_text != blank -%}
@@ -13,7 +14,13 @@
     {%- endif -%}
     <span class="nav-trust-badge__content">
       {%- if badge_title != blank -%}
-        <span class="nav-trust-badge__title">{{ badge_title }}</span>
+        {%- if badge_link != blank -%}
+          <a class="nav-trust-badge__title nav-trust-badge__title-link" href="{{ badge_link }}" target="_blank" rel="noopener">
+            {{ badge_title }}
+          </a>
+        {%- else -%}
+          <span class="nav-trust-badge__title">{{ badge_title }}</span>
+        {%- endif -%}
       {%- endif -%}
       {%- if badge_text != blank -%}
         <span class="nav-trust-badge__text">{{ badge_text }}</span>
