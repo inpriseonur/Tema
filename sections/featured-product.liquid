@@ -33,9 +33,9 @@
                   {% endfor %}
                 </div>
               </div>
-              <div class="swiper-buttons">
-                <div class="button-next"></div>
-                <div class="button-prev"></div>
+              <div class="swiper-buttons product-tab-buttons">
+                <button type="button" class="button-prev product-tab-button-prev-{{ block.id }}" aria-label="Önceki ürün"></button>
+                <button type="button" class="button-next product-tab-button-next-{{ block.id }}" aria-label="Sonraki ürün"></button>
               </div>
             </div>
             <script>
@@ -53,8 +53,8 @@
                 rtl: true,
                 {%- endif -%}
                 navigation: {
-                  nextEl: '.button-next',
-                  prevEl: '.button-prev',
+                  nextEl: '.product-tab-button-next-{{ block.id }}',
+                  prevEl: '.product-tab-button-prev-{{ block.id }}',
                 },
                 breakpoints: {
                   0: {
@@ -410,6 +410,11 @@
     background-color: var(--color-primary);
     box-shadow: 0px 6px 16px rgba(6, 31, 79, 0.12);
 }
+.product-area .tab-content .button-next.swiper-button-disabled,
+.product-area .tab-content .button-prev.swiper-button-disabled{
+    opacity: 0.35;
+    pointer-events: none;
+}
 @media(max-width: 767px){
   .product-area .single-product-wrap .product-content .product-title a {
     height: 38px;
@@ -429,9 +434,6 @@
     min-width: 36px;
     padding: 3px 8px;
     font-size: 11px;
-  }
-  .product-area .tab-content .swiper-buttons{
-    display: none;
   }
 }
 </style>

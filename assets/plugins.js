@@ -645,6 +645,10 @@ class StRecomPro extends HTMLElement {
               observer: true,
               observeParents: true,
               watchSlidesProgress: true,
+              navigation: {
+                nextEl: '.related-product-button-next',
+                prevEl: '.related-product-button-prev',
+              },
               breakpoints: {
                 0: {
                   slidesPerView: 1,

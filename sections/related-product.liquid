@@ -19,6 +19,10 @@
                 {% endfor %}
               </div>
             </div>
+            <div class="related-product-buttons">
+              <button type="button" class="related-product-button related-product-button-prev" aria-label="Önceki ürün"></button>
+              <button type="button" class="related-product-button related-product-button-next" aria-label="Sonraki ürün"></button>
+            </div>
             {% endif %}
           </relative-pro>
         </div>
@@ -151,6 +155,67 @@
     text-align: center;
   }
 
+  .related-product .product-related {
+    position: relative;
+  }
+
+  .related-product .related-slider {
+    display: block;
+    position: relative;
+  }
+
+  .related-product .related-product-button {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(6, 31, 79, 0.16);
+    border-radius: 4px;
+    color: var(--color-primary);
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 4px 12px rgba(6, 31, 79, 0.08);
+    transform: translateY(-50%);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .related-product .related-product-button:hover {
+    color: #fff;
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+    box-shadow: 0 6px 16px rgba(6, 31, 79, 0.12);
+  }
+
+  .related-product .related-product-button.swiper-button-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .related-product .related-product-button-prev {
+    left: -15px;
+  }
+
+  .related-product .related-product-button-next {
+    right: -15px;
+  }
+
+  .related-product .related-product-button:after {
+    font: normal normal normal 18px/1 FontAwesome;
+  }
+
+  .related-product .related-product-button-prev:after {
+    content: "\f104";
+  }
+
+  .related-product .related-product-button-next:after {
+    content: "\f105";
+  }
+
   @media (min-width: 1200px) {
     .related-product .section-title h2 {
       font-size: 24px;
@@ -193,6 +258,19 @@
       min-width: 36px;
       padding: 3px 8px;
       font-size: 11px;
+    }
+
+    .related-product .related-product-button {
+      width: 26px;
+      height: 26px;
+    }
+
+    .related-product .related-product-button-prev {
+      left: -10px;
+    }
+
+    .related-product .related-product-button-next {
+      right: -10px;
     }
   }
 </style>

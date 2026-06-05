@@ -125,6 +125,10 @@
             {% endfor %}
           </div>
         </div>
+        <div class="slider-product-buttons">
+          <button type="button" class="slider-product-button slider-product-button-prev-{{ section.id }}" aria-label="Önceki ürün"></button>
+          <button type="button" class="slider-product-button slider-product-button-next-{{ section.id }}" aria-label="Sonraki ürün"></button>
+        </div>
       </div>
     </div>
   </div>
@@ -176,8 +180,8 @@
     rtl: true,
     {%- endif -%}
     navigation: {
-      nextEl: '.button-next',
-      prevEl: '.button-prev',
+      nextEl: '.slider-product-button-next-{{ section.id }}',
+      prevEl: '.slider-product-button-prev-{{ section.id }}',
     },
     breakpoints: {
       0: {
@@ -515,6 +519,75 @@
     color: #8d8d8d;
     font-size: 13px;
     line-height: 1.1;
+  }
+}
+
+.slider-content .grid-wrapper.ser-wrapper {
+  position: relative;
+}
+
+.slider-content .ser-wrapper .slider-product-button {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(6, 31, 79, 0.16);
+  border-radius: 4px;
+  color: var(--color-primary);
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 12px rgba(6, 31, 79, 0.08);
+  transform: translateY(-50%);
+  transition: all 0.2s ease-in-out;
+}
+
+.slider-content .ser-wrapper .slider-product-button:hover {
+  color: #fff;
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  box-shadow: 0 6px 16px rgba(6, 31, 79, 0.12);
+}
+
+.slider-content .ser-wrapper .slider-product-button.swiper-button-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.slider-content .ser-wrapper .slider-product-button-prev-{{ section.id }} {
+  left: -10px;
+}
+
+.slider-content .ser-wrapper .slider-product-button-next-{{ section.id }} {
+  right: -10px;
+}
+
+.slider-content .ser-wrapper .slider-product-button:after {
+  font: normal normal normal 18px/1 FontAwesome;
+}
+
+.slider-content .ser-wrapper .slider-product-button-prev-{{ section.id }}:after {
+  content: "\f104";
+}
+
+.slider-content .ser-wrapper .slider-product-button-next-{{ section.id }}:after {
+  content: "\f105";
+}
+
+@media (min-width: 1199px) {
+  .slider-content .ser-wrapper .slider-product-buttons {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .slider-content .ser-wrapper .slider-product-button {
+    width: 26px;
+    height: 26px;
   }
 }
 
