@@ -1,4 +1,18 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- liquid
+  assign packaging_video_index = blank
+  assign packaging_video_media_id = blank
+  for media in product.media
+    assign media_alt_downcase = media.alt | downcase
+    if media.media_type == 'video' or media.media_type == 'external_video'
+      if media_alt_downcase contains 'paketleme-video'
+        assign packaging_video_index = forloop.index0
+        assign packaging_video_media_id = media.id
+        break
+      endif
+    endif
+  endfor
+-%}
 <section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
   <div class="product-details">
     <div class="container">
@@ -33,6 +47,20 @@
                     <div class="big-button button-next"><i class="ti ti-arrow-right"></i></div>
                     <div class="big-button button-prev"><i class="ti ti-arrow-left"></i></div>
                   </div>
+                  {%- if packaging_video_index != blank -%}
+                    <button
+                      type="button"
+                      class="packaging-video-cta"
+                      data-packaging-video-cta
+                      data-packaging-video-index="{{ packaging_video_index }}"
+                    >
+                      <span class="packaging-video-cta__icon" aria-hidden="true"><i class="ti-package"></i></span>
+                      <span class="packaging-video-cta__text">
+                        <strong>Kırılmaya karşı nasıl paketliyoruz?</strong>
+                        <span>Videoyu izle <i class="ti-control-play"></i></span>
+                      </span>
+                    </button>
+                  {%- endif -%}
                 </div>
                 <div class="pro-slider">
                   <button type="button" class="thumb-button thumb-button-prev" aria-label="Önceki görsel">
@@ -832,6 +860,58 @@
   </div>
   <script type="text/javascript">
     (function() {
+      var productSection = document.getElementById('MainProduct-{{ section.id }}');
+      var packagingVideoMediaId = {{ packaging_video_media_id | json }};
+
+      function trackPackagingVideoEvent(eventName) {
+        if (typeof window.gtag !== 'function') return;
+        window.gtag('event', eventName, {
+          product_id: {{ product.id | json }},
+          product_title: {{ product.title | json }},
+          video_media_id: packagingVideoMediaId,
+          cta_location: 'product_gallery'
+        });
+      }
+
+      function resetDeferredMedia(media) {
+        var player = media.querySelector('[data-deferred-product-media-player]');
+        if (player) player.replaceChildren();
+        media.classList.remove('is-loaded');
+      }
+
+      function resetInactiveDeferredMedia(activeSlide) {
+        if (!productSection) return;
+        productSection.querySelectorAll('[data-deferred-product-media]').forEach(function(media) {
+          if (!activeSlide || !activeSlide.contains(media)) resetDeferredMedia(media);
+        });
+      }
+
+      if (productSection && !productSection.dataset.deferredMediaBound) {
+        productSection.dataset.deferredMediaBound = 'true';
+        productSection.addEventListener('click', function(event) {
+          var button = event.target.closest('[data-deferred-product-media-button]');
+          if (!button || !productSection.contains(button)) return;
+
+          var media = button.closest('[data-deferred-product-media]');
+          var player = media && media.querySelector('[data-deferred-product-media-player]');
+          var template = media && media.querySelector('[data-deferred-product-media-template]');
+          if (!media || !player || !template || media.classList.contains('is-loaded')) return;
+
+          player.appendChild(template.content.cloneNode(true));
+          media.classList.add('is-loaded');
+
+          if (String(media.dataset.mediaId) === String(packagingVideoMediaId)) {
+            trackPackagingVideoEvent('packaging_video_play');
+          }
+
+          var video = player.querySelector('video');
+          if (video) {
+            var playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(function() {});
+          }
+        });
+      }
+
       setTimeout(function () {
         var swiperOptions = {
           spaceBetween: 0,
@@ -881,6 +961,54 @@
         }
 
         var swiper2 = new Swiper(".slider-big-{{ product.id }}", swiperOptions);
+        swiper2.on('slideChangeTransitionStart', function() {
+          resetInactiveDeferredMedia(swiper2.slides[swiper2.activeIndex]);
+        });
+
+        var packagingVideoCta = productSection && productSection.querySelector('[data-packaging-video-cta]');
+        if (packagingVideoCta) {
+          var packagingVideoIndex = parseInt(packagingVideoCta.dataset.packagingVideoIndex, 10);
+          var productMediaTop = productSection.querySelector('.product_img_top');
+
+          function updatePackagingVideoCtaPosition() {
+            var videoSlide = swiper2.slides[packagingVideoIndex];
+            var videoStage = videoSlide && videoSlide.querySelector('[data-deferred-product-media]');
+            if (!productMediaTop || !videoStage) return;
+            var videoStageHeight = videoStage.offsetHeight;
+            if (!videoStageHeight) return;
+
+            var ctaTop = videoStageHeight + 10;
+            var trustMessages = productSection.querySelector('.purchase-trust-messages:not(.purchase-trust-messages--hide-desktop)');
+            if (trustMessages && packagingVideoCta.offsetHeight) {
+              var mediaTopRect = productMediaTop.getBoundingClientRect();
+              var trustMessagesRect = trustMessages.getBoundingClientRect();
+              ctaTop = trustMessagesRect.bottom - mediaTopRect.top - packagingVideoCta.offsetHeight;
+            }
+
+            productMediaTop.style.setProperty('--packaging-cta-top', Math.max(ctaTop, 0) + 'px');
+            productMediaTop.classList.add('is-packaging-cta-ready');
+          }
+
+          requestAnimationFrame(updatePackagingVideoCtaPosition);
+          window.addEventListener('load', updatePackagingVideoCtaPosition);
+          window.addEventListener('resize', updatePackagingVideoCtaPosition);
+
+          packagingVideoCta.addEventListener('click', function() {
+            if (Number.isNaN(packagingVideoIndex)) return;
+            trackPackagingVideoEvent('packaging_video_click');
+
+            var galleryElement = productSection.querySelector('.slider-big-{{ product.id }}');
+            var gallerySwiper = galleryElement && galleryElement.swiper ? galleryElement.swiper : swiper2;
+            gallerySwiper.slideTo(packagingVideoIndex, 0);
+
+            var videoSlide = gallerySwiper.slides[packagingVideoIndex];
+            var playButton = videoSlide && videoSlide.querySelector('[data-deferred-product-media-button]');
+            if (playButton) playButton.click();
+
+            var gallery = productSection.querySelector('.product_img_top');
+            if (gallery) gallery.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          });
+        }
         $(".option-block .op-lb").click(function(){
           var op_select = $(this).text();
           $(this).parents('.variant-option-block').find('.current-option').html(op_select);

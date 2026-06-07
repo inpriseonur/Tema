@@ -1,10 +1,10 @@
 {%- assign img_url = media | image_url -%}
 {%- liquid
     assign ratio = 1
-    if img_url and section.settings.image_ratio == 'portrait'
+    if media.preview_image and section.settings.image_ratio == 'portrait'
       assign ratio = 0.8
-    elsif img_url and section.settings.image_ratio == 'adapt'
-      assign ratio = section.img_url.aspect_ratio
+    elsif media.preview_image and section.settings.image_ratio == 'adapt'
+      assign ratio = media.preview_image.aspect_ratio
     endif
     if ratio == 0 or ratio == null
       assign ratio = 1
@@ -55,28 +55,27 @@
   {% endif %}
 </a>
 {% when 'external_video' %}
-<div class="product-thumb ratio" style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;">
-  {{ media | external_video_tag }}
+<div class="product-thumb deferred-product-media ratio" data-deferred-product-media data-media-id="{{ media.id }}" style="--ratio-percent: 78%; --media-aspect-ratio: {{ media.preview_image.aspect_ratio | default: 1.777 }};">
+  <button type="button" class="deferred-product-media__poster" data-deferred-product-media-button aria-label="Videoyu oynat">
+    {{ media.preview_image | image_url: width: 1100 | image_tag: loading: image_loading, fetchpriority: image_fetchpriority, class: 'deferred-product-media__poster-image', alt: media.alt }}
+    <span class="deferred-product-media__play" aria-hidden="true"><i class="fa fa-play"></i></span>
+  </button>
+  <div class="deferred-product-media__player" data-deferred-product-media-player></div>
+  <template data-deferred-product-media-template>
+    {{ media | external_video_tag: autoplay: true }}
+  </template>
 </div>
 {% when 'video' %}
-<div class="product-thumb product-vid product-single__media--video product-single__media--{{ media.id }} ratio" data-image-id="{{ media.id }}" style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;">
-  {{ media | video_tag: class: 'media-video', autoplay: true, loop: true, controls: true }}
+<div class="product-thumb deferred-product-media ratio" data-deferred-product-media data-media-id="{{ media.id }}" style="--ratio-percent: 78%; --media-aspect-ratio: {{ media.preview_image.aspect_ratio | default: 1.777 }};">
+  <button type="button" class="deferred-product-media__poster" data-deferred-product-media-button aria-label="Videoyu oynat">
+    {{ media.preview_image | image_url: width: 1100 | image_tag: loading: image_loading, fetchpriority: image_fetchpriority, class: 'deferred-product-media__poster-image', alt: media.alt }}
+    <span class="deferred-product-media__play" aria-hidden="true"><i class="fa fa-play"></i></span>
+  </button>
+  <div class="deferred-product-media__player" data-deferred-product-media-player></div>
+  <template data-deferred-product-media-template>
+    {{ media | video_tag: class: 'media-video', controls: true, preload: 'none', playsinline: true }}
+  </template>
 </div>
-<style>
-  .product-vid {
-    padding-top: 100%;
-    position: relative;
-  }
-  .product-vid video.media-video {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    width: 100%;
-  }
-</style>
 {% when 'model' %}
 <div class="product-thumb product-3d" data-image-id="{{ media.id }}">
   {{ media | media_tag: toggleable: true, data-model-id: media.id }}
