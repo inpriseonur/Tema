@@ -2,6 +2,21 @@
 {%- liquid
   assign packaging_video_index = blank
   assign packaging_video_media_id = blank
+  assign mobile_gallery_aspect_ratio = blank
+
+  if current_variant.featured_media.media_type == 'image'
+    assign mobile_gallery_aspect_ratio = current_variant.featured_media.preview_image.aspect_ratio
+  endif
+
+  if mobile_gallery_aspect_ratio == blank
+    for media in product.media
+      if media.media_type == 'image'
+        assign mobile_gallery_aspect_ratio = media.preview_image.aspect_ratio
+        break
+      endif
+    endfor
+  endif
+
   for media in product.media
     assign media_alt_downcase = media.alt | downcase
     if media.media_type == 'video' or media.media_type == 'external_video'
@@ -12,8 +27,13 @@
       endif
     endif
   endfor
+
+  if mobile_gallery_aspect_ratio == blank or mobile_gallery_aspect_ratio == 0
+    assign mobile_gallery_aspect_ratio = 1
+  endif
+  assign mobile_gallery_ratio_percent = 1.0 | divided_by: mobile_gallery_aspect_ratio | times: 100
 -%}
-<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
+<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}" style="--mobile-gallery-ratio-percent: {{ mobile_gallery_ratio_percent }}%;">
   <div class="product-details">
     <div class="container">
       <div class="grid-wrap {% if section.settings.service_enable or section.settings.campaign_popup_enable %} service-wrap{% endif %} ">
@@ -44,8 +64,15 @@
                       </div>
                       {%- endfor -%}
                     </div>
-                    <div class="big-button button-next"><i class="ti ti-arrow-right"></i></div>
-                    <div class="big-button button-prev"><i class="ti ti-arrow-left"></i></div>
+                    <button type="button" class="big-button button-next" aria-label="Sonraki görsel"><i class="ti ti-arrow-right"></i></button>
+                    <button type="button" class="big-button button-prev" aria-label="Önceki görsel"><i class="ti ti-arrow-left"></i></button>
+                    {%- if product.media.size > 1 -%}
+                      <div class="mobile-media-counter" data-mobile-media-counter aria-live="polite">
+                        <span data-mobile-media-current>1</span>
+                        <span aria-hidden="true">/</span>
+                        <span>{{ product.media.size }}</span>
+                      </div>
+                    {%- endif -%}
                   </div>
                   {%- if packaging_video_index != blank -%}
                     <button
@@ -913,6 +940,7 @@
       }
 
       setTimeout(function () {
+        var mainGalleryElement = productSection && productSection.querySelector('.slider-big-{{ product.id }}');
         var swiperOptions = {
           spaceBetween: 0,
           slidesPerView: 1,
@@ -920,8 +948,8 @@
           slideToClickedSlide: true,
           loopedSlides: 50,
           navigation: {
-            nextEl: ".button-next",
-            prevEl: ".button-prev"
+            nextEl: mainGalleryElement && mainGalleryElement.querySelector(".button-next"),
+            prevEl: mainGalleryElement && mainGalleryElement.querySelector(".button-prev")
           }
         };
 
@@ -961,6 +989,35 @@
         }
 
         var swiper2 = new Swiper(".slider-big-{{ product.id }}", swiperOptions);
+        var mobileMediaCurrent = mainGalleryElement && mainGalleryElement.querySelector('[data-mobile-media-current]');
+        var mainGalleryPrev = mainGalleryElement && mainGalleryElement.querySelector('.button-prev');
+        var mainGalleryNext = mainGalleryElement && mainGalleryElement.querySelector('.button-next');
+
+        function updateMobileMediaCounter() {
+          if (mobileMediaCurrent) mobileMediaCurrent.textContent = swiper2.activeIndex + 1;
+        }
+
+        function handleMainGalleryNavigation(event, direction) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          direction === 'next' ? swiper2.slideNext() : swiper2.slidePrev();
+        }
+
+        if (mainGalleryPrev) {
+          mainGalleryPrev.addEventListener('click', function(event) {
+            handleMainGalleryNavigation(event, 'prev');
+          }, true);
+        }
+
+        if (mainGalleryNext) {
+          mainGalleryNext.addEventListener('click', function(event) {
+            handleMainGalleryNavigation(event, 'next');
+          }, true);
+        }
+
+        updateMobileMediaCounter();
+        swiper2.on('slideChange', updateMobileMediaCounter);
         swiper2.on('slideChangeTransitionStart', function() {
           resetInactiveDeferredMedia(swiper2.slides[swiper2.activeIndex]);
         });
