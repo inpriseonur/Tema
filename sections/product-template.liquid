@@ -74,20 +74,6 @@
                       </div>
                     {%- endif -%}
                   </div>
-                  {%- if packaging_video_index != blank -%}
-                    <button
-                      type="button"
-                      class="packaging-video-cta"
-                      data-packaging-video-cta
-                      data-packaging-video-index="{{ packaging_video_index }}"
-                    >
-                      <span class="packaging-video-cta__icon" aria-hidden="true"><i class="ti-package"></i></span>
-                      <span class="packaging-video-cta__text">
-                        <strong>Kırılmaya karşı nasıl paketliyoruz?</strong>
-                        <span>Videoyu izle <i class="ti-control-play"></i></span>
-                      </span>
-                    </button>
-                  {%- endif -%}
                 </div>
                 <div class="pro-slider">
                   <button type="button" class="thumb-button thumb-button-prev" aria-label="Önceki görsel">
@@ -382,6 +368,20 @@
                         {%- endif -%}
                       {%- endfor -%}
                     </div>
+                  {%- endif -%}
+                  {%- if packaging_video_index != blank -%}
+                    <button
+                      type="button"
+                      class="packaging-video-cta"
+                      data-packaging-video-cta
+                      data-packaging-video-index="{{ packaging_video_index }}"
+                    >
+                      <span class="packaging-video-cta__icon" aria-hidden="true"><i class="ti-package"></i></span>
+                      <span class="packaging-video-cta__text">
+                        <strong>Kırılmaya karşı nasıl paketliyoruz?</strong>
+                        <span>Videoyu izle <i class="ti-control-play"></i></span>
+                      </span>
+                    </button>
                   {%- endif -%}
                   {%- when 'inventory' -%}
                   <div class="product-inventory{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} hidden{% endif %}" {{ block.shopify_attributes }} id="Inventory-{{ section.id }}" role="status">
@@ -1025,30 +1025,6 @@
         var packagingVideoCta = productSection && productSection.querySelector('[data-packaging-video-cta]');
         if (packagingVideoCta) {
           var packagingVideoIndex = parseInt(packagingVideoCta.dataset.packagingVideoIndex, 10);
-          var productMediaTop = productSection.querySelector('.product_img_top');
-
-          function updatePackagingVideoCtaPosition() {
-            var videoSlide = swiper2.slides[packagingVideoIndex];
-            var videoStage = videoSlide && videoSlide.querySelector('[data-deferred-product-media]');
-            if (!productMediaTop || !videoStage) return;
-            var videoStageHeight = videoStage.offsetHeight;
-            if (!videoStageHeight) return;
-
-            var ctaTop = videoStageHeight + 10;
-            var trustMessages = productSection.querySelector('.purchase-trust-messages:not(.purchase-trust-messages--hide-desktop)');
-            if (trustMessages && packagingVideoCta.offsetHeight) {
-              var mediaTopRect = productMediaTop.getBoundingClientRect();
-              var trustMessagesRect = trustMessages.getBoundingClientRect();
-              ctaTop = trustMessagesRect.bottom - mediaTopRect.top - packagingVideoCta.offsetHeight;
-            }
-
-            productMediaTop.style.setProperty('--packaging-cta-top', Math.max(ctaTop, 0) + 'px');
-            productMediaTop.classList.add('is-packaging-cta-ready');
-          }
-
-          requestAnimationFrame(updatePackagingVideoCtaPosition);
-          window.addEventListener('load', updatePackagingVideoCtaPosition);
-          window.addEventListener('resize', updatePackagingVideoCtaPosition);
 
           packagingVideoCta.addEventListener('click', function() {
             if (Number.isNaN(packagingVideoIndex)) return;
