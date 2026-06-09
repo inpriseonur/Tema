@@ -138,70 +138,9 @@
     align-self: end;
   }
 
-  .product-main-template .packaging-video-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    width: auto;
-    max-width: calc(100% - 92px);
-    margin-top: -4px;
-    padding: 6px 0 2px;
-    border: 0;
-    border-top: 1px solid rgba(20, 40, 80, 0.08);
-    border-radius: 0;
-    color: var(--color-secondary);
-    background-color: transparent;
-    box-shadow: none;
-    text-align: left;
-    transition: color 0.2s ease;
-  }
-
-  .product-main-template .packaging-video-cta:hover {
-    color: #9a7b42;
-  }
-
-  .product-main-template .packaging-video-cta__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 22px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    color: #b79659;
-    background-color: rgba(183, 150, 89, 0.12);
-    font-size: 11px;
-  }
-
-  .product-main-template .packaging-video-cta__text {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    min-width: 0;
-    font-size: 12px;
-    line-height: 1.25;
-  }
-
-  .product-main-template .packaging-video-cta__text strong {
-    color: var(--color-secondary);
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .product-main-template .packaging-video-cta__text span {
-    color: #9a7b42;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
 }
 
 .product_detail_img .pro-slider .thumb-button {
-  display: none;
-}
-
-.packaging-video-cta,
-.quickview-block .packaging-video-cta {
   display: none;
 }
 
@@ -2020,6 +1959,72 @@
   color: #061f4f;
 }
 
+.purchase-trust-message--interactive {
+  width: 100%;
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.purchase-trust-message--interactive:hover {
+  border-color: #dab15a;
+  background: #fffaf0;
+  box-shadow: 0 3px 10px rgba(6, 31, 79, 0.07);
+}
+
+.purchase-trust-message--interactive:focus-visible {
+  outline: 2px solid #dab15a;
+  outline-offset: 2px;
+}
+
+.purchase-trust-message--interactive:active {
+  transform: translateY(1px);
+}
+
+.purchase-trust-message--interactive .purchase-trust-message__icon {
+  background: #061f4f;
+  color: #dab15a;
+}
+
+.purchase-trust-message__play-icon {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+.purchase-trust-message__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #b8925e;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.purchase-trust-message--interactive:hover .purchase-trust-message__action {
+  color: #061f4f;
+}
+
+.purchase-trust-message__action svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+
+.purchase-trust-message--interactive:hover .purchase-trust-message__action svg {
+  transform: translateX(2px);
+}
+
 .purchase-trust-message__icon {
   display: inline-flex;
   align-items: center;
@@ -2133,6 +2138,15 @@
 
   .purchase-trust-message__subtitle {
     font-size: 10.5px;
+  }
+
+  .purchase-trust-message__action span {
+    display: none;
+  }
+
+  .purchase-trust-message__action svg {
+    width: 14px;
+    height: 14px;
   }
 
   .purchase-trust-messages--compact {

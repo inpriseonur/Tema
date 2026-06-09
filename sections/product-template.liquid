@@ -332,20 +332,46 @@
                           assign enabled_key = 'message_' | append: message_index | append: '_enabled'
                           assign title_key = 'message_' | append: message_index | append: '_title'
                           assign subtitle_key = 'message_' | append: message_index | append: '_subtitle'
-                          assign icon_key = 'message_' | append: message_index | append: '_icon'
-                          assign tone_key = 'message_' | append: message_index | append: '_tone'
-                          assign message_enabled = block.settings[enabled_key]
-                          assign message_title = block.settings[title_key]
-                          assign message_subtitle = block.settings[subtitle_key]
-                          assign message_icon = block.settings[icon_key]
-                          assign message_tone = block.settings[tone_key]
-                        -%}
-                        {%- if message_enabled and message_title != blank -%}
-                          <div class="purchase-trust-message purchase-trust-message--{{ message_tone }}">
-                            <span class="purchase-trust-message__icon" aria-hidden="true">
-                              {%- case message_icon -%}
-                                {%- when 'shipping' -%}
-                                  <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z"></path><path d="M14 10h4l3 3v4h-7z"></path><circle cx="7" cy="17" r="2"></circle><circle cx="18" cy="17" r="2"></circle></svg>
+                           assign icon_key = 'message_' | append: message_index | append: '_icon'
+                           assign tone_key = 'message_' | append: message_index | append: '_tone'
+                           assign video_enabled_key = 'message_' | append: message_index | append: '_packaging_video_enabled'
+                           assign video_title_key = 'message_' | append: message_index | append: '_packaging_video_title'
+                           assign video_subtitle_key = 'message_' | append: message_index | append: '_packaging_video_subtitle'
+                           assign message_enabled = block.settings[enabled_key]
+                           assign message_title = block.settings[title_key]
+                           assign message_subtitle = block.settings[subtitle_key]
+                           assign message_icon = block.settings[icon_key]
+                           assign message_tone = block.settings[tone_key]
+                           assign message_is_packaging_video = false
+
+                           if message_enabled and block.settings[video_enabled_key] and packaging_video_index != blank
+                             assign message_is_packaging_video = true
+                             if block.settings[video_title_key] != blank
+                               assign message_title = block.settings[video_title_key]
+                             endif
+                             if block.settings[video_subtitle_key] != blank
+                               assign message_subtitle = block.settings[video_subtitle_key]
+                             endif
+                           endif
+                         -%}
+                         {%- if message_enabled and message_title != blank -%}
+                           {%- if message_is_packaging_video -%}
+                             <button
+                               type="button"
+                               class="purchase-trust-message purchase-trust-message--{{ message_tone }} purchase-trust-message--interactive"
+                               data-packaging-video-cta
+                               data-packaging-video-index="{{ packaging_video_index }}"
+                             >
+                           {%- else -%}
+                             <div class="purchase-trust-message purchase-trust-message--{{ message_tone }}">
+                           {%- endif -%}
+                             <span class="purchase-trust-message__icon" aria-hidden="true">
+                               {%- if message_is_packaging_video -%}
+                                 <svg class="purchase-trust-message__play-icon" viewBox="0 0 24 24"><path d="M9 7l8 5-8 5z"></path></svg>
+                               {%- else -%}
+                               {%- case message_icon -%}
+                                 {%- when 'shipping' -%}
+                                   <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3z"></path><path d="M14 10h4l3 3v4h-7z"></path><circle cx="7" cy="17" r="2"></circle><circle cx="18" cy="17" r="2"></circle></svg>
                                 {%- when 'clock' -%}
                                   <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
                                 {%- when 'payment' -%}
@@ -354,36 +380,33 @@
                                   <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
                                 {%- when 'support' -%}
                                   <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0"></path><path d="M4 12v4a2 2 0 0 0 2 2h2v-6H4z"></path><path d="M20 12v4a2 2 0 0 1-2 2h-2v-6h4z"></path><path d="M9 20h3"></path></svg>
-                                {%- else -%}
-                                  <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
-                              {%- endcase -%}
-                            </span>
-                            <span class="purchase-trust-message__text">
-                              <span class="purchase-trust-message__title">{{ message_title }}</span>
+                                 {%- else -%}
+                                   <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+                               {%- endcase -%}
+                               {%- endif -%}
+                             </span>
+                             <span class="purchase-trust-message__text">
+                               <span class="purchase-trust-message__title">{{ message_title }}</span>
                               {%- if message_subtitle != blank -%}
-                                <span class="purchase-trust-message__subtitle">{{ message_subtitle }}</span>
-                              {%- endif -%}
-                            </span>
-                          </div>
-                        {%- endif -%}
-                      {%- endfor -%}
-                    </div>
-                  {%- endif -%}
-                  {%- if packaging_video_index != blank -%}
-                    <button
-                      type="button"
-                      class="packaging-video-cta"
-                      data-packaging-video-cta
-                      data-packaging-video-index="{{ packaging_video_index }}"
-                    >
-                      <span class="packaging-video-cta__icon" aria-hidden="true"><i class="ti-package"></i></span>
-                      <span class="packaging-video-cta__text">
-                        <strong>Kırılmaya karşı nasıl paketliyoruz?</strong>
-                        <span>Videoyu izle <i class="ti-control-play"></i></span>
-                      </span>
-                    </button>
-                  {%- endif -%}
-                  {%- when 'inventory' -%}
+                                 <span class="purchase-trust-message__subtitle">{{ message_subtitle }}</span>
+                               {%- endif -%}
+                             </span>
+                             {%- if message_is_packaging_video -%}
+                               <span class="purchase-trust-message__action" aria-hidden="true">
+                                 <span>İzle</span>
+                                 <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
+                               </span>
+                             {%- endif -%}
+                           {%- if message_is_packaging_video -%}
+                             </button>
+                           {%- else -%}
+                             </div>
+                           {%- endif -%}
+                         {%- endif -%}
+                       {%- endfor -%}
+                     </div>
+                   {%- endif -%}
+                   {%- when 'inventory' -%}
                   <div class="product-inventory{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} hidden{% endif %}" {{ block.shopify_attributes }} id="Inventory-{{ section.id }}" role="status">
                     <h6>{{ block.settings.availability_title }}</h6>
                     {%- if product.selected_or_first_available_variant.inventory_management == 'shopify' -%}
@@ -895,8 +918,7 @@
         window.gtag('event', eventName, {
           product_id: {{ product.id | json }},
           product_title: {{ product.title | json }},
-          video_media_id: packagingVideoMediaId,
-          cta_location: 'product_gallery'
+          video_media_id: packagingVideoMediaId
         });
       }
 
@@ -933,6 +955,8 @@
 
           var video = player.querySelector('video');
           if (video) {
+            video.muted = true;
+            video.defaultMuted = true;
             var playPromise = video.play();
             if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(function() {});
           }
@@ -1022,11 +1046,10 @@
           resetInactiveDeferredMedia(swiper2.slides[swiper2.activeIndex]);
         });
 
-        var packagingVideoCta = productSection && productSection.querySelector('[data-packaging-video-cta]');
-        if (packagingVideoCta) {
-          var packagingVideoIndex = parseInt(packagingVideoCta.dataset.packagingVideoIndex, 10);
-
+        var packagingVideoCtas = productSection ? productSection.querySelectorAll('[data-packaging-video-cta]') : [];
+        packagingVideoCtas.forEach(function(packagingVideoCta) {
           packagingVideoCta.addEventListener('click', function() {
+            var packagingVideoIndex = parseInt(packagingVideoCta.dataset.packagingVideoIndex, 10);
             if (Number.isNaN(packagingVideoIndex)) return;
             trackPackagingVideoEvent('packaging_video_click');
 
@@ -1041,7 +1064,7 @@
             var gallery = productSection.querySelector('.product_img_top');
             if (gallery) gallery.scrollIntoView({ behavior: 'smooth', block: 'center' });
           });
-        }
+        });
         $(".option-block .op-lb").click(function(){
           var op_select = $(this).text();
           $(this).parents('.variant-option-block').find('.current-option').html(op_select);
@@ -1465,6 +1488,22 @@
         "default": "accent"
       },
       {
+        "type": "checkbox",
+        "id": "message_1_packaging_video_enabled",
+        "label": "Paketleme videosu varsa oynat",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "message_1_packaging_video_title",
+        "label": "Video varsa ana mesaj"
+      },
+      {
+        "type": "text",
+        "id": "message_1_packaging_video_subtitle",
+        "label": "Video varsa alt mesaj"
+      },
+      {
         "type": "header",
         "content": "Mesaj 2"
       },
@@ -1512,6 +1551,22 @@
         "default": "normal"
       },
       {
+        "type": "checkbox",
+        "id": "message_2_packaging_video_enabled",
+        "label": "Paketleme videosu varsa oynat",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "message_2_packaging_video_title",
+        "label": "Video varsa ana mesaj"
+      },
+      {
+        "type": "text",
+        "id": "message_2_packaging_video_subtitle",
+        "label": "Video varsa alt mesaj"
+      },
+      {
         "type": "header",
         "content": "Mesaj 3"
       },
@@ -1557,6 +1612,22 @@
           { "value": "quiet", "label": "Sade" }
         ],
         "default": "quiet"
+      },
+      {
+        "type": "checkbox",
+        "id": "message_3_packaging_video_enabled",
+        "label": "Paketleme videosu varsa oynat",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "message_3_packaging_video_title",
+        "label": "Video varsa ana mesaj"
+      },
+      {
+        "type": "text",
+        "id": "message_3_packaging_video_subtitle",
+        "label": "Video varsa alt mesaj"
       }
     ]
   },
