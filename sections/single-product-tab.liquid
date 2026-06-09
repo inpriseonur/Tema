@@ -105,6 +105,42 @@
     </div>
   </div>
 </section>
+<script>
+  (function() {
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section || section.dataset.reviewBadgeNavigationBound === 'true') return;
+    section.dataset.reviewBadgeNavigationBound = 'true';
+
+    document.addEventListener('click', function(event) {
+      var badge = event.target.closest('.product-main-template .jdgm-preview-badge, .product-main-template .jdgm-prev-badge');
+      if (!badge) return;
+
+      var reviewTab = section.querySelector('[data-bs-toggle="tab"][href="#pro-review"]');
+      var reviewPanel = section.querySelector('#pro-review');
+      if (!reviewTab || !reviewPanel) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      var scrollToReviews = function() {
+        reviewPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      if (reviewTab.classList.contains('active')) {
+        scrollToReviews();
+        return;
+      }
+
+      reviewTab.addEventListener('shown.bs.tab', scrollToReviews, { once: true });
+
+      if (window.bootstrap && window.bootstrap.Tab) {
+        window.bootstrap.Tab.getOrCreateInstance(reviewTab).show();
+      } else {
+        reviewTab.click();
+      }
+    }, true);
+  })();
+</script>
 {% schema %}
 {
   "name": "Information Tab",
