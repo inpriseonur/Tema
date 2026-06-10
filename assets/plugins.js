@@ -368,10 +368,13 @@ class Swatchoption extends HTMLElement {
     var product_id = this.swatch.featured_image.product_id;
     if (this.swatch && this.swatch.featured_image) {
       if(jQuery('.product_details .swiper-slide').length >= 1){
+        var productSliderEl = document.querySelector("#slider-small-"+product_id);
+        var isQuickView = productSliderEl && productSliderEl.closest('.quickview-block');
+        var useAutoHeight = window.innerWidth < 1200 || isQuickView;
         var swiperOptions = {
           spaceBetween: 0,
           slidesPerView: 1,
-          autoHeight: true,
+          autoHeight: useAutoHeight,
           slideToClickedSlide: true,
           navigation: {
             nextEl: ".button-next",
@@ -379,8 +382,6 @@ class Swatchoption extends HTMLElement {
           }
         };
 
-        var quickViewSliderEl = document.querySelector("#slider-small-"+product_id);
-        var isQuickView = quickViewSliderEl && quickViewSliderEl.closest('.quickview-block');
         var useVerticalThumbs = !isQuickView && window.innerWidth >= 1200;
 
         if (window.innerWidth > 749) {
@@ -414,7 +415,7 @@ class Swatchoption extends HTMLElement {
           var swiperOptionsLoop = {
             spaceBetween: 0,
             slidesPerView: 1,
-            autoHeight: true,
+            autoHeight: useAutoHeight,
             slideToClickedSlide: true,
             loop: true,
             loopedSlides: 50,

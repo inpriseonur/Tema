@@ -3,6 +3,7 @@
   assign packaging_video_index = blank
   assign packaging_video_media_id = blank
   assign mobile_gallery_aspect_ratio = blank
+  assign desktop_gallery_ratio_percent = 100
 
   if current_variant.featured_media.media_type == 'image'
     assign mobile_gallery_aspect_ratio = current_variant.featured_media.preview_image.aspect_ratio
@@ -32,8 +33,14 @@
     assign mobile_gallery_aspect_ratio = 1
   endif
   assign mobile_gallery_ratio_percent = 1.0 | divided_by: mobile_gallery_aspect_ratio | times: 100
+
+  if section.settings.image_ratio == 'portrait'
+    assign desktop_gallery_ratio_percent = 125
+  elsif section.settings.image_ratio == 'adapt'
+    assign desktop_gallery_ratio_percent = mobile_gallery_ratio_percent
+  endif
 -%}
-<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}" style="--mobile-gallery-ratio-percent: {{ mobile_gallery_ratio_percent }}%;">
+<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}" style="--mobile-gallery-ratio-percent: {{ mobile_gallery_ratio_percent }}%; --desktop-gallery-ratio-percent: {{ desktop_gallery_ratio_percent }}%;">
   <div class="product-details">
     <div class="container">
       <div class="grid-wrap {% if section.settings.service_enable or section.settings.campaign_popup_enable %} service-wrap{% endif %} ">
@@ -965,10 +972,11 @@
 
       setTimeout(function () {
         var mainGalleryElement = productSection && productSection.querySelector('.slider-big-{{ product.id }}');
+        var isNormalDesktopGallery = productSection && !productSection.closest('.quickview-block') && window.innerWidth >= 1200;
         var swiperOptions = {
           spaceBetween: 0,
           slidesPerView: 1,
-          autoHeight: true,
+          autoHeight: !isNormalDesktopGallery,
           slideToClickedSlide: true,
           loopedSlides: 50,
           navigation: {

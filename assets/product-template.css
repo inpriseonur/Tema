@@ -327,6 +327,12 @@
   display: none;
 }
 
+@media (min-width: 1200px) {
+  section.product-main-template .slider-big .swiper-slide > .deferred-product-media {
+    --ratio-percent: var(--desktop-gallery-ratio-percent);
+  }
+}
+
 .mobile-media-counter {
   display: none;
 }
