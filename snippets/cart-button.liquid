@@ -5,8 +5,16 @@
     assign qty_rules = true
   endif
 -%}
+<a
+  href="{{ product.url | within: collection }}"
+  class="quick-action product-card-detail-action"
+  aria-label="{{ product.title | escape }} ürününü incele"
+  title="Ürünü incele"
+>
+  <span class="cart-title"><i class="ti ti-arrow-right"></i></span>
+</a>
 {%- if product.variants.size > 1 or qty_rules -%}
-<qv-modal data-modal="#QuickAdd-{{ product.id }}" class="quick-action">
+<qv-modal data-modal="#QuickAdd-{{ product.id }}" class="quick-action product-card-cart-action">
   <a id="{{ product_form_id }}-submit" type="submit" name="add" class="quick-add-btn" aria-haspopup="dialog" aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ product.id }}" data-product-url="{{ shop.url }}{{ product.url | split: "?" | first }}?view=main-product">
     <span class="cart-title"><i class="fa fa-shopping-bag"></i></span>
     <div class="ajax-loader hidden">
@@ -21,7 +29,7 @@
   </div>
 </popup-view>
 {%- else -%}
-<cart-action class="quick-action">
+<cart-action class="quick-action product-card-cart-action">
   {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled>
     <button id="{{ product_form_id }}-submit" type="submit" name="add" class="quick-add-btn" aria-haspopup="dialog" aria-labelledby="{{ product_form_id }}-submit title-{{ section_id }}-{{ product.id }}" aria-live="polite" data-sold-out-message="true" {% if product.selected_or_first_available_variant.available == false %} disabled{% endif %} aria-label="{{ 'products.product.add_to_cart' | t }}">
