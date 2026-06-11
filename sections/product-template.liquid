@@ -1,4 +1,5 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign explicitly_selected_variant = product.selected_variant -%}
 {%- liquid
   assign packaging_video_index = blank
   assign packaging_video_media_id = blank
@@ -148,7 +149,12 @@
                   {{- block.settings.text -}}
                   {%- when 'title_wrap' -%}
                   <div class="product-title" {{ block.shopify_attributes }}>
-                    <h1>{{ product.title }}</h1>
+                    <h1 data-product-variant-title>
+                      {{- product.title -}}
+                      {%- if explicitly_selected_variant and product.has_only_default_variant == false -%}
+                        {{- ' ' -}}{{- explicitly_selected_variant.options | join: ' ' -}}
+                      {%- endif -%}
+                    </h1>
                   </div>
                   {%- if settings.show_rating -%}
                     <div class="product-grid-rating product-social-proof">
@@ -919,6 +925,28 @@
     (function() {
       var productSection = document.getElementById('MainProduct-{{ section.id }}');
       var packagingVideoMediaId = {{ packaging_video_media_id | json }};
+      var productTitleHeading = productSection && productSection.querySelector('[data-product-variant-title]');
+      var baseProductTitle = {{ product.title | json }};
+
+      function updateProductVariantTitle(variant) {
+        if (!productTitleHeading) return;
+        var variantOptions = variant && Array.isArray(variant.options)
+          ? variant.options.filter(function(option) { return option && option !== 'Default Title'; })
+          : [];
+        productTitleHeading.textContent = variantOptions.length
+          ? baseProductTitle + ' ' + variantOptions.join(' ')
+          : baseProductTitle;
+      }
+
+      if (productSection) {
+        productSection.addEventListener('change', function(event) {
+          var variantPicker = event.target.closest('pr-option, selects-box');
+          if (!variantPicker) return;
+          setTimeout(function() {
+            updateProductVariantTitle(variantPicker.swatch);
+          }, 0);
+        });
+      }
 
       function trackPackagingVideoEvent(eventName) {
         if (typeof window.gtag !== 'function') return;
