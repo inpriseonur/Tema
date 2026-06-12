@@ -42,7 +42,11 @@
     src="{{ img_url | image_url: width: 550 }}"
     data-src="{{ img_url | image_url: width: 550 }}"
     alt="{{ img_url.alt | escape }}"
-    id="{{ media_id }}"
+    {% if selected_variant_media_id != blank and media.id == selected_variant_media_id %}
+      id="SelectedVariantImage"
+    {% elsif media_id != blank %}
+      id="{{ media_id }}"
+    {% endif %}
     class="{{ image_class }}"
     width="{{ img_url.width }}"
     height="{{ img_url.width | divided_by: img_url.aspect_ratio }}"

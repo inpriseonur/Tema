@@ -68,7 +68,12 @@
                       {%- for media in product.media -%}
                       {% assign i = forloop.index %}
                       <div class="swiper-slide" data-layout="thumb-slider" data-image="{{ media.src | image_url }}" data-image-id="{{ media.id }}" data-index="{{ i }}">
-                        {% render 'media', media: media, section: section, priority: forloop.first %}
+                        {% render 'media',
+                          media: media,
+                          section: section,
+                          priority: forloop.first,
+                          selected_variant_media_id: current_variant.featured_media.id
+                        %}
                       </div>
                       {%- endfor -%}
                     </div>
