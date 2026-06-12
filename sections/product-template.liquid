@@ -932,6 +932,33 @@
       var packagingVideoMediaId = {{ packaging_video_media_id | json }};
       var productTitleHeading = productSection && productSection.querySelector('[data-product-variant-title]');
       var baseProductTitle = {{ product.title | json }};
+      var productInfo = productTitleHeading && productTitleHeading.closest('.product_details_info');
+      var priceBlock = productInfo && productInfo.querySelector('.pro-price-label');
+      var reviewBlock = productInfo && productInfo.querySelector('.product-title + .product-app-block');
+      var salesProofBlock = reviewBlock && reviewBlock.nextElementSibling;
+
+      if (reviewBlock && salesProofBlock && salesProofBlock.classList.contains('product-social-proof-sales')) {
+        var socialProofRow = document.createElement('div');
+        socialProofRow.className = 'product-social-proof-row';
+        reviewBlock.parentNode.insertBefore(socialProofRow, reviewBlock);
+        socialProofRow.appendChild(reviewBlock);
+        socialProofRow.appendChild(salesProofBlock);
+      }
+
+      var titleSpacingAnchor = priceBlock && priceBlock.previousElementSibling;
+
+      if (titleSpacingAnchor && !titleSpacingAnchor.classList.contains('product-title')) {
+        titleSpacingAnchor.classList.add('variant-title-spacing-anchor');
+      }
+
+      function updateProductVariantTitleSpacing() {
+        if (!productTitleHeading || !productInfo || !titleSpacingAnchor) return;
+        var lineHeight = parseFloat(window.getComputedStyle(productTitleHeading).lineHeight);
+        if (!lineHeight) return;
+        var extraHeight = Math.min(Math.max(productTitleHeading.getBoundingClientRect().height - lineHeight, 0), lineHeight);
+        productInfo.style.setProperty('--variant-title-line-height', lineHeight + 'px');
+        productInfo.style.setProperty('--variant-title-extra-height', extraHeight + 'px');
+      }
 
       function updateProductVariantTitle(variant) {
         if (!productTitleHeading) return;
@@ -941,7 +968,11 @@
         productTitleHeading.textContent = variantOptions.length
           ? baseProductTitle + ' ' + variantOptions.join(' ')
           : baseProductTitle;
+        requestAnimationFrame(updateProductVariantTitleSpacing);
       }
+
+      requestAnimationFrame(updateProductVariantTitleSpacing);
+      window.addEventListener('resize', updateProductVariantTitleSpacing);
 
       if (productSection) {
         productSection.addEventListener('change', function(event) {
