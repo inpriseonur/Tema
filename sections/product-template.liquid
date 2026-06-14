@@ -5,6 +5,16 @@
   assign packaging_video_media_id = blank
   assign mobile_gallery_aspect_ratio = blank
   assign desktop_gallery_ratio_percent = 100
+  assign selected_variant_media_id = current_variant.featured_media.id
+
+  if selected_variant_media_id == blank
+    for media in product.media
+      if media.media_type == 'image'
+        assign selected_variant_media_id = media.id
+        break
+      endif
+    endfor
+  endif
 
   if current_variant.featured_media.media_type == 'image'
     assign mobile_gallery_aspect_ratio = current_variant.featured_media.preview_image.aspect_ratio
@@ -72,7 +82,7 @@
                           media: media,
                           section: section,
                           priority: forloop.first,
-                          selected_variant_media_id: current_variant.featured_media.id
+                          selected_variant_media_id: selected_variant_media_id
                         %}
                       </div>
                       {%- endfor -%}
