@@ -89,6 +89,11 @@
                 </div>
               </div>
             </div>
+            {%- if collection.metafields.custom.seo_content != blank -%}
+            <div class="collection-seo-content rte">
+              {{ collection.metafields.custom.seo_content | metafield_tag }}
+            </div>
+            {%- endif -%}
           </div>
           <div class="pro-grli-wrap product-sidebar{% if section.settings.sidebar_handle == 'without_sidebar' %} product-without-sidebar{% endif %}">
             <div id="main-collection-filters" data-id="{{ section.id }}">
