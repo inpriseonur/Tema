@@ -22,6 +22,7 @@
            <form action="{{ routes.search_url }}" method="get" role="search" class="search">
             <div class="form-search">
               <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'templates.search.placeholder' | t }}" aria-label="{{ 'templates.search.placeholder' | t }}" required>
+              <input type="hidden" name="type" value="product">
               <button type="submit" class="page-search-button">
                 <i class="fa fa-search"></i>
               </button>
@@ -31,23 +32,11 @@
         {% if search.performed %}
           <div class="search-list">
             {% for item in search.results %}
-              <div class="search-item">
-                {%- case item.object_type -%}
-                {%- when 'product' -%}
+              {%- if item.object_type == 'product' -%}
+                <div class="search-item">
                 {% render 'product-grid-item', product: item %}
-                {%- when 'article' -%}
-                {% render 'blog-grid-item', article: item %}
-                {%- when 'page' -%}
-                <div class="page-wrapper">
-                  <a href="{{ item.url }}">
-                    {{ item.title | truncate: 50 | escape }}
-                  </a>
-                  <span class="label">
-                    {{- 'templates.search.page' | t -}}
-                  </span>
                 </div>
-                {%- endcase -%}
-              </div>
+              {%- endif -%}
             {% endfor %}
           </div>
         {% endif %}
