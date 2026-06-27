@@ -1,3 +1,16 @@
+{%- if collection.handle == 'all' and collection.sort_by == blank and collection.default_sort_by != 'best-selling' -%}
+<script>
+  (function() {
+    var url = new URL(window.location.href);
+
+    if (!url.searchParams.has('sort_by')) {
+      url.searchParams.set('sort_by', 'best-selling');
+      window.location.replace(url.toString());
+    }
+  })();
+</script>
+{%- endif -%}
+
 <div class="main-content-wrap shop-page section-ptb">
   <div class="container">
     <div class="row">
