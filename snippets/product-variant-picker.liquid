@@ -26,6 +26,7 @@
         {%- liquid
           assign swatch_count = option.values | map: 'swatch' | compact | size
           assign picker_type = block.settings.picker_type
+          assign option_label = option.name
 
           if swatch_count > 0 and block.settings.swatch_shape != 'none'
             if block.settings.picker_type == 'dropdown'
@@ -34,11 +35,15 @@
               assign picker_type = 'swatch'
             endif
           endif
+
+          if product.tags contains 'Bundle' and option.name contains 'Aroma'
+            assign option_label = 'Meyveli koli aromasını seçin'
+          endif
         -%}
         {%- if picker_type == 'swatch' -%}
           <varitem class="js variant-option-block product-form__input product-form__input--swatch">
             <h6 class="option-title">
-              <span>{{ option.name }}:</span>
+              <span>{{ option_label }}:</span>
               <span class="current-option">{{ option.selected_value }}</span>
             </h6>
             <div class="option-block">
@@ -53,7 +58,7 @@
         {%- elsif picker_type == 'button' -%}
           <varitem class="js variant-option-block product-form__input product-form__input--pill">
             <h6 class="option-title">
-              <span>{{ option.name }}:</span>
+              <span>{{ option_label }}:</span>
               <span class="current-option">{{ option.selected_value }}</span>
             </h6>
             <div class="option-block">
@@ -82,9 +87,15 @@
     {% endif %}
     {{ block.shopify_attributes }}>
     {%- for option in product.options_with_values -%}
+    {%- liquid
+      assign option_label = option.name
+      if product.tags contains 'Bundle' and option.name contains 'Aroma'
+        assign option_label = 'Meyveli koli aromasını seçin'
+      endif
+    -%}
     <div class="variant-option-block ">
       <h6 class="option-title" for="Option-{{ section.id }}-{{ forloop.index0 }}">
-        {{ option.name }}:
+        {{ option_label }}:
         <span class="current-option" id="current-option{{ forloop.index0 }}">{{ option.selected_value }}</span>
       </h6>
         <div class="option-block">

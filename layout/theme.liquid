@@ -700,10 +700,29 @@
             margin: 0 !important;
             line-height: 1;
           }
+          .mobile-sticky-price .unit-price {
+            padding-inline-start: 0 !important;
+            font-size: 11px !important;
+            line-height: 1;
+            color: #5f6b82;
+          }
+          .mobile-sticky-price .unit-price-desktop {
+            display: none !important;
+          }
+          .mobile-sticky-price .unit-price-mobile {
+            display: inline !important;
+          }
+          .mobile-sticky-price .price-box.has-compare-price .unit-price,
+          .mobile-sticky-price .price-box:has(.old-price) .unit-price {
+            display: none !important;
+          }
           .mobile-sticky-price .product-label {
             margin: 0 !important;
             transform: scale(0.9);
             transform-origin: center;
+          }
+          .bundle-product .mobile-sticky-price .product-label {
+            display: none !important;
           }
         }
         @media screen and (min-width: 750px) { .sticky-top-row, .mobile-sticky-price { display: none !important; } }
@@ -719,6 +738,7 @@
           wrapper.className = 'mobile-sticky-price';
 
           var priceClone = priceBox.cloneNode(true);
+          priceClone.classList.toggle('has-compare-price', !!priceClone.querySelector('.old-price'));
           wrapper.appendChild(priceClone);
 
           if (discountLabel) {
@@ -754,6 +774,7 @@
           // Varyant değiştiğinde klonları güncellemek için Observer
           var observer = new MutationObserver(function() {
             priceClone.innerHTML = priceBox.innerHTML;
+            priceClone.classList.toggle('has-compare-price', !!priceClone.querySelector('.old-price'));
             if (discountLabel && discountClone) {
               discountClone.innerHTML = discountLabel.innerHTML;
               var pEl = discountClone.querySelector('.percent-count');

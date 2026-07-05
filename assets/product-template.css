@@ -668,6 +668,54 @@ body.template-product .product-main-template .product-social-proof-row > .produc
   margin-top: 15px;
 }
 
+.product-main-template.bundle-product .bundle-product-subtitle {
+  margin-top: 8px;
+  color: #536079;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.product-main-template.bundle-product .bundle-mobile-price-note {
+  display: none;
+}
+
+.product-main-template.bundle-product .pro-price-label {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-main-template.bundle-product .bundle-price-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  color: #687086;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.product-main-template.bundle-product .bundle-price-summary s {
+  color: #8a90a0;
+  font-weight: 700;
+}
+
+.product-main-template.bundle-product .bundle-price-summary strong {
+  padding: 5px 9px;
+  border: 1px solid rgba(180, 126, 24, 0.22);
+  border-radius: 6px;
+  background: #fff2d2;
+  color: #7a4a05;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.product-main-template.bundle-product .pro-price-label .product-label {
+  display: none !important;
+}
+
 /* Sadece Desktop (Masaüstü) için güncellemeler */
 @media (min-width: 768px) {
   .product_details_info .pro-price-label {
@@ -736,6 +784,14 @@ body.template-product .product-main-template .product-social-proof-row > .produc
 
 .product_details_info .pro-price-label .price-box .unit-price {
   padding-inline-start: 5px;
+  color: #536079;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.product_details_info .pro-price-label .price-box .unit-price-mobile {
+  display: none;
 }
 
 .product_details_info .pro-price-label .product-label {
@@ -749,6 +805,80 @@ body.template-product .product-main-template .product-social-proof-row > .produc
 
 .product_details_info .product-description {
   margin-top: 15px;
+}
+
+.product-main-template.bundle-product .bundle-set-content {
+  margin-top: 18px;
+  padding: 14px 15px;
+  border: 1px solid rgba(6, 31, 79, 0.10);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.product-main-template.bundle-product .bundle-set-content h2 {
+  margin: 0 0 8px;
+  color: #061f4f;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.product-main-template.bundle-product .bundle-set-content__body {
+  color: #28354f;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.product-main-template.bundle-product .bundle-set-content__body > *:last-child {
+  margin-bottom: 0;
+}
+
+.product-main-template.bundle-product .bundle-set-content__body ul,
+.product-main-template.bundle-product .bundle-set-content__body ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.product-main-template.bundle-product .bundle-set-content__body p {
+  margin-bottom: 5px;
+}
+
+@media (max-width: 767px) {
+  .product-main-template.bundle-product .bundle-product-subtitle {
+    font-size: 13px;
+  }
+
+  .product-main-template.bundle-product .bundle-mobile-price-note {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 8px;
+    color: #687086;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .product-main-template.bundle-product .bundle-mobile-price-note span {
+    text-decoration: line-through;
+  }
+
+  .product-main-template.bundle-product .bundle-mobile-price-note strong {
+    padding: 3px 7px;
+    border: 1px solid rgba(180, 126, 24, 0.22);
+    border-radius: 6px;
+    background: #fff2d2;
+    color: #7a4a05;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .product-main-template.bundle-product .bundle-set-content {
+    margin-top: 14px;
+    padding: 12px 13px;
+  }
 }
 
 /* Fiyat altı geri sayım (Desktop) */

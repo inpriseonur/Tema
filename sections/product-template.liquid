@@ -50,8 +50,13 @@
   elsif section.settings.image_ratio == 'adapt'
     assign desktop_gallery_ratio_percent = mobile_gallery_ratio_percent
   endif
+
+  assign is_bundle_product = false
+  if product.tags contains 'Bundle'
+    assign is_bundle_product = true
+  endif
 -%}
-<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}" style="--mobile-gallery-ratio-percent: {{ mobile_gallery_ratio_percent }}%; --desktop-gallery-ratio-percent: {{ desktop_gallery_ratio_percent }}%;">
+<section class="main-content-wrap product-details-page product-main-template{% if product.tags contains 'mobil-kompakt-gorsel' %} mobile-compact-media{% endif %}{% if is_bundle_product %} bundle-product{% endif %}" id="MainProduct-{{ section.id }}" data-section="{{ section.id }}" style="--mobile-gallery-ratio-percent: {{ mobile_gallery_ratio_percent }}%; --desktop-gallery-ratio-percent: {{ desktop_gallery_ratio_percent }}%;">
   <div class="product-details">
     <div class="container">
       <div class="grid-wrap {% if section.settings.service_enable or section.settings.campaign_popup_enable %} service-wrap{% endif %} ">
@@ -170,6 +175,18 @@
                         {{- ' ' -}}{{- explicitly_selected_variant.options | join: ' ' -}}
                       {%- endif -%}
                     </h1>
+                    {%- if is_bundle_product and product.metafields.descriptors.subtitle != blank -%}
+                      <div class="bundle-product-subtitle">
+                        {{ product.metafields.descriptors.subtitle.value }}
+                      </div>
+                    {%- endif -%}
+                    {%- if is_bundle_product and product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+                      {%- assign bundle_mobile_saving = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price -%}
+                      <div class="bundle-mobile-price-note">
+                        <span>Tek tek alınca {{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+                        <strong>{{ bundle_mobile_saving | money_without_trailing_zeros }} set avantajı</strong>
+                      </div>
+                    {%- endif -%}
                   </div>
                   {%- if settings.show_rating -%}
                     <div class="product-grid-rating product-social-proof">
@@ -482,21 +499,26 @@
                   <div class="pro-price-label" {{ block.shopify_attributes }}>
                     <div class="price-box" id="price-{{ section.id }}">
                       <span class="new-price" id="ProductPrice">{{ product.selected_or_first_available_variant.price | money }}</span>
-                      {%- if product.compare_at_price_max > product.price -%}
+                      {%- if product.compare_at_price_max > product.price and is_bundle_product == false -%}
                       <span class="old-price" id="ComparePrice">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
                       {%- endif -%}
-                      <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} d-none{% endif %}">
-                        <span class="price-item price-item--last">
-                          <span class="unit-price-unit">{{- product.selected_or_first_available_variant.unit_price | money -}}</span>
-                          <span>
-                            {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
-                              {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
-                            {%- endif -%}
-                            {{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}
+                      {%- unless is_bundle_product -%}
+                        {%- assign unit_price_text = product.selected_or_first_available_variant.unit_price | money_without_currency | replace: '.', ',' | append: ' TL' -%}
+                        <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} d-none{% endif %}">
+                          <span class="price-item price-item--last">
+                            <span class="unit-price-desktop">{{ unit_price_text }} / şişe</span>
+                            <span class="unit-price-mobile">{{ unit_price_text }} / şişe</span>
                           </span>
-                        </span>
-                      </small>
+                        </small>
+                      {%- endunless -%}
                     </div>
+                    {%- if is_bundle_product and product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+                      {%- assign bundle_saving = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price -%}
+                      <div class="bundle-price-summary">
+                        <span>Tek tek alınca <s>{{ product.selected_or_first_available_variant.compare_at_price | money }}</s></span>
+                        <strong>{{ bundle_saving | money_without_trailing_zeros }} set avantajı</strong>
+                      </div>
+                    {%- endif -%}
                     {% if settings.sale_percent_enable %}
                     <div
         class="product-label"
@@ -569,6 +591,14 @@
                   {%- endif -%}
 
                   {%- when 'swatch_option' -%}
+                  {%- if is_bundle_product and product.metafields.custom.uzun_alt_aciklama != blank -%}
+                    <div class="bundle-set-content">
+                      <h2>Set içeriği</h2>
+                      <div class="bundle-set-content__body">
+                        {{ product.metafields.custom.uzun_alt_aciklama | metafield_tag }}
+                      </div>
+                    </div>
+                  {%- endif -%}
                   <div class="pro-detail-action" {{ block.shopify_attributes }}>
                    {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %} 
                   </div>
