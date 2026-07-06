@@ -52,6 +52,7 @@
                           </thead>
                           <tbody>
                             {%- for item in cart.items -%}
+                              {%- assign item_variant_title = item.options_with_values | map: 'value' | join: ' ' -%}
                               <tr class="cart-item" id="cartpro-{{ item.index | plus: 1 }}">
                                 <td class="item-media">
                                   <div class="cart-image">
@@ -61,7 +62,12 @@
                                   </a>
                                   {% endif %}
                                   <div class="item-info">
-                                    <a href="{{ item.url }}" class="item-title">{{ item.product.title | escape }}</a>
+                                    <a href="{{ item.url }}" class="item-title">
+                                      {{ item.product.title | escape }}
+                                      {%- if item.product.has_only_default_variant == false -%}
+                                        <span class="cart-title-variant-mobile"> - {{ item_variant_title }}</span>
+                                      {%- endif -%}
+                                    </a>
 
                                     {%- if item.product.has_only_default_variant == false
                                     or item.properties.size != 0
@@ -69,7 +75,7 @@
                                     -%}
                                     <div class="item-option">
                                       {%- if item.product.has_only_default_variant == false -%}
-                                          {{ item.options_with_values | map: "value" | join: " " }}
+                                          <span class="cart-option-variant">{{ item_variant_title }}</span>
                                       {%- endif -%}
                                       {%- for property in item.properties -%}
                                         {%- assign property_first_char = property.first | slice: 0 -%}
@@ -207,6 +213,8 @@
             <script>
             (function(){
               document.addEventListener('DOMContentLoaded', function(){
+                if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) return;
+
                 var MAX = 2;
                 var sec = document.getElementById('cart-comp-section');
                 var grid = document.getElementById('cart-comp-grid');
@@ -425,20 +433,6 @@
       </div>
       {%- if cart != empty -%}
       <div class="col-12 mobile-sticky-cart sticky d-md-none">
-        {% liquid 
-          assign ist_threshold = settings.istanbul_free_shipping_threshold | times: 100 
-          assign ist_value_left = ist_threshold | minus: cart.total_price 
-          assign ist_procent = cart.total_price | times: 100 | divided_by: ist_threshold | at_most: 100
-          assign ist_value_left_money = ist_value_left | money
-          assign ist_promote_txt = settings.istanbul_promote_free_shipping_txt | default: 'İstanbul ücretsiz özel teslimata <b>[value]</b> kaldı'
-          assign ist_unlocked_txt = settings.istanbul_unlocked_free_shipping_txt | default: 'İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!'
-        %}
-        <div class="ship-bar-bg"><div class="ship-bar-fill" style="width:{{ ist_procent }}%"></div></div>
-        {% if ist_value_left <= 0 %}
-          <p class="ship-text">{{ ist_unlocked_txt }}</p>
-        {% else %}
-          <p class="ship-text">{{ ist_promote_txt | replace: '[value]', ist_value_left_money }}</p>
-        {% endif %}
         <div class="total-row js-contents-subtotal">
           <span class="total-label">Ara toplam</span>
           <span class="total-price">{{ cart.total_price | money }}</span>
@@ -1037,9 +1031,17 @@
     position: relative;
     z-index: 2;
   }
+  .cart-title-variant-mobile {
+    display: none;
+  }
   /* Sepet bos iken tamamlayici gizle */
   .cart-body.is-empty ~ .cart-comp-section {
     display: none !important;
+  }
+  @media (max-width: 767px) {
+    .cart-comp-section {
+      display: none !important;
+    }
   }
   /* Complementary Products */
   .cart-comp-section {
@@ -1216,11 +1218,74 @@
         inset 0 -2px 0 rgba(218, 177, 90, 0.48),
         0 4px 14px rgba(16, 24, 40, 0.10);
     }
-    .mobile-sticky-cart .checkout-btn-mobile:active {
+  .mobile-sticky-cart .checkout-btn-mobile:active {
       transform: translateY(1px);
       box-shadow:
         inset 0 -2px 0 rgba(218, 177, 90, 0.62),
         0 2px 8px rgba(16, 24, 40, 0.12);
+    }
+
+    .cart-title-variant-mobile {
+      display: inline;
+      color: #5f6775;
+      font-weight: 500;
+    }
+    .cart-page .cart-body .item-media .item-info .item-title {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      padding-bottom: 0;
+    }
+    .cart-page .cart-body .item-media .item-info .item-option {
+      padding-bottom: 0;
+    }
+    .cart-page .cart-body .item-media .item-info .cart-option-variant {
+      display: none;
+    }
+    .cart-page .cart-body .item-unit-price-mobile {
+      display: none;
+    }
+    .cart-page .cart-body .cart-item-totals .item-price span {
+      font-size: 15.5px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .kf-area {
+      margin-top: 12px;
+    }
+    .kf-header-row {
+      gap: 0;
+    }
+    .kf-checkbox-label {
+      min-height: 46px;
+      padding: 9px 12px !important;
+      gap: 9px;
+      border-width: 1px;
+      border-radius: 7px;
+      background: #fff;
+      box-shadow: none;
+    }
+    .kf-checkbox-label:hover {
+      background: #fff;
+    }
+    .kf-checkbox-custom {
+      width: 18px;
+      height: 18px;
+      border-width: 1.5px;
+      border-radius: 4px;
+    }
+    .kf-checkbox-custom::after {
+      top: 1px;
+      left: 5px;
+      width: 5px;
+      height: 10px;
+    }
+    .kf-checkbox-text {
+      font-size: 12.5px !important;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #4f5b6b;
     }
 
     /* Single Row Item Layout for Mobile */
@@ -1228,8 +1293,8 @@
       display: grid !important;
       grid-template-columns: auto 1fr auto;
       align-items: center;
-      padding-bottom: 15px;
-      gap: 10px 0;
+      padding-bottom: 12px;
+      gap: 3px 0;
     }
     .item-media {
       grid-column: 1 / -1;
@@ -1246,8 +1311,8 @@
     qty-box {
       grid-column: 1;
       grid-row: 2;
-      margin-left: 60px;
-      transform: scale(0.85);
+      margin-left: 76px;
+      transform: translateY(-4px) scale(0.85);
       transform-origin: left center;
     }
     .cart-item-totals .item-price {
@@ -1256,12 +1321,14 @@
       text-align: right;
       padding-right: 15px;
       margin: 0 !important;
+      transform: translateY(-4px);
     }
     delpro-btn {
       grid-column: 3;
       grid-row: 2;
       display: flex;
       justify-content: flex-end;
+      transform: translateY(-4px);
     }
     .cart-pro-err {
       grid-column: 1 / -1;

@@ -274,4 +274,22 @@
     display: none !important;
   }
 }
+
+body.template-cart {
+  padding-bottom: 0 !important;
+}
+
+body.template-cart .mobile-sticky-menu {
+  display: none !important;
+}
+
+@media(max-width: 767px){
+  body.template-cart {
+    min-height: 0 !important;
+  }
+
+  body.template-cart main[role="main"] {
+    flex: 0 0 auto !important;
+  }
+}
 </style>
