@@ -713,7 +713,7 @@
             display: inline !important;
           }
           .mobile-sticky-price .price-box.has-compare-price .unit-price,
-          .mobile-sticky-price .price-box:has(.old-price) .unit-price {
+          .mobile-sticky-price .price-box:has(.old-price:not(.d-none)) .unit-price {
             display: none !important;
           }
           .mobile-sticky-price .product-label {
@@ -738,10 +738,10 @@
           wrapper.className = 'mobile-sticky-price';
 
           var priceClone = priceBox.cloneNode(true);
-          priceClone.classList.toggle('has-compare-price', !!priceClone.querySelector('.old-price'));
+          priceClone.classList.toggle('has-compare-price', !!priceClone.querySelector('.old-price:not(.d-none)'));
           wrapper.appendChild(priceClone);
 
-          if (discountLabel) {
+          if (discountLabel && !priceClone.querySelector('.product-label')) {
             var discountClone = discountLabel.cloneNode(true);
             /* % işareti CSS pseudo-element ile gelmediyse manuel ekle */
             var percentEl = discountClone.querySelector('.percent-count');
@@ -774,8 +774,14 @@
           // Varyant değiştiğinde klonları güncellemek için Observer
           var observer = new MutationObserver(function() {
             priceClone.innerHTML = priceBox.innerHTML;
-            priceClone.classList.toggle('has-compare-price', !!priceClone.querySelector('.old-price'));
-            if (discountLabel && discountClone) {
+            priceClone.classList.toggle('has-compare-price', !!priceClone.querySelector('.old-price:not(.d-none)'));
+            var clonedLabel = priceClone.querySelector('.product-label');
+            if (clonedLabel) {
+              var clonedPercent = clonedLabel.querySelector('.percent-count');
+              if (clonedPercent && !clonedPercent.textContent.includes('%')) {
+                clonedPercent.textContent = '%' + clonedPercent.textContent.trim();
+              }
+            } else if (discountLabel && discountClone) {
               discountClone.innerHTML = discountLabel.innerHTML;
               var pEl = discountClone.querySelector('.percent-count');
               if (pEl && !pEl.textContent.includes('%')) {

@@ -444,12 +444,18 @@ class Swatchoption extends HTMLElement {
     $comparePrice = $('#ComparePrice'),
     $Productlabel = $('.product-label');
     if(this.swatch.price < this.swatch.compare_at_price) {
+      if (!$comparePrice.length && $productPrice.length) {
+        $comparePrice = $('<span class="old-price" id="ComparePrice"></span>');
+        $comparePrice.insertAfter($productPrice);
+      }
+      $comparePrice.html(Shopify.formatMoney(this.swatch.compare_at_price, window.money_format)).removeClass('d-none').show();
       $ProductDiscount.html(((this.swatch.compare_at_price - this.swatch.price)*100.0/(this.swatch.compare_at_price)).toFixed());
-      $ProductDiscount.show();
-      $Productlabel.show();
+      $ProductDiscount.removeClass('d-none').show();
+      $Productlabel.removeClass('d-none').show();
     }else{
-      $ProductDiscount.hide();
-      $Productlabel.hide();
+      $comparePrice.addClass('d-none').hide();
+      $ProductDiscount.addClass('d-none').hide();
+      $Productlabel.addClass('d-none').hide();
     }
   }
   itemsUpdate() {

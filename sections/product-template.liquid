@@ -496,15 +496,47 @@
                   </div>
 
                   {%- when 'product_price' -%}
+                  {%- assign selected_variant = product.selected_or_first_available_variant -%}
+                  {%- assign selected_has_compare_price = false -%}
+                  {%- if selected_variant.compare_at_price and selected_variant.compare_at_price > selected_variant.price -%}
+                    {%- assign selected_has_compare_price = true -%}
+                  {%- endif -%}
                   <div class="pro-price-label" {{ block.shopify_attributes }}>
                     <div class="price-box" id="price-{{ section.id }}">
-                      <span class="new-price" id="ProductPrice">{{ product.selected_or_first_available_variant.price | money }}</span>
-                      {%- if product.compare_at_price_max > product.price and is_bundle_product == false -%}
-                      <span class="old-price" id="ComparePrice">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
-                      {%- endif -%}
+                      <span class="new-price" id="ProductPrice">{{ selected_variant.price | money }}</span>
+                      <span class="old-price{% unless selected_has_compare_price and is_bundle_product == false %} d-none{% endunless %}" id="ComparePrice">
+                        {%- if selected_has_compare_price and is_bundle_product == false -%}
+                          {{ selected_variant.compare_at_price | money }}
+                        {%- endif -%}
+                      </span>
+                      {% if settings.sale_percent_enable %}
+                      <div
+                        class="product-label{% unless selected_has_compare_price and product.available == true %} d-none{% endunless %}"
+                        {% if selected_has_compare_price and product.available == true %}
+                          style="display: block;"
+                        {% else %}
+                          style="display: none;"
+                        {% endif %}
+                      >
+                        <span class="percent-count sale-title" id="ProductDiscount">
+                          {%- if selected_has_compare_price -%}
+                            {{-
+                              selected_variant.compare_at_price
+                              | minus: selected_variant.price
+                              | times: 100.0
+                              | divided_by: selected_variant.compare_at_price
+                              | money_without_currency
+                              | replace: ',', '.'
+                              | times: 100
+                              | remove: '.0'
+                            -}}
+                          {%- endif -%}
+                        </span>
+                      </div>
+                      {% endif %}
                       {%- unless is_bundle_product -%}
-                        {%- assign unit_price_text = product.selected_or_first_available_variant.unit_price | money_without_currency | replace: '.', ',' | append: ' TL' -%}
-                        <small class="unit-price caption{% if product.selected_or_first_available_variant.unit_price_measurement == nil %} d-none{% endif %}">
+                        {%- assign unit_price_text = selected_variant.unit_price | money_without_currency | replace: '.', ',' | append: ' TL' -%}
+                        <small class="unit-price caption{% if selected_variant.unit_price_measurement == nil %} d-none{% endif %}">
                           <span class="price-item price-item--last">
                             <span class="unit-price-desktop">{{ unit_price_text }} / şişe</span>
                             <span class="unit-price-mobile">{{ unit_price_text }} / şişe</span>
@@ -519,35 +551,6 @@
                         <strong>{{ bundle_saving | money_without_trailing_zeros }} set avantajı</strong>
                       </div>
                     {%- endif -%}
-                    {% if settings.sale_percent_enable %}
-                    <div
-        class="product-label"
-
-        {% if settings.sale_percent_enable
-          and product.selected_or_first_available_variant.compare_at_price
-            > product.selected_or_first_available_variant.price
-          and product.available == true
-        %}
-          style="display: block;"
-        {% else %}
-          style="display: none;"
-        {% endif %}
-      >
-        
-        <span class="percent-count sale-title" id="ProductDiscount">
-          {{-
-            product.selected_or_first_available_variant.compare_at_price
-            | minus: product.selected_or_first_available_variant.price
-            | times: 100.0
-            | divided_by: product.selected_or_first_available_variant.compare_at_price
-            | money_without_currency
-            | replace: ',', '.'
-            | times: 100
-            | remove: '.0'
-          -}}
-        </span>
-      </div>
-                    {% endif %}
                   </div>
                   {%- if block.settings.countdown_enabled and block.settings.countdown_end_date != blank -%}
                     {%- assign cd_today = 'now' | date: '%Y-%m-%d' -%}
