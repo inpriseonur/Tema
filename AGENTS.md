@@ -42,6 +42,7 @@ Mağazanın öne çıkan iş kuralları:
 - Ayar eklerken ilgili section schema veya `settings_schema.json` ile Liquid kullanımını birlikte güncelle.
 - Mağaza metinlerini ve eşikleri kod içine tekrar gömmek yerine mevcut tema ayarlarını tercih et.
 - `yedek/`, `node_modules/`, `playwright-report/` ve `test-results/` içinde ürün kodu değiştirme.
+- her gelitirmeden sonra değişiklik yaptığın dosyaları belirt.
 
 ## Test
 
