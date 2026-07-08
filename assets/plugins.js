@@ -443,6 +443,12 @@ class Swatchoption extends HTMLElement {
     $productPrice = $('#ProductPrice'),
     $comparePrice = $('#ComparePrice'),
     $Productlabel = $('.product-label');
+    if (this.closest('.product-main-template.bundle-product')) {
+      $comparePrice.addClass('d-none').hide();
+      $ProductDiscount.addClass('d-none').hide();
+      $Productlabel.addClass('d-none').hide();
+      return;
+    }
     if(this.swatch.price < this.swatch.compare_at_price) {
       if (!$comparePrice.length && $productPrice.length) {
         $comparePrice = $('<span class="old-price" id="ComparePrice"></span>');

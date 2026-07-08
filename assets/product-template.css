@@ -712,7 +712,12 @@ body.template-product .product-main-template .product-social-proof-row > .produc
   font-weight: 800;
 }
 
-.product-main-template.bundle-product .pro-price-label .product-label {
+.product-main-template.bundle-product .pro-price-label .old-price,
+.product-main-template.bundle-product .pro-price-label #ComparePrice,
+.product-main-template.bundle-product .pro-price-label .product-label,
+.product-main-template.bundle-product .mobile-sticky-price .old-price,
+.product-main-template.bundle-product .mobile-sticky-price #ComparePrice,
+.product-main-template.bundle-product .mobile-sticky-price .product-label {
   display: none !important;
 }
 
