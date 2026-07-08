@@ -775,6 +775,18 @@
                       </span>
                     {%- endif -%}
                   </div>
+                  {%- unless is_bundle_product -%}
+                    {% render 'product-volume-discounts', product: product, section_id: section.id %}
+                    <div class="product-volume-discount-templates" hidden>
+                      {%- for volume_variant in product.variants -%}
+                        {%- if volume_variant.metafields.custom.volume_discount_tiers.value != blank -%}
+                          <template data-volume-template-variant-id="{{ volume_variant.id }}">
+                            {% render 'product-volume-discounts', product: product, section_id: section.id, volume_variant: volume_variant %}
+                          </template>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  {%- endunless -%}
                   {%- when 'product_sku' -%}
                   {%- if current_variant.sku.size > 0 -%}
                   <div class="product-sku" {{ block.shopify_attributes }}>
@@ -1023,7 +1035,206 @@
           if (!variantPicker) return;
           setTimeout(function() {
             updateProductVariantTitle(variantPicker.swatch);
+            syncVolumeDiscountsForVariantId(getSelectedProductVariantId(variantPicker.swatch));
           }, 0);
+        });
+
+        var productVariantInput = productSection.querySelector('#{{ product_form_id }} input[name="id"]');
+        if (productVariantInput) {
+          productVariantInput.addEventListener('change', function() {
+            syncVolumeDiscountsForVariantId(productVariantInput.value);
+          });
+        }
+      }
+
+      function initProductVolumeDiscounts(scope) {
+        var volumeDiscounts = scope && scope.querySelector('[data-volume-discounts]');
+        if (!volumeDiscounts || volumeDiscounts.closest('.quickview-block')) return;
+
+        var quantityInput = productSection && productSection.querySelector('#Quantity-{{ section.id }}');
+        var summary = volumeDiscounts.querySelector('[data-volume-summary]');
+        var summaryQuantity = volumeDiscounts.querySelector('[data-volume-summary-quantity]');
+        var summaryTotal = volumeDiscounts.querySelector('[data-volume-summary-total]');
+        var tiers = Array.prototype.slice.call(volumeDiscounts.querySelectorAll('[data-volume-tier]'));
+
+        if (!quantityInput || !tiers.length) return;
+
+        function syncSelectedTierWithQuantity() {
+          var currentQuantity = parseInt(quantityInput.value, 10);
+          var selectedTier = null;
+
+          tiers.forEach(function(tier) {
+            var tierQuantity = parseInt(tier.dataset.quantity, 10);
+            var isSelected = !Number.isNaN(currentQuantity) && currentQuantity === tierQuantity;
+            tier.classList.toggle('is-selected', isSelected);
+            tier.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+            if (isSelected) selectedTier = tier;
+          });
+
+          if (summary && summaryQuantity && summaryTotal && selectedTier) {
+            summaryQuantity.textContent = currentQuantity;
+            summaryTotal.textContent = selectedTier.dataset.totalPrice || '';
+            summary.classList.add('is-visible');
+            summary.setAttribute('aria-hidden', 'false');
+          } else if (summary) {
+            summary.classList.remove('is-visible');
+            summary.setAttribute('aria-hidden', 'true');
+          }
+        }
+
+        tiers.forEach(function(tier) {
+          if (tier.dataset.volumeBound === 'true') return;
+          tier.dataset.volumeBound = 'true';
+          tier.addEventListener('click', function() {
+            var quantity = parseInt(tier.dataset.quantity, 10);
+            if (!quantity || Number.isNaN(quantity)) return;
+
+            quantityInput.value = quantity;
+            quantityInput.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+        });
+
+        quantityInput.volumeDiscountSync = syncSelectedTierWithQuantity;
+
+        if (quantityInput.dataset.volumeQuantityBound !== 'true') {
+          quantityInput.dataset.volumeQuantityBound = 'true';
+          quantityInput.addEventListener('change', function() {
+            if (typeof quantityInput.volumeDiscountSync === 'function') quantityInput.volumeDiscountSync();
+          });
+          quantityInput.addEventListener('input', function() {
+            if (typeof quantityInput.volumeDiscountSync === 'function') quantityInput.volumeDiscountSync();
+          });
+        }
+
+        syncSelectedTierWithQuantity();
+      }
+
+      initProductVolumeDiscounts(productSection);
+
+      {%- liquid
+        assign volume_discount_variant_ids = ''
+        for variant in product.variants
+          if variant.metafields.custom.volume_discount_tiers.value != blank
+            if volume_discount_variant_ids != ''
+              assign volume_discount_variant_ids = volume_discount_variant_ids | append: ','
+            endif
+            assign volume_discount_variant_ids = volume_discount_variant_ids | append: variant.id
+          endif
+        endfor
+        assign volume_discount_variant_ids_array = volume_discount_variant_ids | split: ','
+      -%}
+      var volumeDiscountVariantIds = {{ volume_discount_variant_ids_array | json }};
+
+      function getVolumeDiscountInsertAnchor() {
+        if (!productSection) return null;
+
+        return productSection.querySelector('#ProductMeta-{{ section.id }}') || productSection.querySelector('.pro-detail-action');
+      }
+
+      function getSelectedProductVariantId(variant) {
+        if (variant && variant.id) return String(variant.id);
+
+        var productVariantInput = productSection && productSection.querySelector('#{{ product_form_id }} input[name="id"]');
+        return productVariantInput && productVariantInput.value ? String(productVariantInput.value) : '';
+      }
+
+      function setVolumeDiscountVisibility(volumeDiscounts, isVisible) {
+        if (!volumeDiscounts) return;
+
+        volumeDiscounts.hidden = !isVisible;
+      }
+
+      function resetProductQuantityToMinimum() {
+        var quantityInput = productSection && productSection.querySelector('#Quantity-{{ section.id }}');
+        if (!quantityInput) return;
+
+        var minimumQuantity = parseInt(quantityInput.getAttribute('min') || quantityInput.dataset.min || '1', 10);
+        if (!minimumQuantity || Number.isNaN(minimumQuantity)) minimumQuantity = 1;
+        quantityInput.value = minimumQuantity;
+        quantityInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+
+      function syncVolumeDiscountsForVariantId(variantId) {
+        variantId = variantId ? String(variantId) : '';
+        if (!variantId || !productSection) return;
+
+        var currentVolumeDiscounts = productSection.querySelector('[data-volume-discounts]');
+        var variantHasVolumeDiscount = volumeDiscountVariantIds.indexOf(variantId) !== -1;
+
+        if (!variantHasVolumeDiscount) {
+          setVolumeDiscountVisibility(currentVolumeDiscounts, false);
+          resetProductQuantityToMinimum();
+          return;
+        }
+
+        if (currentVolumeDiscounts && String(currentVolumeDiscounts.dataset.variantId) === variantId) {
+          setVolumeDiscountVisibility(currentVolumeDiscounts, true);
+          return;
+        }
+
+        var nextVolumeDiscounts = getVolumeDiscountTemplateForVariant(variantId);
+        if (!nextVolumeDiscounts) return;
+
+        if (currentVolumeDiscounts) {
+          currentVolumeDiscounts.replaceWith(nextVolumeDiscounts);
+        } else {
+          var insertAnchor = getVolumeDiscountInsertAnchor();
+          if (!insertAnchor) return;
+          insertAnchor.insertAdjacentElement('afterend', nextVolumeDiscounts);
+        }
+
+        setVolumeDiscountVisibility(productSection.querySelector('[data-volume-discounts]'), true);
+        initProductVolumeDiscounts(productSection);
+      }
+
+      function getVolumeDiscountTemplateForVariant(variantId) {
+        if (!productSection || !variantId) return null;
+
+        var template = productSection.querySelector('[data-volume-template-variant-id="' + variantId + '"]');
+        if (!template || !template.content) return null;
+
+        return template.content.firstElementChild
+          ? template.content.firstElementChild.cloneNode(true)
+          : null;
+      }
+
+      if (typeof user === 'function' && window.SP_OBJECT && SP_OBJECT.swatchUpdate) {
+        user(SP_OBJECT.swatchUpdate, function(event) {
+          var data = event && event.data;
+          if (!data || String(data.stScId) !== '{{ section.id }}' || !data.html || !productSection) return;
+
+          var currentVolumeDiscounts = productSection.querySelector('[data-volume-discounts]');
+          var sourceVolumeDiscounts = data.html.getElementById('VolumeDiscounts-{{ section.id }}');
+          var variantId = data.variant && data.variant.id ? String(data.variant.id) : '';
+          var variantHasVolumeDiscount = variantId && volumeDiscountVariantIds.indexOf(variantId) !== -1;
+
+          if (variantId && !variantHasVolumeDiscount) {
+            setVolumeDiscountVisibility(currentVolumeDiscounts, false);
+            return;
+          }
+
+          if (sourceVolumeDiscounts && variantId && String(sourceVolumeDiscounts.dataset.variantId) !== variantId) {
+            sourceVolumeDiscounts = null;
+          }
+
+          if (!sourceVolumeDiscounts && variantHasVolumeDiscount) {
+            sourceVolumeDiscounts = getVolumeDiscountTemplateForVariant(variantId);
+          }
+
+          if (currentVolumeDiscounts && sourceVolumeDiscounts) {
+            currentVolumeDiscounts.replaceWith(sourceVolumeDiscounts);
+            setVolumeDiscountVisibility(productSection.querySelector('[data-volume-discounts]'), true);
+            initProductVolumeDiscounts(productSection);
+          } else if (currentVolumeDiscounts) {
+            setVolumeDiscountVisibility(currentVolumeDiscounts, false);
+          } else if (sourceVolumeDiscounts) {
+            var insertAnchor = getVolumeDiscountInsertAnchor();
+            if (insertAnchor) {
+              insertAnchor.insertAdjacentElement('afterend', sourceVolumeDiscounts);
+              setVolumeDiscountVisibility(productSection.querySelector('[data-volume-discounts]'), true);
+              initProductVolumeDiscounts(productSection);
+            }
+          }
         });
       }
 

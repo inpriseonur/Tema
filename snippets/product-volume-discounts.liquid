@@ -1,0 +1,59 @@
+{%- liquid
+  assign selected_variant = volume_variant | default: product.selected_or_first_available_variant
+  assign volume_discount = selected_variant.metafields.custom.volume_discount_tiers.value
+  assign volume_tiers = volume_discount.tiers
+  assign volume_section_id = section_id | default: section.id
+-%}
+
+{%- if volume_discount != blank and volume_tiers != blank and volume_tiers.size > 0 -%}
+  <div
+    class="product-volume-discounts"
+    id="VolumeDiscounts-{{ volume_section_id }}"
+    data-volume-discounts
+    data-section-id="{{ volume_section_id }}"
+    data-variant-id="{{ selected_variant.id }}"
+  >
+    <div class="product-volume-discounts__header">
+      {%- if volume_discount.title != blank -%}
+        <h2 class="product-volume-discounts__title">{{ volume_discount.title }}</h2>
+      {%- endif -%}
+      {%- if volume_discount.subtitle != blank -%}
+        <p class="product-volume-discounts__subtitle">{{ volume_discount.subtitle }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="product-volume-discounts__tiers" role="list">
+      {%- for tier in volume_tiers -%}
+        {%- liquid
+          assign tier_quantity = tier.quantity | plus: 0
+          assign tier_percent = tier.percent | plus: 0
+          assign tier_discount_amount = selected_variant.price | times: tier_percent | divided_by: 100
+          assign tier_unit_price = selected_variant.price | minus: tier_discount_amount
+          assign tier_total_price = tier_unit_price | times: tier_quantity
+        -%}
+        {%- if tier_quantity > 0 and tier_percent > 0 -%}
+          <button
+            type="button"
+            class="product-volume-discounts__tier{% if forloop.last %} is-featured{% endif %}"
+            data-volume-tier
+            data-quantity="{{ tier_quantity }}"
+            data-total-price="{{ tier_total_price | money }}"
+            aria-pressed="false"
+          >
+            {%- if tier.badge != blank -%}
+              <span class="product-volume-discounts__badge">{{ tier.badge }}</span>
+            {%- endif -%}
+            <span class="product-volume-discounts__quantity">{{ tier_quantity }} koli</span>
+            <span class="product-volume-discounts__percent">%{{ tier_percent }} indirim</span>
+            <span class="product-volume-discounts__unit">Koli başına: {{ tier_unit_price | money }}</span>
+          </button>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="product-volume-discounts__summary" data-volume-summary aria-hidden="true">
+      Seçili <strong data-volume-summary-quantity></strong> koli toplamı:
+      <strong data-volume-summary-total></strong>
+    </div>
+  </div>
+{%- endif -%}
