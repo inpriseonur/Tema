@@ -37,13 +37,17 @@
             class="product-volume-discounts__tier{% if forloop.last %} is-featured{% endif %}"
             data-volume-tier
             data-quantity="{{ tier_quantity }}"
+            data-percent="{{ tier_percent }}"
+            data-unit-price="{{ tier_unit_price | money }}"
+            data-unit-price-cents="{{ tier_unit_price }}"
+            data-original-price="{{ selected_variant.price | money }}"
             data-total-price="{{ tier_total_price | money }}"
             aria-pressed="false"
           >
             {%- if tier.badge != blank -%}
               <span class="product-volume-discounts__badge">{{ tier.badge }}</span>
             {%- endif -%}
-            <span class="product-volume-discounts__quantity">{{ tier_quantity }} koli</span>
+            <span class="product-volume-discounts__quantity">{{ tier_quantity }}+ koli</span>
             <span class="product-volume-discounts__percent">%{{ tier_percent }} indirim</span>
             <span class="product-volume-discounts__unit">Koli başına: {{ tier_unit_price | money }}</span>
           </button>

@@ -1059,27 +1059,112 @@
 
         if (!quantityInput || !tiers.length) return;
 
+        function updateMobileStickyVolumePrice(selectedTier) {
+          var stickyPrice = document.querySelector('.mobile-sticky-price');
+          var stickyNewPrice = stickyPrice && stickyPrice.querySelector('.new-price');
+          if (!stickyPrice || !stickyNewPrice) return;
+
+          if (selectedTier && selectedTier.dataset.unitPrice) {
+            var stickyPriceBox = stickyPrice.querySelector('.price-box');
+            var stickyOldPrice = stickyPrice.querySelector('.old-price');
+            var stickyLabel = stickyPrice.querySelector('.product-label');
+            var stickyPercent = stickyLabel && stickyLabel.querySelector('.percent-count');
+
+            stickyNewPrice.textContent = selectedTier.dataset.unitPrice;
+            if (!stickyOldPrice && stickyPriceBox) {
+              stickyOldPrice = document.createElement('span');
+              stickyOldPrice.className = 'old-price';
+              stickyNewPrice.insertAdjacentElement('afterend', stickyOldPrice);
+            }
+            if (stickyOldPrice) {
+              stickyOldPrice.textContent = selectedTier.dataset.originalPrice || '';
+              stickyOldPrice.classList.remove('d-none');
+              stickyOldPrice.style.display = '';
+            }
+            if (!stickyLabel && stickyPriceBox) {
+              stickyLabel = document.createElement('div');
+              stickyLabel.className = 'product-label';
+              stickyPercent = document.createElement('span');
+              stickyPercent.className = 'percent-count sale-title';
+              stickyLabel.appendChild(stickyPercent);
+              stickyPriceBox.appendChild(stickyLabel);
+            }
+            stickyPercent = stickyPercent || (stickyLabel && stickyLabel.querySelector('.percent-count'));
+            if (stickyLabel && stickyPercent) {
+              stickyPercent.textContent = selectedTier.dataset.percent || '';
+              stickyLabel.classList.remove('d-none');
+              stickyLabel.style.display = '';
+            }
+            if (stickyPriceBox) stickyPriceBox.classList.add('has-compare-price');
+            stickyPrice.classList.add('is-volume-price');
+            return;
+          }
+
+          var currentPriceBox = productSection && productSection.querySelector('#price-{{ section.id }}');
+          var stickyPriceBoxReset = stickyPrice.querySelector('.price-box');
+          if (currentPriceBox && stickyPriceBoxReset) {
+            stickyPriceBoxReset.innerHTML = currentPriceBox.innerHTML;
+            stickyPriceBoxReset.classList.toggle('has-compare-price', !!stickyPriceBoxReset.querySelector('.old-price:not(.d-none)'));
+          } else {
+            var currentProductPrice = productSection && productSection.querySelector('#price-{{ section.id }} .new-price');
+            if (currentProductPrice) stickyNewPrice.textContent = currentProductPrice.textContent;
+          }
+          stickyPrice.classList.remove('is-volume-price');
+        }
+
         function syncSelectedTierWithQuantity() {
           var currentQuantity = parseInt(quantityInput.value, 10);
           var selectedTier = null;
 
-          tiers.forEach(function(tier) {
+          if (volumeDiscounts.hidden) {
+            tiers.forEach(function(tier) {
+              tier.classList.remove('is-selected');
+              tier.setAttribute('aria-pressed', 'false');
+            });
+            if (summary) {
+              summary.classList.remove('is-visible');
+              summary.setAttribute('aria-hidden', 'true');
+            }
+            updateMobileStickyVolumePrice(null);
+            return;
+          }
+
+          tiers
+            .slice()
+            .sort(function(a, b) {
+              return parseInt(a.dataset.quantity, 10) - parseInt(b.dataset.quantity, 10);
+            })
+            .forEach(function(tier) {
             var tierQuantity = parseInt(tier.dataset.quantity, 10);
-            var isSelected = !Number.isNaN(currentQuantity) && currentQuantity === tierQuantity;
+            if (!Number.isNaN(currentQuantity) && !Number.isNaN(tierQuantity) && currentQuantity >= tierQuantity) {
+              selectedTier = tier;
+            }
+          });
+
+          tiers.forEach(function(tier) {
+            var isSelected = tier === selectedTier;
             tier.classList.toggle('is-selected', isSelected);
             tier.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
-            if (isSelected) selectedTier = tier;
           });
 
           if (summary && summaryQuantity && summaryTotal && selectedTier) {
+            var unitPriceCents = parseInt(selectedTier.dataset.unitPriceCents, 10);
+            var totalPriceCents = !Number.isNaN(unitPriceCents) && !Number.isNaN(currentQuantity)
+              ? unitPriceCents * currentQuantity
+              : null;
+
             summaryQuantity.textContent = currentQuantity;
-            summaryTotal.textContent = selectedTier.dataset.totalPrice || '';
+            summaryTotal.textContent = totalPriceCents !== null && window.Shopify && typeof Shopify.formatMoney === 'function'
+              ? Shopify.formatMoney(totalPriceCents, window.money_format)
+              : selectedTier.dataset.totalPrice || '';
             summary.classList.add('is-visible');
             summary.setAttribute('aria-hidden', 'false');
           } else if (summary) {
             summary.classList.remove('is-visible');
             summary.setAttribute('aria-hidden', 'true');
           }
+
+          updateMobileStickyVolumePrice(selectedTier);
         }
 
         tiers.forEach(function(tier) {
@@ -1124,6 +1209,7 @@
         assign volume_discount_variant_ids_array = volume_discount_variant_ids | split: ','
       -%}
       var volumeDiscountVariantIds = {{ volume_discount_variant_ids_array | json }};
+      var activeVolumeVariantId = getSelectedProductVariantId();
 
       function getVolumeDiscountInsertAnchor() {
         if (!productSection) return null;
@@ -1158,12 +1244,18 @@
         variantId = variantId ? String(variantId) : '';
         if (!variantId || !productSection) return;
 
+        if (activeVolumeVariantId && activeVolumeVariantId !== variantId) {
+          resetProductQuantityToMinimum();
+        }
+        activeVolumeVariantId = variantId;
+
         var currentVolumeDiscounts = productSection.querySelector('[data-volume-discounts]');
         var variantHasVolumeDiscount = volumeDiscountVariantIds.indexOf(variantId) !== -1;
 
         if (!variantHasVolumeDiscount) {
           setVolumeDiscountVisibility(currentVolumeDiscounts, false);
-          resetProductQuantityToMinimum();
+          var stickyPrice = document.querySelector('.mobile-sticky-price');
+          if (stickyPrice) stickyPrice.classList.remove('is-volume-price');
           return;
         }
 
