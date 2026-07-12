@@ -1,0 +1,43 @@
+{%- liquid
+  assign teaser_variant = product.selected_or_first_available_variant
+  assign is_bundle_product = false
+  if product.tags contains 'Bundle'
+    assign is_bundle_product = true
+  endif
+
+  assign volume_discount = teaser_variant.metafields.custom.volume_discount_tiers.value
+  assign volume_tiers = volume_discount.tiers
+  assign best_quantity = 0
+  assign best_percent = 0
+
+  if volume_tiers != blank and is_bundle_product == false
+    for tier in volume_tiers
+      assign tier_quantity = tier.quantity | plus: 0
+      if tier_quantity > best_quantity
+        assign best_quantity = tier_quantity
+        assign best_percent = tier.percent | plus: 0
+      endif
+    endfor
+  endif
+
+  assign best_unit_price = 0
+  if best_quantity > 0 and best_percent > 0
+    assign discount_multiplier = 100 | minus: best_percent
+    assign best_unit_price = teaser_variant.price | times: discount_multiplier | divided_by: 100
+  endif
+-%}
+
+{%- if best_unit_price > 0 -%}
+  {%- if mode == 'badge' -%}
+    <span class="volume-discount-card-badge">Çok Al Az Öde</span>
+  {%- elsif mode == 'compact' -%}
+    <div class="product-volume-teaser product-volume-teaser--compact">
+      <span>{{ best_quantity }}+ koli {{ best_unit_price | money }}</span>
+    </div>
+  {%- else -%}
+    <div class="product-volume-teaser">
+      <span class="product-volume-teaser__title">Çok Al Az Öde</span>
+      <span class="product-volume-teaser__value">{{ best_quantity }}+ koli {{ best_unit_price | money }}</span>
+    </div>
+  {%- endif -%}
+{%- endif -%}

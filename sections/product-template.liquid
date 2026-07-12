@@ -536,10 +536,11 @@
                       {% endif %}
                       {%- unless is_bundle_product -%}
                         {%- assign unit_price_text = selected_variant.unit_price | money_without_currency | replace: '.', ',' | append: ' TL' -%}
+                        {%- assign unit_price_label = product.metafields.custom.unit_price_label.value | default: 'şişe' -%}
                         <small class="unit-price caption{% if selected_variant.unit_price_measurement == nil %} d-none{% endif %}">
                           <span class="price-item price-item--last">
-                            <span class="unit-price-desktop">{{ unit_price_text }} / şişe</span>
-                            <span class="unit-price-mobile">{{ unit_price_text }} / şişe</span>
+                            <span class="unit-price-desktop">{{ unit_price_text }} / {{ unit_price_label | escape }}</span>
+                            <span class="unit-price-mobile">{{ unit_price_text }} / {{ unit_price_label | escape }}</span>
                           </span>
                         </small>
                       {%- endunless -%}

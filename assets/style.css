@@ -1204,6 +1204,23 @@ product grid css
 .single-product-wrap .product-image .product-label .sale-title{
   right: 5px;
 }
+.single-product-wrap .product-image .product-label .volume-discount-card-badge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #061f4f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
 .single-product-wrap .product-image .product-action{
   display: flex;
   align-items: center;
@@ -1258,6 +1275,31 @@ product grid css
 .single-product-wrap .product-content .product-grid-rating,
 .single-product-wrap .product-content .price-box{
     margin-top: 5px;
+}
+.single-product-wrap .product-content .product-volume-teaser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+  align-items: center;
+  margin-top: 7px;
+  color: #061f4f;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.single-product-wrap .product-content .product-volume-teaser__title {
+  color: #061f4f;
+  font-weight: 800;
+}
+.single-product-wrap .product-content .product-volume-teaser__value {
+  color: var(--color-secondary);
+  font-weight: 800;
+}
+.product-list-item .single-product-wrap .product-content .product-volume-teaser--compact {
+  margin-top: 6px;
+  color: var(--color-secondary);
+  font-size: 12px;
+  font-weight: 800;
 }
 .single-product-wrap .product-content .product-action {
   display: none;
@@ -1518,6 +1560,16 @@ product-list item css
 .product-list-item .single-product-wrap .product-content .product-action button.loading .ajax-loader {
   display: flex;
   align-items: center;
+}
+
+/* Disable product-card hover actions in listings */
+.single-product-wrap .product-image .product-action,
+.single-product-wrap:hover .product-image .product-action,
+.single-product-wrap .product-content .product-action {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /*=====================================

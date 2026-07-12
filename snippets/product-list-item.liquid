@@ -38,6 +38,7 @@
       {%- endif -%}
     </a>
     <div class="product-label">
+      {% render 'product-card-volume-teaser', product: product, mode: 'badge' %}
        {% if settings.sale_percent_enable
         and product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price
         and product.available == true
@@ -72,6 +73,7 @@
 
       {% endif %}
     </div>
+    {% render 'product-card-volume-teaser', product: product, mode: 'compact' %}
     {%- if settings.show_rating -%}
     <div class="product-grid-rating">
       {% if product.metafields.judgeme.badge %}
