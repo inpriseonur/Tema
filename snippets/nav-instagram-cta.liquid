@@ -1,0 +1,20 @@
+{%- liquid
+  assign cta_icon = section.settings.nav_instagram_cta_icon
+  assign cta_text = section.settings.nav_instagram_cta_text
+  assign cta_link = section.settings.nav_instagram_cta_link | default: settings.social_icon_4_link
+-%}
+
+{%- if cta_link != blank -%}
+  {%- if cta_icon != blank or cta_text != blank -%}
+    <a class="nav-instagram-cta" href="{{ cta_link }}" target="_blank" rel="noopener" aria-label="{{ cta_text | default: 'Instagram' | escape }}">
+      {%- if cta_icon != blank -%}
+        <span class="nav-instagram-cta__icon" aria-hidden="true">
+          {{ cta_icon }}
+        </span>
+      {%- endif -%}
+      {%- if cta_text != blank -%}
+        <span class="nav-instagram-cta__text">{{ cta_text }}</span>
+      {%- endif -%}
+    </a>
+  {%- endif -%}
+{%- endif -%}

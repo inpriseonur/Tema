@@ -118,8 +118,15 @@
               render 'mega-menu'
             endif
           %}
-          {%- if section.settings.nav_trust_badge_enable -%}
-            {%- render 'nav-trust-badge' -%}
+          {%- if section.settings.nav_instagram_cta_enable or section.settings.nav_trust_badge_enable -%}
+            <div class="nav-action-group">
+              {%- if section.settings.nav_instagram_cta_enable -%}
+                {%- render 'nav-instagram-cta' -%}
+              {%- endif -%}
+              {%- if section.settings.nav_trust_badge_enable -%}
+                {%- render 'nav-trust-badge' -%}
+              {%- endif -%}
+            </div>
           {%- endif -%}
         </div>
       </div>
@@ -245,20 +252,17 @@
   {
     "type": "html",
     "id": "nav_trust_badge_icon",
-    "label": "Badge icon HTML",
-    "default": "<i class=\"ti-package\"></i>"
+    "label": "Badge icon HTML"
   },
   {
     "type": "text",
     "id": "nav_trust_badge_title",
-    "label": "Badge title",
-    "default": "Korumalı paketleme"
+    "label": "Badge title"
   },
   {
     "type": "text",
     "id": "nav_trust_badge_text",
-    "label": "Badge text",
-    "default": "Güvenli teslimat"
+    "label": "Badge text"
   },
   {
     "type": "url",
@@ -287,6 +291,52 @@
     "type": "color",
     "id": "menu_active_color",
     "label": "Menu hover and active color",
+    "default": "#b79659"
+  },
+  {
+    "type": "header",
+    "content": "Menu Instagram CTA"
+  },
+  {
+    "type": "checkbox",
+    "id": "nav_instagram_cta_enable",
+    "label": "Enable menu Instagram CTA",
+    "default": true
+  },
+  {
+    "type": "html",
+    "id": "nav_instagram_cta_icon",
+    "label": "Instagram icon HTML",
+    "default": "<i class=\"fa fa-instagram\"></i>"
+  },
+  {
+    "type": "text",
+    "id": "nav_instagram_cta_text",
+    "label": "Instagram CTA text",
+    "default": "Fırsatları takip et"
+  },
+  {
+    "type": "url",
+    "id": "nav_instagram_cta_link",
+    "label": "Instagram CTA link",
+    "info": "Leave blank to use the global social Instagram link."
+  },
+  {
+    "type": "color",
+    "id": "nav_instagram_cta_icon_color",
+    "label": "Instagram icon color",
+    "default": "#e4405f"
+  },
+  {
+    "type": "color",
+    "id": "nav_instagram_cta_text_color",
+    "label": "Instagram text color",
+    "default": "#142850"
+  },
+  {
+    "type": "color",
+    "id": "nav_instagram_cta_hover_color",
+    "label": "Instagram hover color",
     "default": "#b79659"
   }
   ],
@@ -519,6 +569,47 @@
     justify-content: space-between;
     gap: 20px;
   }
+  .main-menu-area .main-navigation > nav.mainwrap {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
+  .main-menu-area .nav-action-group {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    margin-right: 28px;
+    white-space: nowrap;
+  }
+  .main-menu-area .nav-instagram-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    line-height: 1;
+    color: {{ section.settings.nav_instagram_cta_text_color }};
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  .main-menu-area .nav-instagram-cta__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ section.settings.nav_instagram_cta_icon_color }};
+    font-size: 18px;
+    line-height: 1;
+    transition: color 0.2s ease-in-out;
+  }
+  .main-menu-area .nav-instagram-cta:hover {
+    color: {{ section.settings.nav_instagram_cta_hover_color }};
+    transform: translateY(-1px);
+  }
+  .main-menu-area .nav-instagram-cta:hover .nav-instagram-cta__icon {
+    color: {{ section.settings.nav_instagram_cta_hover_color }};
+  }
   .main-menu-area .nav-trust-badge {
     flex: 0 0 auto;
     display: inline-flex;
@@ -527,7 +618,7 @@
     height: 34px;
     line-height: 1;
     white-space: nowrap;
-    margin-right: 28px;
+    margin-right: 0;
   }
   .main-menu-area .nav-trust-badge__icon {
     display: inline-flex;
@@ -579,14 +670,24 @@
     color: {{ section.settings.header_icon_color }};
   }
   @media (max-width: 1199px) {
-    .main-menu-area .nav-trust-badge {
+    .main-menu-area .nav-action-group {
       display: none;
     }
   }
   @media (min-width: 1200px) and (max-width: 1399px) {
+    .main-menu-area .nav-action-group {
+      gap: 14px;
+      margin-right: 18px;
+    }
+    .main-menu-area .nav-instagram-cta {
+      gap: 7px;
+      font-size: 13px;
+    }
+    .main-menu-area .nav-instagram-cta__icon {
+      font-size: 17px;
+    }
     .main-menu-area .nav-trust-badge {
       gap: 7px;
-      margin-right: 18px;
     }
     .main-menu-area .nav-trust-badge__title {
       font-size: 13px;
