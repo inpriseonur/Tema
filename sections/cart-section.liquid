@@ -300,6 +300,17 @@
             
             <!-- App terms will be moved here on mobile -->
             <div id="mobile-terms-target" class="mobile-terms-wrapper d-md-none" style="margin-top: 20px; padding: 0 15px;"></div>
+            {%- if cart != empty and section.settings.delivery_enable -%}
+            <div class="cart-delivery-info-mobile d-md-none" aria-label="İstanbul teslimat bilgisi">
+              <span class="cart-delivery-info-mobile__icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+              </span>
+              <span class="cart-delivery-info-mobile__copy">
+                <strong>{{ section.settings.delivery_title }}</strong>
+                <span>{{ section.settings.delivery_description }}</span>
+              </span>
+            </div>
+            {%- endif -%}
 
             {%- assign distance_contract_page = pages['mesafeli-satis-sozlesmesi'] -%}
             {%- assign preliminary_info_page = pages['on-bilgilendirme-formu'] -%}
@@ -1544,6 +1555,51 @@
     .cart-pro-err {
       grid-column: 1 / -1;
       grid-row: 3;
+    }
+    .cart-delivery-info-mobile {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 0 15px 14px;
+      padding: 8px 10px;
+      border: 1px solid #dcefe0;
+      border-left: 2px solid #3c9b5f;
+      border-radius: 7px;
+      background: #f7fcf6;
+      color: #1a2b4c;
+    }
+    .cart-delivery-info-mobile__icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 18px;
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      color: #3c9b5f;
+    }
+    .cart-delivery-info-mobile__icon svg {
+      display: block;
+      width: 18px;
+      height: 18px;
+    }
+    .cart-delivery-info-mobile__copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .cart-delivery-info-mobile__copy strong {
+      color: #142850;
+      font-size: 11.5px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .cart-delivery-info-mobile__copy span {
+      color: #5f6775;
+      font-size: 10.5px;
+      font-weight: 500;
+      line-height: 1.35;
     }
   }
 
