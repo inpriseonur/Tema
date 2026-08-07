@@ -9,15 +9,27 @@
   assign volume_tiers = volume_discount.tiers
   assign best_quantity = 0
   assign best_percent = 0
+  assign featured_quantity = 0
+  assign featured_percent = 0
 
   if volume_tiers != blank and is_bundle_product == false
     for tier in volume_tiers
       assign tier_quantity = tier.quantity | plus: 0
+      assign tier_percent = tier.percent | plus: 0
+      if tier.card_featured and featured_quantity == 0
+        assign featured_quantity = tier_quantity
+        assign featured_percent = tier_percent
+      endif
       if tier_quantity > best_quantity
         assign best_quantity = tier_quantity
-        assign best_percent = tier.percent | plus: 0
+        assign best_percent = tier_percent
       endif
     endfor
+  endif
+
+  if featured_quantity > 0 and featured_percent > 0
+    assign best_quantity = featured_quantity
+    assign best_percent = featured_percent
   endif
 
   assign best_unit_price = 0
