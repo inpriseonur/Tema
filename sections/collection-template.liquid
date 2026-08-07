@@ -25,12 +25,20 @@
                 <div class="collection-image">
                   {%- if section.settings.custom_image_enable -%}
                     {%- if section.settings.custom_image -%}
-                    {{ section.settings.custom_image | image_url: width: 1920 | image_tag:
-                      loading: 'lazy',
-                      width: section.settings.custom_image.width,
-                      height: section.settings.custom_image.height,
-                      class: "img-fluid lazyload",
-                      alt: section.settings.custom_image.alt | escape }}
+                    <picture>
+                      {%- if section.settings.custom_image_mobile -%}
+                        <source
+                          media="(max-width: 767px)"
+                          srcset="{{ section.settings.custom_image_mobile | image_url: width: 900 }}"
+                        >
+                      {%- endif -%}
+                      {{ section.settings.custom_image | image_url: width: 1920 | image_tag:
+                        loading: 'lazy',
+                        width: section.settings.custom_image.width,
+                        height: section.settings.custom_image.height,
+                        class: "img-fluid lazyload",
+                        alt: section.settings.custom_image.alt | escape }}
+                    </picture>
                     {%- else -%}
                     {{ 'hero-apparel-1' | placeholder_svg_tag }}
                     {%- endif -%}
@@ -289,7 +297,13 @@
       "type": "image_picker",
       "id": "custom_image",
       "label": "Custom Image",
-      "info": "Recommended Size: 1410px x 365px"
+      "info": "Recommended Size: 1410px x 240px"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_image_mobile",
+      "label": "Mobile Custom Image",
+      "info": "Recommended Size: 900px x 320px"
     },
     {
       "type": "checkbox",
@@ -417,6 +431,14 @@
 }
 .collection-title-hidden + .collection-info {
   margin-top: 0 !important;
+}
+.collection-image picture,
+.collection-image picture img {
+  display: block;
+  width: 100%;
+}
+.collection-image picture img {
+  height: auto;
 }
 .shop-product-wrap.grid-5 ul.product-view li.st-col-item {
   width: calc(20% - 30px);
