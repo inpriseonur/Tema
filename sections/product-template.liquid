@@ -188,25 +188,6 @@
                       </div>
                     {%- endif -%}
                   </div>
-                  {%- if settings.show_rating -%}
-                    <div class="product-grid-rating product-social-proof">
-                      {% if product.metafields.judgeme.badge %}
-                      <div class='jdgm-widget jdgm-preview-badge'>
-                        {{ product.metafields.judgeme.badge }}
-                      </div>
-                      {% else %}
-                      <div class="jdgm-prev-badge jdgm--js" data-average-rating="0.00" data-number-of-reviews="0">
-                        <span class="jdgm-prev-badge__stars" data-score="0.00"><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span><span class="jdgm-star jdgm--off"></span></span>
-                        <span class="jdgm-prev-badge__text">No reviews</span>
-                      </div>
-                      {% endif %}
-                      {%- assign social_satis_adedi = product.metafields.custom.satis_adedi | default: 0 | plus: 0 -%}
-                      {%- if social_satis_adedi > 0 -%}
-                        <span class="product-social-proof__separator">·</span>
-                        <span class="product-social-proof__sales">Bu ay {{ social_satis_adedi }} adet satın alındı</span>
-                      {%- endif -%}
-                    </div>
-                    {%- endif -%}
                   {%- when 'sales_count' -%}
                   {%- assign satis_adedi = product.metafields.custom.satis_adedi | default: 0 | plus: 0 -%}
                   {%- if satis_adedi >= block.settings.min_count -%}
