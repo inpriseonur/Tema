@@ -129,7 +129,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
+    {%- assign noindex_page = false -%}
     {%- if template == 'cart' -%}
+      {%- assign noindex_page = true -%}
+    {%- elsif template.name == 'page' and page.handle == 'favorilerim' -%}
+      {%- assign noindex_page = true -%}
+    {%- endif -%}
+    {%- if noindex_page -%}
       <meta name="robots" content="noindex,nofollow">
     {%- endif -%}
     {%- if settings.favicon != blank -%}
