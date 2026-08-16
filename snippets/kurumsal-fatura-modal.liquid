@@ -61,8 +61,8 @@
       <div class="kf-form-row kf-form-row--half">
         <div class="kf-field">
           <label for="kf-vergi-no" class="kf-label">Vergi Numarası <span class="kf-required">*</span></label>
-          <input type="text" id="kf-vergi-no" class="kf-input kf-field-input" data-kf-key="vergi" placeholder="Maks. 10 haneli" inputmode="numeric" maxlength="10" autocomplete="off">
-          <span class="kf-hint">Sadece rakam, en fazla 10 karakter</span>
+          <input type="text" id="kf-vergi-no" class="kf-input kf-field-input" data-kf-key="vergi" placeholder="10 veya 11 haneli" inputmode="numeric" maxlength="11" autocomplete="off">
+          <span class="kf-hint">Sadece rakam, 10 veya 11 karakter</span>
         </div>
         <div class="kf-field">
           <label for="kf-vergi-dairesi" class="kf-label">Vergi Dairesi <span class="kf-required">*</span></label>
@@ -120,8 +120,8 @@
       </div>
       <div class="kf-field">
         <label for="kf-m-vergi-no" class="kf-label">Vergi Numarası <span class="kf-required">*</span></label>
-        <input type="text" id="kf-m-vergi-no" class="kf-input kf-m-field-input" data-kf-key="vergi" placeholder="Maks. 10 haneli" inputmode="numeric" maxlength="10" autocomplete="off">
-        <span class="kf-hint">Sadece rakam, en fazla 10 karakter</span>
+        <input type="text" id="kf-m-vergi-no" class="kf-input kf-m-field-input" data-kf-key="vergi" placeholder="10 veya 11 haneli" inputmode="numeric" maxlength="11" autocomplete="off">
+        <span class="kf-hint">Sadece rakam, 10 veya 11 karakter</span>
       </div>
       <div class="kf-field">
         <label for="kf-m-vergi-dairesi" class="kf-label">Vergi Dairesi <span class="kf-required">*</span></label>
@@ -615,11 +615,11 @@
     [desktopInputs.vergi, mobileInputs.vergi].forEach(function(inp) {
       if (!inp) return;
       inp.addEventListener('input', function() {
-        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
       });
       inp.addEventListener('paste', function() {
         var self = this;
-        setTimeout(function() { self.value = self.value.replace(/[^0-9]/g, '').slice(0, 10); }, 0);
+        setTimeout(function() { self.value = self.value.replace(/[^0-9]/g, '').slice(0, 11); }, 0);
       });
     });
 
