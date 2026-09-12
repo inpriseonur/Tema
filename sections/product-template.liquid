@@ -534,15 +534,17 @@
                       </div>
                     {%- endif -%}
                   </div>
-                  {%- if block.settings.countdown_enabled and block.settings.countdown_end_date != blank -%}
+                  {%- if block.settings.countdown_enabled -%}
+                    {%- assign product_countdown_end_date = product.metafields.custom.countdown_end_date.value -%}
+                    {%- if product_countdown_end_date != blank -%}
                     {%- assign cd_today = 'now' | date: '%Y-%m-%d' -%}
                     {%- assign cd_today_ts = cd_today | date: '%s' | plus: 0 -%}
-                    {%- assign cd_end_ts = block.settings.countdown_end_date | date: '%s' | plus: 0 -%}
+                    {%- assign cd_end_ts = product_countdown_end_date | date: '%s' | plus: 0 -%}
                     {%- assign cd_diff = cd_end_ts | minus: cd_today_ts -%}
                     {%- assign cd_days = cd_diff | divided_by: 86400 -%}
                     {%- if cd_days >= 0 -%}
                       <div class="price-countdown"
-                           data-end-date="{{ block.settings.countdown_end_date }}"
+                           data-end-date="{{ product_countdown_end_date | date: '%Y-%m-%d' }}"
                            style="color: {{ block.settings.countdown_text_color }};">
                         <span class="countdown-icon">{{ block.settings.countdown_icon }}</span>
                         <span class="countdown-text">
@@ -553,6 +555,7 @@
                           {%- endif -%}
                         </span>
                       </div>
+                    {%- endif -%}
                     {%- endif -%}
                   {%- endif -%}
                   {%- if block.settings.price_advantage_enabled and block.settings.price_advantage_message != blank -%}
@@ -632,19 +635,22 @@
                   {%- for inner_block in section.blocks -%}
                     {%- if inner_block.type == 'product_price' -%}
                       {%- assign mobile_countdown_visible = false -%}
-                      {%- if inner_block.settings.countdown_enabled and inner_block.settings.countdown_end_date != blank -%}
+                      {%- if inner_block.settings.countdown_enabled -%}
+                        {%- assign mobile_product_countdown_end_date = product.metafields.custom.countdown_end_date.value -%}
+                        {%- if mobile_product_countdown_end_date != blank -%}
                         {%- assign mcd_today = 'now' | date: '%Y-%m-%d' -%}
                         {%- assign mcd_today_ts = mcd_today | date: '%s' | plus: 0 -%}
-                        {%- assign mcd_end = inner_block.settings.countdown_end_date | date: '%s' | plus: 0 -%}
+                        {%- assign mcd_end = mobile_product_countdown_end_date | date: '%s' | plus: 0 -%}
                         {%- assign mcd_diff = mcd_end | minus: mcd_today_ts -%}
                         {%- assign mcd_days = mcd_diff | divided_by: 86400 -%}
                         {%- if mcd_days >= 0 -%}
                           {%- assign mobile_countdown_visible = true -%}
                         {%- endif -%}
+                        {%- endif -%}
                       {%- endif -%}
                       {%- if mobile_countdown_visible -%}
                         <div class="qty-countdown-mobile"
-                             data-end-date="{{ inner_block.settings.countdown_end_date }}"
+                             data-end-date="{{ mobile_product_countdown_end_date | date: '%Y-%m-%d' }}"
                              style="color: {{ inner_block.settings.countdown_text_color }};">
                           <span class="countdown-icon">{{ inner_block.settings.countdown_icon }}</span>
                           <span class="countdown-text">
