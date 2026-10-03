@@ -82,7 +82,17 @@
                       <ul class="product-view" id="product-grid" data-id="{{ section.id }}">
                         {%- for product in collection.products -%}
                         <li class="st-col-item{% if section.settings.sidebar_handle == 'without_sidebar' %} st-col{% endif %}">
-                          {%- render 'product-grid-item', product: product -%}
+                          {%- assign ga4_collection_list_id = 'collection_' | append: collection.handle -%}
+                          {%- render 'product-grid-item',
+                            product: product,
+                            ga4_list_id: ga4_collection_list_id,
+                            ga4_list_name: collection.title,
+                            ga4_click_area: 'Collection ürün listesi',
+                            ga4_source_page_type: 'collection',
+                            ga4_source_page_name: collection.title,
+                            ga4_item_category: collection.title,
+                            ga4_index: forloop.index
+                          -%}
                         </li>
                         {%- endfor -%}
                       </ul>

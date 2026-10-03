@@ -28,7 +28,19 @@
                 <div class="swiper-wrapper">
                   {% for product in collections[block.settings.tab_product].products %}
                   <div class="swiper-slide">
-                    {% render 'product-grid-item',product: product, section_id: section.id  %}
+                    {% assign ga4_featured_list_id = 'home_featured_product_tab_' | append: block.settings.tab_product %}
+                    {% assign ga4_featured_list_name = section.settings.section_title | append: ' - ' | append: category_product.title %}
+                    {% render 'product-grid-item',
+                      product: product,
+                      section_id: section.id,
+                      ga4_list_id: ga4_featured_list_id,
+                      ga4_list_name: ga4_featured_list_name,
+                      ga4_click_area: ga4_featured_list_name,
+                      ga4_source_page_type: 'home',
+                      ga4_source_page_name: 'Ana sayfa',
+                      ga4_item_category: category_product.title,
+                      ga4_index: forloop.index
+                    %}
                   </div>
                   {% endfor %}
                 </div>

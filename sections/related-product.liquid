@@ -14,7 +14,16 @@
               <div class="swiper-wrapper">
                 {% for recommendation in recommendations.products %}
                 <div class="swiper-slide">
-                  {% render 'product-grid-item', product: recommendation %}
+                  {% render 'product-grid-item',
+                    product: recommendation,
+                    section_id: section.id,
+                    ga4_list_id: 'product_related',
+                    ga4_list_name: section.settings.related_title,
+                    ga4_click_area: 'Ürün detay - ilgili ürünler',
+                    ga4_source_page_type: 'product',
+                    ga4_source_page_name: product.title,
+                    ga4_index: forloop.index
+                  %}
                 </div>
                 {% endfor %}
               </div>
@@ -274,7 +283,6 @@
     }
   }
 </style>
-
 
 
 

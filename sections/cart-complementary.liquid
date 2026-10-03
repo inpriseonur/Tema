@@ -11,7 +11,23 @@
     <h6 class="cart-complementary-product__heading">Sepetini tamamla</h6>
     <div class="cart-complementary-product__item">
       {% if rec_product.featured_image %}
-      <a href="{{ rec_product.url }}" class="cart-complementary-product__img">
+      <a
+        href="{{ rec_product.url }}"
+        class="cart-complementary-product__img"
+        data-ga4-product-click
+        data-ga4-item-id="{{ rec_product.id }}"
+        data-ga4-item-name="{{ rec_product.title | escape }}"
+        data-ga4-item-variant="{% unless rec_variant.title == 'Default Title' %}{{ rec_variant.title | escape }}{% endunless %}"
+        data-ga4-item-brand="{{ rec_product.vendor | escape }}"
+        data-ga4-price="{{ rec_variant.price }}"
+        data-ga4-currency="{{ cart.currency.iso_code }}"
+        data-ga4-index="1"
+        data-ga4-list-id="cart_drawer_complementary"
+        data-ga4-list-name="Cart drawer - sepet önerisi"
+        data-ga4-click-area="Cart drawer - sepet önerisi"
+        data-ga4-source-page-type="cart_drawer"
+        data-ga4-source-page-name="Alışveriş Sepetim"
+      >
         <img
           src="{{ rec_product.featured_image | image_url: width: 150 }}"
           alt="{{ rec_product.title | escape }}"
@@ -22,7 +38,23 @@
       </a>
       {% endif %}
       <div class="cart-complementary-product__info">
-        <a href="{{ rec_product.url }}" class="cart-complementary-product__name">
+        <a
+          href="{{ rec_product.url }}"
+          class="cart-complementary-product__name"
+          data-ga4-product-click
+          data-ga4-item-id="{{ rec_product.id }}"
+          data-ga4-item-name="{{ rec_product.title | escape }}"
+          data-ga4-item-variant="{% unless rec_variant.title == 'Default Title' %}{{ rec_variant.title | escape }}{% endunless %}"
+          data-ga4-item-brand="{{ rec_product.vendor | escape }}"
+          data-ga4-price="{{ rec_variant.price }}"
+          data-ga4-currency="{{ cart.currency.iso_code }}"
+          data-ga4-index="1"
+          data-ga4-list-id="cart_drawer_complementary"
+          data-ga4-list-name="Cart drawer - sepet önerisi"
+          data-ga4-click-area="Cart drawer - sepet önerisi"
+          data-ga4-source-page-type="cart_drawer"
+          data-ga4-source-page-name="Alışveriş Sepetim"
+        >
           {{ rec_product.title | truncate: 45 }}
         </a>
         <div class="cart-complementary-product__price">

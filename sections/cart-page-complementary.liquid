@@ -87,7 +87,7 @@
           /* Kartları oluştur */
           var html = '';
           for (var k = 0; k < complementary.length; k++) {
-            html += buildCard(complementary[k]);
+            html += buildCard(complementary[k], k + 1);
           }
           grid.innerHTML = html;
           section.style.display = '';
@@ -100,10 +100,25 @@
       })
       .catch(function() { showTrending(); });
 
-    function buildCard(product) {
+    function buildCard(product, index) {
       var variant = product.variants[0];
       var imgSrc = product.featured_image ? product.featured_image.replace(/(\.[^\.]+)$/, '_300x$1') : '';
       var price = formatMoney(variant.price);
+      var ga4Attrs = [
+        'data-ga4-product-click',
+        'data-ga4-item-id="' + escapeAttr(product.id) + '"',
+        'data-ga4-item-name="' + escapeAttr(product.title) + '"',
+        'data-ga4-item-variant="' + escapeAttr(variant.title === 'Default Title' ? '' : variant.title) + '"',
+        'data-ga4-item-brand="' + escapeAttr(product.vendor || '') + '"',
+        'data-ga4-price="' + escapeAttr(variant.price) + '"',
+        'data-ga4-currency="{{ cart.currency.iso_code }}"',
+        'data-ga4-index="' + escapeAttr(index || '') + '"',
+        'data-ga4-list-id="cart_page_complementary"',
+        'data-ga4-list-name="Cart sayfası - ürün önerisi"',
+        'data-ga4-click-area="Cart sayfası - ürün önerisi"',
+        'data-ga4-source-page-type="cart"',
+        'data-ga4-source-page-name="Sepet"'
+      ].join(' ');
       var compareHtml = '';
       if (variant.compare_at_price && variant.compare_at_price > variant.price) {
         compareHtml = '<span class="old-price">' + formatMoney(variant.compare_at_price) + '</span>';
@@ -113,11 +128,11 @@
         : '<button type="button" class="cart-comp-card__add btn-style1" disabled>Tükendi</button>';
 
       return '<div class="cart-comp-card">'
-        + '<a href="' + product.url + '" class="cart-comp-card__img">'
+        + '<a href="' + product.url + '" class="cart-comp-card__img" ' + ga4Attrs + '>'
         + '<img src="' + imgSrc + '" alt="' + (product.title || '').replace(/"/g, '&quot;') + '" loading="lazy" width="150" height="150">'
         + '</a>'
         + '<div class="cart-comp-card__info">'
-        + '<a href="' + product.url + '" class="cart-comp-card__name">' + truncate(product.title, 50) + '</a>'
+        + '<a href="' + product.url + '" class="cart-comp-card__name" ' + ga4Attrs + '>' + truncate(product.title, 50) + '</a>'
         + '<div class="cart-comp-card__price">'
         + '<span class="new-price">' + price + '</span>'
         + compareHtml
@@ -161,6 +176,14 @@
     function truncate(str, len) {
       if (!str) return '';
       return str.length > len ? str.substring(0, len) + '…' : str;
+    }
+
+    function escapeAttr(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
     }
   });
 })();

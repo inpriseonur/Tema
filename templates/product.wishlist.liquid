@@ -1,8 +1,13 @@
 {% layout none %}
 <div data-product-html>
 <div class="product-wrapper">
-  {%- liquid
-    render 'product-grid-item', product: product
-   -%}
+  {% render 'product-grid-item',
+    product: product,
+    ga4_list_id: 'wishlist',
+    ga4_list_name: 'Favorilerim',
+    ga4_click_area: 'Wishlist',
+    ga4_source_page_type: 'wishlist',
+    ga4_source_page_name: 'Favorilerim'
+  %}
 </div>
 </div>

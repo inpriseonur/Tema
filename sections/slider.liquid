@@ -7,7 +7,21 @@
             {% for block in section.blocks %}
             <div class="swiper-slide slide-{{ block.id }}">
               <div class="slide-image">
-                <a class="ratio" href="{{ block.settings.slider_button_url }}" aria-label="{{ block.settings.slider_button_url }}">
+                {%- assign ga4_slider_promotion_name = block.settings.slider_title | default: block.settings.slider_sub_title | default: block.settings.slider_bg_img.alt | default: 'Ana sayfa slider' -%}
+                {%- assign ga4_slider_slot = 'home_hero_slider_' | append: forloop.index -%}
+                <a
+                  class="ratio"
+                  href="{{ block.settings.slider_button_url }}"
+                  aria-label="{{ block.settings.slider_button_url }}"
+                  data-ga4-promotion-click
+                  data-ga4-promotion-id="{{ ga4_slider_slot | escape }}"
+                  data-ga4-promotion-name="{{ ga4_slider_promotion_name | escape }}"
+                  data-ga4-creative-name="{{ ga4_slider_promotion_name | escape }}"
+                  data-ga4-creative-slot="{{ ga4_slider_slot | escape }}"
+                  data-ga4-click-area="Ana sayfa slider"
+                  data-ga4-source-page-type="home"
+                  data-ga4-source-page-name="Ana sayfa"
+                >
                   {%- if block.settings.slider_bg_img -%}
                   <img
                   srcset="
@@ -101,7 +115,18 @@
             {% assign product_limit = section.settings.select_product_limit %}
             {% for product in collections[section.settings.select_product].products limit: product_limit %}
             <div class="swiper-slide">
-              {% render 'product-list-item', product: product, section_id: section.id, show_full_title: true %}
+              {% render 'product-list-item',
+                product: product,
+                section_id: section.id,
+                show_full_title: true,
+                ga4_list_id: 'home_side_slider',
+                ga4_list_name: 'Ana sayfa - slider yanı seçki',
+                ga4_click_area: 'Ana sayfa - slider yanı seçki',
+                ga4_source_page_type: 'home',
+                ga4_source_page_name: 'Ana sayfa',
+                ga4_item_category: collections[section.settings.select_product].title,
+                ga4_index: forloop.index
+              %}
             </div>
             {% else %}
             {% for i in (1..product_limit) %}

@@ -31,7 +31,15 @@
 								<div class="st-content-parent">
 								  	<div class="product-list-item">
 									  	<div class="tt-hotspot-content">
-										    {% render 'product-list-item',product: product %}								    
+										    {% render 'product-list-item',
+                          product: product,
+                          ga4_list_id: 'banner_lookbook_hotspot',
+                          ga4_list_name: section.settings.banner_title,
+                          ga4_click_area: 'Banner lookbook hotspot',
+                          ga4_source_page_type: template.name,
+                          ga4_source_page_name: page_title,
+                          ga4_index: forloop.index
+                        %}
 									  	</div>
 								  	</div>
 								</div>

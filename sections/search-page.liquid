@@ -34,7 +34,15 @@
             {% for item in search.results %}
               {%- if item.object_type == 'product' -%}
                 <div class="search-item">
-                {% render 'product-grid-item', product: item %}
+                {% render 'product-grid-item',
+                  product: item,
+                  ga4_list_id: 'search_results',
+                  ga4_list_name: 'Arama sonuçları',
+                  ga4_click_area: 'Search sonuçları',
+                  ga4_source_page_type: 'search',
+                  ga4_source_page_name: search.terms,
+                  ga4_index: forloop.index
+                %}
                 </div>
               {%- endif -%}
             {% endfor %}

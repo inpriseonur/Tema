@@ -9,10 +9,36 @@
   if ratio == 0 or ratio == null
   assign ratio = 1
   endif
+  assign ga4_variant = product.selected_or_first_available_variant
+  assign ga4_list_id_value = ga4_list_id | default: 'product_grid'
+  assign ga4_list_name_value = ga4_list_name | default: 'Product grid'
+  assign ga4_click_area_value = ga4_click_area | default: ga4_list_name_value
+  assign ga4_source_page_type_value = ga4_source_page_type | default: template.name
+  assign ga4_source_page_name_value = ga4_source_page_name | default: page_title
+  assign ga4_index_value = ga4_index | default: forloop.index
+  assign ga4_item_category_value = ga4_item_category | default: collection.title
 -%}
 <div class="single-product-wrap">
   <div class="product-image">
-    <a class="pro-img ratio" href="{{ product.url | within: collection }}" style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;">
+    <a
+      class="pro-img ratio"
+      href="{{ product.url | within: collection }}"
+      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      data-ga4-product-click
+      data-ga4-item-id="{{ product.id }}"
+      data-ga4-item-name="{{ product.title | escape }}"
+      data-ga4-item-variant="{% unless ga4_variant.title == 'Default Title' %}{{ ga4_variant.title | escape }}{% endunless %}"
+      data-ga4-item-brand="{{ product.vendor | escape }}"
+      data-ga4-item-category="{{ ga4_item_category_value | escape }}"
+      data-ga4-price="{{ ga4_variant.price }}"
+      data-ga4-currency="{{ cart.currency.iso_code }}"
+      data-ga4-index="{{ ga4_index_value }}"
+      data-ga4-list-id="{{ ga4_list_id_value | escape }}"
+      data-ga4-list-name="{{ ga4_list_name_value | escape }}"
+      data-ga4-click-area="{{ ga4_click_area_value | escape }}"
+      data-ga4-source-page-type="{{ ga4_source_page_type_value | escape }}"
+      data-ga4-source-page-name="{{ ga4_source_page_name_value | escape }}"
+    >
       {%- if product.featured_media -%}
         <div class="{%- if product.media[1] != blank -%} img1{%- endif -%}">
           {% assign image_height = product.featured_media.width | divided_by: product.featured_media.aspect_ratio %}
@@ -67,7 +93,24 @@
   </div>
   <div class="product-content">
     <div class="product-title">
-      <a href="{{ product.url | within: collection }}" title="{{ product.title }}">{{ product.title }}</a>
+      <a
+        href="{{ product.url | within: collection }}"
+        title="{{ product.title }}"
+        data-ga4-product-click
+        data-ga4-item-id="{{ product.id }}"
+        data-ga4-item-name="{{ product.title | escape }}"
+        data-ga4-item-variant="{% unless ga4_variant.title == 'Default Title' %}{{ ga4_variant.title | escape }}{% endunless %}"
+        data-ga4-item-brand="{{ product.vendor | escape }}"
+        data-ga4-item-category="{{ ga4_item_category_value | escape }}"
+        data-ga4-price="{{ ga4_variant.price }}"
+        data-ga4-currency="{{ cart.currency.iso_code }}"
+        data-ga4-index="{{ ga4_index_value }}"
+        data-ga4-list-id="{{ ga4_list_id_value | escape }}"
+        data-ga4-list-name="{{ ga4_list_name_value | escape }}"
+        data-ga4-click-area="{{ ga4_click_area_value | escape }}"
+        data-ga4-source-page-type="{{ ga4_source_page_type_value | escape }}"
+        data-ga4-source-page-name="{{ ga4_source_page_name_value | escape }}"
+      >{{ product.title }}</a>
     </div>
     <div class="price-box">
       <span class="new-price" id="ProductPrice">{{ product.selected_or_first_available_variant.price | money }}</span>
