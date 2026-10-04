@@ -66,9 +66,12 @@
                       loading="lazy">
                     </a> 
                   {% endif %}
-                  <div class="product-information">
+                  <div class="product-information{% if item.discounts == empty %} product-information--no-discount{% endif %}">
                     <a href="{{ item.url }}" class="card-title">
                       {{- item.product.title | escape -}}
+                      {%- unless item.product.has_only_default_variant -%}
+                        <span class="drawer-variant-inline"> - {{ item.options_with_values | map: 'value' | join: ' ' | escape }}</span>
+                      {%- endunless -%}
                     </a>
                     {%- if item.product.has_only_default_variant == false
                       or item.properties.size != 0
@@ -76,7 +79,7 @@
                     -%}
                       <div class="item-option">
                         {%- if item.product.has_only_default_variant == false -%}
-                          {{ item.options_with_values | map: "value" | join: " " }}
+                          <span class="drawer-variant-separate">{{ item.options_with_values | map: "value" | join: " " | escape }}</span>
                         {%- endif -%}
                         {%- for property in item.properties -%}
                           {%- assign property_first_char = property.first | slice: 0 -%}
@@ -106,10 +109,10 @@
                       </div>
                     {%- else -%}
                       <div class="item-price">
-                        <span>{{ item.original_price | money }}</span>
-                        {%- if item.variant.compare_at_price > item.variant.price -%}
+                        {%- if item.variant.compare_at_price > item.original_price -%}
                         <span class="old-price" id="ComparePrice-ajax-{{ forloop.index }}">{{ item.variant.compare_at_price | money }}</span>
                         {%- endif -%}
+                        <span class="price-item-regular">{{ item.final_price | money }}</span>
                       </div>
                     {%- endif -%}
                     <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
@@ -144,6 +147,10 @@
                         >
                         <button class="qty-bt" name="plus" type="button">+</button>
                       </qty-box>
+                      <span class="drawer-line-total">
+                        <span class="visually-hidden">{{ item.quantity }} adet toplamı:</span>
+                        {{ item.final_line_price | money }}
+                      </span>
                       <delpro-btn
                         id="ajaxcart-remove-{{ item.index | plus: 1 }}"
                         data-index="{{ item.index | plus: 1 }}"
@@ -201,6 +208,10 @@
           <span class="heading">{{ 'sections.cart.subtotal' | t }}</span>
           <span class="total-main" data-cart-subtotal="{{ cart.total_price | divided_by: 100 }}">{{ cart.total_price | money_with_currency }}</span>
         </div>
+        {%- assign drawer_tax_note = 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url | strip_html | strip -%}
+        {%- if drawer_tax_note != blank -%}
+          <small class="drawer-tax-note" title="{{ drawer_tax_note | escape }}">({{ drawer_tax_note | escape }})</small>
+        {%- endif -%}
         <div class="mini-cart-button" {{ block.shopify_attributes }}>
           <noscript>
             <button type="submit" class="cart__update-button button" form="ajaxcart-form">
@@ -339,4 +350,3 @@
   });
 })();
 </script>
-

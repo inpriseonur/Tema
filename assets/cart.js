@@ -16,7 +16,35 @@ class CartProduct extends HTMLElement {
     const sendOnBounce = stdebounce((event) => {
       this.triggerChange(event);
     }, RELOAD_TIMER);
-    this.addEventListener('change', sendOnBounce.bind(this));
+    this.addEventListener('change', (event) => {
+      const input = event.target;
+      if (input.matches('[name="updates[]"][data-quantity-variant-id]') &&
+          input.value !== input.getAttribute('value')) {
+        const variant = input.dataset.quantityVariantId;
+        this.volumeDismissed.add(variant);
+        this.volumeAccepted.delete(variant);
+        this.saveVolumeOffers();
+        this.syncVolumeOffers();
+      }
+      sendOnBounce(event);
+    });
+    // Delegation survives the existing section HTML replacements.
+    this.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-volume-offer]');
+      if (!button || !this.contains(button)) return;
+      event.preventDefault();
+      if (button.disabled || this.querySelector('#cart-section.disabled')) return;
+      const line = Number(button.dataset.line);
+      const quantity = Number(button.dataset.quantity);
+      if (!Number.isInteger(line) || line < 1 || !Number.isInteger(quantity) || quantity < 1) return;
+      button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
+      const input = this.querySelector(`#Quantity-${line}`);
+      this.refreshQty(line, quantity, 'updates[]', {
+        variant: button.dataset.variant,
+        key: input && input.dataset.lineKey
+      });
+    });
     Array.from(document.querySelectorAll('.checkout-btn .read-agree')).forEach(e => e.addEventListener('click',  function () {
       if($('.cust-checkbox').is(':checked')) {
         $('.checkout-btn button.check-btn').removeAttr('disabled');
@@ -27,7 +55,16 @@ class CartProduct extends HTMLElement {
     }))
   }
   ajxcartRefreshUnusers = undefined;
+  volumeAccepted = new Set();
+  volumeDismissed = new Set();
   connectedCallback() {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('pg-cart-volume-accepted') || '[]');
+      if (Array.isArray(saved)) this.volumeAccepted = new Set(saved.filter((id) => /^\d+$/.test(id)).map(String));
+      const dismissed = JSON.parse(sessionStorage.getItem('pg-cart-volume-dismissed') || '[]');
+      if (Array.isArray(dismissed)) this.volumeDismissed = new Set(dismissed.filter((id) => /^\d+$/.test(id)).map(String));
+    } catch (_) { /* Keep an in-memory fallback when browser storage is unavailable. */ }
+    this.syncVolumeOffers();
     this.ajxcartRefreshUnusers = user(SP_OBJECT.ajxcartRefresh, (event) => {
       if (event.source === 'ajax-items') {
         return;
@@ -40,6 +77,49 @@ class CartProduct extends HTMLElement {
       this.ajxcartRefreshUnusers();
     }
   }
+  saveVolumeOffers() {
+    try {
+      sessionStorage.setItem('pg-cart-volume-accepted', JSON.stringify([...this.volumeAccepted]));
+      sessionStorage.setItem('pg-cart-volume-dismissed', JSON.stringify([...this.volumeDismissed]));
+    } catch (_) { /* Cart updates must not depend on browser storage. */ }
+  }
+  syncVolumeOffers(root = this) {
+    const contents = root.querySelector('[data-volume-cart-variants]');
+    if (!contents) return;
+    try {
+      const variants = new Set(JSON.parse(contents.dataset.volumeCartVariants).map(String));
+      this.volumeAccepted.forEach((id) => {
+        if (!variants.has(id)) this.volumeAccepted.delete(id);
+      });
+      this.volumeDismissed.forEach((id) => {
+        if (!variants.has(id)) this.volumeDismissed.delete(id);
+      });
+      this.saveVolumeOffers();
+    } catch (_) { return; }
+    root.querySelectorAll('[data-volume-variant]').forEach((offer) => {
+      if (this.volumeDismissed.has(offer.dataset.volumeVariant)) {
+        const row = offer.closest('.cart-volume-offer-row');
+        if (row) {
+          row.previousElementSibling?.classList.remove('cart-item--with-offer');
+          row.remove();
+        } else {
+          offer.remove();
+        }
+        return;
+      }
+      if (!this.volumeAccepted.has(offer.dataset.volumeVariant)) return;
+      if (offer.dataset.volumeConfirmed === 'true') return;
+      const confirmation = offer.querySelector('template[data-volume-confirmation]');
+      if (confirmation) {
+        offer.replaceChildren(confirmation.content.cloneNode(true));
+        offer.dataset.volumeConfirmed = 'true';
+      } else {
+        // An old acceptance must never hide the offer on an undiscounted cart.
+        this.volumeAccepted.delete(offer.dataset.volumeVariant);
+      }
+    });
+    this.saveVolumeOffers();
+  }
   triggerChange(event) {
     this.refreshQty(event.target.dataset.index, event.target.value, document.activeElement.getAttribute('name'));
   }
@@ -49,6 +129,7 @@ class CartProduct extends HTMLElement {
       .then((responseText) => {
         const html = new DOMParser().parseFromString(responseText, 'text/html');
         const sourceQty = html.querySelector('ajax-items');
+        this.syncVolumeOffers(sourceQty);
         this.innerHTML = sourceQty.innerHTML;
         
       })
@@ -80,7 +161,7 @@ class CartProduct extends HTMLElement {
       }
     ];
   }
-  refreshQty(line, quantity, name) {
+  refreshQty(line, quantity, name, volumeOffer) {
     this.loadingShow(line);
     const body = JSON.stringify({
       line,
@@ -102,6 +183,15 @@ class CartProduct extends HTMLElement {
           this.reLiveRegions(line, parsedState.errors);
           return;
         }
+        // Accept only a confirmed quantity change, never a click or failed request.
+        if (volumeOffer && volumeOffer.key) {
+          // Shopify can change line keys when automatic discounts change.
+          const updatedItem = parsedState.items.find((item) => item.key === volumeOffer.key) || parsedState.items[line - 1];
+          if (updatedItem && String(updatedItem.variant_id) === volumeOffer.variant && updatedItem.quantity === quantity) {
+            this.volumeAccepted.add(volumeOffer.variant);
+            this.saveVolumeOffers();
+          }
+        }
         this.classList.toggle('is-empty', parsedState.item_count === 0);
         const cartDrawerWrapper = document.querySelector('ajax-cart');
         const cartFooter = document.getElementById('cart-section-total');
@@ -113,9 +203,12 @@ class CartProduct extends HTMLElement {
           elementToReplace.innerHTML =
             this.callSectionInnerHTML(parsedState.sections[section.section], section.selector);
         }));
+        const volumeContents = this.querySelector('[data-volume-cart-variants]');
+        if (volumeContents) volumeContents.dataset.volumeCartVariants = JSON.stringify(parsedState.items.map((item) => item.variant_id));
         const updatedValue = parsedState.items[line - 1] ? parsedState.items[line - 1].quantity : undefined;
         let message = '';
-        if (items.length === parsedState.items.length && updatedValue !== parseInt(quantityElement.value)) {
+        const requestedValue = volumeOffer ? Number(quantity) : parseInt(quantityElement.value);
+        if (items.length === parsedState.items.length && updatedValue !== requestedValue) {
           if (typeof updatedValue === 'undefined') {
             message = window.stCartString.error;
           } else {
@@ -152,9 +245,9 @@ class CartProduct extends HTMLElement {
     }, 1000);
   }
   callSectionInnerHTML(html, selector) {
-    return new DOMParser()
-      .parseFromString(html, 'text/html')
-      .querySelector(selector).innerHTML;
+    const document = new DOMParser().parseFromString(html, 'text/html');
+    if (selector === '.js-contents') this.syncVolumeOffers(document);
+    return document.querySelector(selector).innerHTML;
   }
   loadingShow(line) {
     const stCartPros = document.getElementById('cart-section') || document.getElementById('ajaxcart-cartitems');
@@ -166,6 +259,10 @@ class CartProduct extends HTMLElement {
     this.lineItemStatusElement.setAttribute('aria-hidden', false);
   }
   loadingOff(line) {
+    this.querySelectorAll('[data-volume-offer][aria-busy="true"]').forEach((button) => {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    });
     const stCartPros = document.getElementById('cart-section') || document.getElementById('ajaxcart-cartitems');
     stCartPros.classList.remove('disabled');
     const cartItemElements = this.querySelectorAll(`#cartpro-${line} .loading-overlay`);

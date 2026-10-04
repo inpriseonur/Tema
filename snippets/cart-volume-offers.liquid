@@ -1,0 +1,121 @@
+{%- comment -%}
+  Render inside .js-contents so existing cart section updates refresh offers too.
+  Campaign settings describe offers; Shopify remains authoritative for discounts.
+{%- endcomment -%}
+{%- assign rendered_variants = '|' -%}
+{%- for block in section.blocks -%}
+  {%- liquid
+    if block.type != 'volume_offer' or block.settings.enabled == false
+      continue
+    endif
+    assign campaign_product = block.settings.product
+    assign variant_id = block.settings.variant_id | strip | plus: 0
+    if row_item.variant_id != variant_id or row_item.selling_plan_allocation != blank
+      continue
+    endif
+    assign variant_token = variant_id | prepend: '|' | append: '|'
+    if campaign_product == blank or variant_id == 0 or rendered_variants contains variant_token
+      continue
+    endif
+    assign campaign_variant = campaign_product.variants | where: 'id', variant_id | first
+    if campaign_variant == blank or campaign_variant.available == false
+      continue
+    endif
+    assign quantity = 0
+    assign original_total = 0
+    assign final_total = 0
+    assign campaign_item = nil
+    for item in cart.items
+      if item.variant_id == variant_id and item.selling_plan_allocation == blank
+        assign quantity = quantity | plus: item.quantity
+        assign original_total = original_total | plus: item.original_line_price
+        assign final_total = final_total | plus: item.final_line_price
+        if campaign_item == nil
+          assign campaign_item = item
+        endif
+      endif
+    endfor
+    if quantity == 0
+      continue
+    endif
+    if campaign_item.key != row_item.key
+      continue
+    endif
+    assign q1 = block.settings.tier_1_quantity | plus: 0
+    assign q2 = block.settings.tier_2_quantity | plus: 0
+    assign q3 = block.settings.tier_3_quantity | plus: 0
+    assign p1 = block.settings.tier_1_percent | plus: 0
+    assign p2 = block.settings.tier_2_percent | plus: 0
+    assign p3 = block.settings.tier_3_percent | plus: 0
+    if q1 < 1 or q2 <= q1 or q3 <= q2 or p2 < p1 or p3 < p2
+      continue
+    endif
+    assign target_quantity = 0
+    assign percent = 0
+    for tier in (1..3)
+      assign quantity_key = tier | prepend: 'tier_' | append: '_quantity'
+      assign percent_key = tier | prepend: 'tier_' | append: '_percent'
+      assign tier_quantity = block.settings[quantity_key] | plus: 0
+      assign tier_percent = block.settings[percent_key] | plus: 0
+      if tier_quantity > quantity and tier_percent > 0
+        assign target_quantity = tier_quantity
+        assign percent = tier_percent
+        break
+      endif
+    endfor
+    assign completed = false
+    if target_quantity == 0
+      assign highest_multiplier = 100 | minus: p3
+      assign expected_total = original_total | times: highest_multiplier | divided_by: 100.0 | round
+      if p3 > 0 and quantity >= q3 and final_total <= expected_total
+        assign completed = true
+        assign percent = p3
+      else
+        continue
+      endif
+    endif
+    assign missing = target_quantity | minus: quantity
+    if completed
+      assign missing = 0
+    endif
+    assign line_quantity = campaign_item.quantity | plus: missing
+    assign quantity_rule = campaign_variant.quantity_rule
+    assign increment = quantity_rule.increment | default: 1
+    assign remainder = line_quantity | modulo: increment
+    if line_quantity < quantity_rule.min or remainder != 0
+      continue
+    endif
+    if quantity_rule.max != blank and line_quantity > quantity_rule.max
+      continue
+    endif
+    if completed == false and campaign_variant.inventory_management != blank and campaign_variant.inventory_policy != 'continue'
+      assign inventory_target = cart | item_count_for_variant: variant_id | plus: missing
+      if inventory_target > campaign_variant.inventory_quantity
+        continue
+      endif
+    endif
+    assign multiplier = 100 | minus: percent
+    assign offer_price = campaign_item.original_price | times: multiplier | divided_by: 100.0 | round
+    if completed == false and offer_price >= campaign_item.final_price
+      continue
+    endif
+    assign rendered_variants = rendered_variants | append: variant_id | append: '|'
+  -%}
+  <div class="cart-volume-offer" data-volume-variant="{{ variant_id }}" {{ block.shopify_attributes }}>
+    {%- if final_total < original_total -%}
+    <template data-volume-confirmation>
+      {%- assign current_price = final_total | times: 1.0 | divided_by: quantity | round -%}
+      <p class="cart-volume-offer__message" role="status">İndirim uygulandı · Birim fiyatın <strong>{{ current_price | money }}</strong>.</p>
+    </template>
+    {%- endif -%}
+      {%- if completed -%}
+        {%- assign current_price = final_total | times: 1.0 | divided_by: quantity | round -%}
+        <p class="cart-volume-offer__message">En yüksek koli avantajına ulaştın, koli fiyatın <strong>{{ current_price | money }}</strong>.</p>
+      {%- else -%}
+        <p class="cart-volume-offer__message"><strong>{{ missing }} koli daha ekle</strong>, %{{ percent }} indirim ile koli fiyatın <strong>{{ offer_price | money }}</strong> olsun.</p>
+      {%- endif -%}
+    {%- unless completed -%}
+      <button type="button" class="cart-volume-offer__button" data-volume-offer data-variant="{{ variant_id }}" data-line="{{ campaign_item.index | plus: 1 }}" data-quantity="{{ line_quantity }}" aria-label="{{ campaign_product.title | escape }} {{ campaign_variant.title | escape }}: {{ missing }} koli daha ekle">Ekle <span aria-hidden="true">+</span></button>
+    {%- endunless -%}
+  </div>
+{%- endfor -%}

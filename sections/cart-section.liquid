@@ -40,7 +40,7 @@
                 </div>
                 <div class="cart-body-item" id="cart-section" data-id="{{ section.id }}">
                   <form action="{{ routes.cart_url }}" method="post" id="cart">
-                    <div class="js-contents">
+                    <div class="js-contents" data-volume-cart-variants="{{ cart.items | map: 'variant_id' | json | escape }}">
                       {%- if cart != empty -%}
                         <table>
                           <thead>
@@ -53,7 +53,10 @@
                           <tbody>
                             {%- for item in cart.items -%}
                               {%- assign item_variant_title = item.options_with_values | map: 'value' | join: ' ' -%}
-                              <tr class="cart-item" id="cartpro-{{ item.index | plus: 1 }}">
+                              {%- capture volume_offer -%}
+                                {%- render 'cart-volume-offers', cart: cart, section: section, row_item: item -%}
+                              {%- endcapture -%}
+                              <tr class="cart-item{% if volume_offer != blank %} cart-item--with-offer{% endif %}" id="cartpro-{{ item.index | plus: 1 }}">
                                 <td class="item-media">
                                   <div class="cart-image">
                                   {% if item.image %}
@@ -113,6 +116,7 @@
                                       <input
                                       class="qty-box-input"
                                       data-quantity-variant-id="{{ item.variant.id }}"
+                                      data-line-key="{{ item.key | escape }}"
                                       type="number"
                                       name="updates[]"
                                       value="{{ item.quantity }}"
@@ -149,15 +153,10 @@
                                         <span class="price-item-sale">
                                           {{- item.original_price | money -}}
                                         </span>
-                                        <span class="price-item-regular">
-                                          {{ item.final_price | money }}
-                                        </span>
-                                        {%- else -%}
-                                        <span>{{ item.original_price | money }}</span>
-                                        {%- if item.variant.compare_at_price > item.variant.price -%}
+                                        {%- elsif item.variant.compare_at_price > item.original_price -%}
                                         <span class="old-price" id="ComparePrice-{{ forloop.index }}">{{ item.variant.compare_at_price | money }}</span>
                                         {%- endif -%}
-                                        {%- endif -%}
+                                        <span class="price-item-regular">{{ item.final_price | money }}</span>
                                       </div>
                                       <div class="item-price">
                                         <span class="price-item price-item-regular">
@@ -173,6 +172,11 @@
                                   </div>
                                 </td>
                               </tr>
+                              {%- if volume_offer != blank -%}
+                                <tr class="cart-volume-offer-row">
+                                  <td colspan="3">{{ volume_offer }}</td>
+                                </tr>
+                              {%- endif -%}
                             {%- endfor -%}
                           </tbody>
                         </table>
@@ -466,7 +470,13 @@
       {%- if cart != empty -%}
       <div class="col-12 mobile-sticky-cart sticky d-md-none">
         <div class="total-row js-contents-subtotal">
-          <span class="total-label">Ara toplam</span>
+          {%- assign mobile_tax_note = 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url | strip_html | strip -%}
+          <span class="total-label-group">
+            <span class="total-label">{{ 'sections.cart.subtotal' | t }}</span>
+            {%- if mobile_tax_note != blank -%}
+              <small class="total-tax-note" title="{{ mobile_tax_note | escape }}">({{ mobile_tax_note | escape }})</small>
+            {%- endif -%}
+          </span>
           <span class="total-price">{{ cart.total_price | money }}</span>
         </div>
         <button id="mobile-checkout-trigger" class="checkout-btn-mobile" type="button">Ödemeye Geç →</button>
@@ -872,6 +882,31 @@
       "label": "Delivery Description",
       "default": "Enter your delivery info here."
     }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "volume_offer",
+      "name": "Koli indirimi kampanyası",
+      "limit": 3,
+      "settings": [
+        { "type": "paragraph", "content": "Teklif gösterir; gerçek indirim Shopify > İndirimler bölümünde tanımlanmalıdır. Varyant, eşikler ve oranlar iki yerde aynı olmalıdır. İndirim tüm uygun kolilere uygulanmalıdır." },
+        { "type": "checkbox", "id": "enabled", "label": "Kampanya aktif", "default": false },
+        { "type": "text", "id": "title", "label": "Kampanya adı", "default": "Koli alım avantajı" },
+        { "type": "product", "id": "product", "label": "Ürün" },
+        { "type": "text", "id": "variant_id", "label": "Varyant ID", "info": "Ürün bağlantısındaki variant= sonrasındaki sayı. Örnek: 44854939058221" },
+        { "type": "header", "content": "1. kademe" },
+        { "type": "number", "id": "tier_1_quantity", "label": "Minimum koli adedi", "default": 3 },
+        { "type": "range", "id": "tier_1_percent", "label": "İndirim", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+        { "type": "header", "content": "2. kademe" },
+        { "type": "number", "id": "tier_2_quantity", "label": "Minimum koli adedi", "default": 5 },
+        { "type": "range", "id": "tier_2_percent", "label": "İndirim", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+        { "type": "header", "content": "3. kademe" },
+        { "type": "number", "id": "tier_3_quantity", "label": "Minimum koli adedi", "default": 10 },
+        { "type": "range", "id": "tier_3_percent", "label": "İndirim", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 0 },
+        { "type": "paragraph", "content": "Eşikleri ve yüzdeleri küçükten büyüğe girin. Her varyantı yalnızca bir kampanya bloğunda kullanın. Sıfır oranlı kademe teklif olarak gösterilmez." }
+      ]
+    }
   ]
 }
 {% endschema %}
@@ -933,9 +968,13 @@
                 const text = data;
                 const parser = new DOMParser();
                 const htmlDocument = parser.parseFromString(text, 'text/html');
-                const cartHtml = htmlDocument.documentElement.querySelector('.cart-body').innerHTML;
-                ///console.log(cartHtml);
-                document.querySelector('.cart-body').innerHTML = cartHtml;
+                const cartBody = document.querySelector('.cart-body');
+                const nextCartBody = htmlDocument.documentElement.querySelector('.cart-body');
+                // Apply offer visibility before inserting the second cart refresh.
+                if (typeof cartBody.syncVolumeOffers === 'function') {
+                  cartBody.syncVolumeOffers(nextCartBody);
+                }
+                cartBody.innerHTML = nextCartBody.innerHTML;
                 
                 const cartTotalHtml = htmlDocument.documentElement.querySelector('.cart-body-total').innerHTML;
                 if (cartTotalHtml && document.querySelector('.cart-body-total')) {
@@ -1404,9 +1443,11 @@
     .mobile-sticky-cart .ship-bar-fill { height: 100%; background: #2a7a4b; border-radius: 2px; }
     .mobile-sticky-cart .ship-text { width: 100%; max-width: 430px; font-size: 10.5px; color: #666; margin: 0 0 7px; line-height: 1.2; text-align: left; }
     .mobile-sticky-cart .ship-text b { color: #2a7a4b; }
-    .mobile-sticky-cart .total-row { width: 100%; max-width: 430px; display: flex; flex-direction: row; align-items: baseline; justify-content: space-between; margin: 0 0 10px; }
-    .mobile-sticky-cart .total-label { font-size: 14px; color: #666; font-weight: 500; }
-    .mobile-sticky-cart .total-price { font-size: 20px; font-weight: 600; color: #1a2b4c; }
+    .mobile-sticky-cart .total-row { width: 100%; max-width: 430px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 10px; }
+    .mobile-sticky-cart .total-label-group { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; white-space: nowrap; }
+    .mobile-sticky-cart .total-label { flex-shrink: 0; font-size: 14px; color: #666; font-weight: 500; }
+    .mobile-sticky-cart .total-tax-note { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 8px; font-weight: 400; line-height: 1; color: #6b7280; }
+    .mobile-sticky-cart .total-price { flex-shrink: 0; white-space: nowrap; font-size: 19px; font-weight: 600; color: #1a2b4c; }
     .mobile-sticky-cart .trust-badges { width: 100%; max-width: 430px; display: flex; gap: 0 6px; align-items: center; justify-content: center; flex-wrap: nowrap; margin-top: 8px; margin-bottom: 0; text-align: center; overflow: hidden; }
     .mobile-sticky-cart .trust-badge { display: flex; align-items: center; gap: 3px; min-width: 0; font-size: 10.5px; font-weight: 500; line-height: 1.2; color: #6b7280; white-space: nowrap; letter-spacing: 0; }
     .mobile-sticky-cart .trust-badge-icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 12px; width: 12px; height: 12px; color: #1f7a4d; }
@@ -1450,7 +1491,8 @@
     .cart-title-variant-mobile {
       display: inline;
       color: #5f6775;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 400;
     }
     .cart-page .cart-body .item-media .item-info .item-title {
       display: -webkit-box;
@@ -1466,7 +1508,25 @@
       display: none;
     }
     .cart-page .cart-body .item-unit-price-mobile {
-      display: none;
+      display: flex;
+      justify-content: flex-end;
+      align-items: baseline;
+      gap: 4px;
+      margin: 0;
+      white-space: nowrap;
+    }
+    .cart-page .cart-body .item-unit-price-mobile span {
+      font-size: 10.5px;
+      line-height: 1.2;
+      font-weight: 600;
+      color: #061f4f;
+    }
+    .cart-page .cart-body .item-unit-price-mobile .price-item-sale,
+    .cart-page .cart-body .item-unit-price-mobile .old-price {
+      color: #8a90a0;
+      font-weight: 400;
+      padding-inline-start: 0;
+      text-decoration: line-through;
     }
     .cart-page .cart-body .cart-item-totals .item-price span {
       font-size: 15.5px;
@@ -1480,10 +1540,11 @@
       gap: 0;
     }
     .kf-checkbox-label {
-      min-height: 46px;
-      padding: 9px 12px !important;
+      min-height: 44px;
+      padding: 8px 12px !important;
       gap: 9px;
       border-width: 1px;
+      border-color: #e3e7ec;
       border-radius: 7px;
       background: #fff;
       box-shadow: none;
@@ -1505,7 +1566,7 @@
     }
     .kf-checkbox-text {
       font-size: 12.5px !important;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 1.25;
       color: #4f5b6b;
     }
@@ -1530,6 +1591,19 @@
     .cart-item__quantity-wrapper, .cart-qty-box {
       display: contents !important;
     }
+    .cart-page .cart-body .cart-item-totals-inner {
+      display: contents;
+    }
+    .cart-page .cart-body .cart-item-prices {
+      grid-column: 2;
+      grid-row: 2;
+      min-width: 0;
+      min-height: 34px;
+      justify-content: flex-end;
+      gap: 5px;
+      padding-right: 12px;
+      transform: translateY(-4px);
+    }
     qty-box {
       grid-column: 1;
       grid-row: 2;
@@ -1538,12 +1612,9 @@
       transform-origin: left center;
     }
     .cart-item-totals .item-price {
-      grid-column: 2;
-      grid-row: 2;
       text-align: right;
-      padding-right: 15px;
+      padding-right: 0;
       margin: 0 !important;
-      transform: translateY(-4px);
     }
     delpro-btn {
       grid-column: 3;
