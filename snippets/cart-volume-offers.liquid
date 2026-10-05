@@ -105,7 +105,7 @@
     {%- if final_total < original_total -%}
     <template data-volume-confirmation>
       {%- assign current_price = final_total | times: 1.0 | divided_by: quantity | round -%}
-      <p class="cart-volume-offer__message" role="status">İndirim uygulandı · Birim fiyatın <strong>{{ current_price | money }}</strong>.</p>
+      <p class="cart-volume-offer__message" role="status">İndirim uygulandı, koli fiyatın <strong>{{ current_price | money }}</strong>.</p>
     </template>
     {%- endif -%}
       {%- if completed -%}
