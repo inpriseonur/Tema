@@ -194,8 +194,21 @@ addEventListener('DOMContentLoaded', (event) => {
 .new-product .new-product-slider .owl-nav{
     margin-top: 0;
 }
-.new-product .new-product-slider .item {
-    height: 100%;
+#shopify-section-{{ section.id }} .new-product-slider .owl-stage {
+    display: flex;
+    align-items: stretch;
+}
+#shopify-section-{{ section.id }} .new-product-slider .owl-item {
+    display: flex;
+    float: none;
+}
+#shopify-section-{{ section.id }} .new-product-slider .item {
+    display: flex;
+    width: 100%;
+}
+#shopify-section-{{ section.id }} .new-product-slider .item > .single-product-wrap {
+    width: 100%;
+    height: auto;
 }
 .new-product .new-product-slider .single-product-wrap {
     display: flex;
