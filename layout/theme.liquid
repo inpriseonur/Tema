@@ -766,11 +766,38 @@
           var topRow = document.createElement('div');
           topRow.className = 'sticky-top-row';
           topRow.appendChild(wrapper); // Fiyat kutusunu ekle
-
-
+          var shippingNote = document.createElement('span');
+          shippingNote.className = 'mobile-sticky-shipping';
+          shippingNote.textContent = {{ 'products.product.sticky_free_shipping' | t | json }};
+          topRow.appendChild(shippingNote);
+          btn.classList.add('mobile-purchase-bar');
 
           // Hazırlanan üst satırı butondan önceye ekle
           btn.prepend(topRow);
+
+          // Keep the existing countdown and its fallback together; only relocate on mobile.
+          var countdown = document.querySelector('.product-qty .qty-countdown-mobile[data-end-date]');
+          if (countdown) {
+            var countdownHome = document.createComment('Mobile countdown position');
+            countdown.before(countdownHome);
+            var countdownFallback = countdown.nextElementSibling;
+            if (!countdownFallback || !countdownFallback.classList.contains('price-advantage-mobile--fallback')) countdownFallback = null;
+            var countdownGroup = document.createElement('div');
+            countdownGroup.className = 'mobile-sticky-countdown';
+            wrapper.prepend(countdownGroup);
+            var countdownMedia = window.matchMedia('(max-width: 749px)');
+            function positionStickyCountdown() {
+              if (countdownMedia.matches) {
+                countdownGroup.appendChild(countdown);
+                if (countdownFallback) countdownGroup.appendChild(countdownFallback);
+              } else {
+                countdownHome.after(countdown);
+                if (countdownFallback) countdown.after(countdownFallback);
+              }
+            }
+            positionStickyCountdown();
+            countdownMedia.addEventListener('change', positionStickyCountdown);
+          }
 
           // Stok bilgisini adet kutusunun yanına taşı
           var qtyContainer = document.querySelector('.product-qty');

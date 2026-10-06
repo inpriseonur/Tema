@@ -1535,6 +1535,193 @@ body.template-product .product-main-template .product-social-proof-row > .produc
   }
 }
 
+/* Mobil ürün başlığı ve mevcut tıklanabilir yorum rozeti. */
+@media (max-width: 767px) {
+  body.template-product .product-main-template .product_details_info .product-title {
+    margin-bottom: 4px !important;
+    padding-bottom: 0 !important;
+  }
+
+  body.template-product .product-main-template .product_details_info .product-title h1 {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+  }
+
+  body.template-product .product-main-template .product_details_info .product-title + .product-app-block {
+    margin-top: 0 !important;
+  }
+
+  body.template-product .product-main-template .product_details_info .product-app-block .jdgm-prev-badge,
+  body.template-product .product-main-template .product_details_info .product-app-block .jdgm-prev-badge__text {
+    font-size: 12px !important;
+    line-height: 1.35;
+  }
+
+  body.template-product .product-main-template .product_details_info .product-app-block .jdgm-prev-badge .jdgm-star {
+    font-size: 12px !important;
+  }
+
+  body.template-product .product-main-template .product-app-block .jdgm-prev-badge[data-number-of-reviews]:not([data-number-of-reviews="0"]) .jdgm-prev-badge__text::after {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-inline-start: 7px;
+    border-top: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    vertical-align: 1px;
+  }
+}
+
+/* Yalnızca fiyatı hazırlanmış mobil satın alma barının iç yerleşimi. */
+.volume-summary-short-label {
+  display: none;
+}
+
+@media (max-width: 749px) {
+  .product-main-template .product-qty .product-volume-discounts__summary--beside-quantity {
+    grid-column: 3;
+    grid-row: 1;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .product-volume-discounts__summary--beside-quantity .volume-summary-full-label {
+    display: none;
+  }
+
+  .product-volume-discounts__summary--beside-quantity .volume-summary-short-label {
+    display: inline;
+  }
+
+  .product-volume-discounts__summary--beside-quantity [data-volume-summary-total] {
+    white-space: nowrap;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-countdown {
+    display: none;
+    margin-bottom: -12px;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-countdown:has(> .qty-countdown-mobile:not([style*="display: none"])) {
+    display: block;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-price:has(.old-price:not(.d-none)) .mobile-sticky-countdown {
+    margin-bottom: 0;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-countdown .qty-countdown-mobile {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 9px;
+    line-height: 12px;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-countdown .countdown-text {
+    font-size: 9px;
+    line-height: 12px;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-countdown .countdown-icon {
+    display: none;
+  }
+
+  .product-main-template cart-action.product-form .pr-form-button.mobile-purchase-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 12px !important;
+  }
+
+  .product-main-template .mobile-purchase-bar .sticky-top-row {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-price {
+    flex-direction: column;
+    justify-content: flex-start;
+    min-width: 0;
+  }
+
+  .product-main-template .mobile-purchase-bar .price-box {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-rows: 12px minmax(23px, auto);
+    align-items: center;
+    justify-content: start;
+    gap: 0 6px;
+    width: 100%;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-price .old-price {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: start;
+    text-align: left;
+    color: #89909e;
+    font-size: 11px !important;
+    font-weight: 400;
+    text-decoration: line-through;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-price .new-price {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: baseline;
+    font-size: 18px !important;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-price .unit-price:not(.d-none) {
+    display: block !important;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: baseline;
+    min-width: 0;
+    font-size: 9px !important;
+    line-height: 1.2;
+  }
+
+  .product-main-template .mobile-purchase-bar .mobile-sticky-price .product-label {
+    display: none !important;
+  }
+
+  .product-main-template .mobile-sticky-shipping {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 14px;
+    color: #23854a;
+  }
+
+  .product-main-template cart-action.product-form .mobile-purchase-bar .ajax-cart-btn {
+    flex: 0 0 43%;
+    width: 43% !important;
+    min-width: 110px;
+    height: 44px;
+    padding: 8px !important;
+  }
+
+  .product-main-template .mobile-purchase-bar .ajax-cart-btn .cart-title {
+    font-size: 13px;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+}
+
 /* ── Trust Footer — Ödeme ikonları + Favoriler tek satır ── */
 .product-trust-footer {
   display: flex;
@@ -1987,6 +2174,71 @@ body.template-product .product-main-template .product-social-proof-row > .produc
     color: #fff;
     font-weight: 700;
     box-shadow: inset 0 -2px 0 rgba(218, 177, 90, 0.9);
+  }
+}
+
+/* Mobil seçim kontrolleri: masaüstü ölçülerini ve seçim davranışını korur. */
+@media (max-width: 767px) {
+  body.template-product .product-main-template .pr-option .variant-option-block:not(:first-child) {
+    margin-top: 8px;
+  }
+
+  body.template-product .product-main-template:not(.bundle-product) .product_details_info .product-volume-discounts {
+    margin-top: 8px;
+  }
+
+  body.template-product .product-main-template .product_details_info:not(:has(.product-volume-discounts:not([hidden]))) .pro-detail-action ~ .product-qty {
+    margin-top: 6px !important;
+  }
+
+  body.template-product .product-main-template .product_details_info .pro-detail-action {
+    margin-top: 8px;
+  }
+
+  body.template-product .product-main-template .pro-detail-action > .product-info {
+    margin-top: 6px;
+  }
+
+  body.template-product .product-main-template .pr-option .option-title {
+    font-size: 12px !important;
+    line-height: 1.2;
+  }
+
+  body.template-product .product-main-template .pr-option .option-block {
+    margin-top: 6px;
+  }
+
+  body.template-product .product-main-template .pr-option .option-block label.op-lb.ot-size {
+    height: 36px !important;
+    min-height: 36px;
+    padding: 0 10px !important;
+    font-size: 11px !important;
+  }
+
+  body.template-product .product-main-template .product-qty h6.qty-head {
+    font-size: 13px !important;
+    margin-bottom: 0 !important;
+    margin-inline-end: 0;
+  }
+
+  body.template-product .product-main-template .product-qty .qty-box {
+    width: 104px !important;
+    height: 34px !important;
+  }
+
+  body.template-product .product-main-template .product-qty .qty-box .qty-bt {
+    flex: 0 0 34px;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 22px;
+  }
+
+  body.template-product .product-main-template .product-qty .qty-box .qty-box-input {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 34px;
+    height: 34px !important;
+    font-size: 13px !important;
   }
 }
 
@@ -2785,6 +3037,41 @@ body.template-product .product-main-template .product-social-proof-row > .produc
   .product-whatsapp-link i {
     font-size: 16px;
   }
+}
+
+/* Mobil ürün bilgileri ve güven mesajları altındaki yardımcı işlemler. */
+@media (max-width: 767px) {
+  .product-main-template .product_details_info .purchase-trust-messages {
+    gap: 4px;
+    margin-bottom: 2px;
+  }
+
+  .product-main-template .product_details_info .purchase-trust-message {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .product-main-template .product_details_info .product-variant-info--below-quantity {
+    gap: 5px 8px;
+    margin: 8px 0 10px;
+  }
+
+  .product-main-template .product-variant-info--below-quantity .product-variant-info__item {
+    white-space: nowrap;
+  }
+
+  .product-main-template .product_details_info .product-action-row--below-trust {
+    margin: 0;
+    padding: 0;
+    gap: 12px;
+  }
+
+  .product-main-template .product_details_info .product-action-row--below-trust button.wishlist.form-btn,
+  .product-main-template .product-action-row--below-trust .product-whatsapp-link {
+    min-height: 36px;
+    padding: 4px 0;
+  }
+
 }
 
 /* --- KAMPANYA POPUP KUTUSU (Masaüstü Sütun Sağ Üst) --- */

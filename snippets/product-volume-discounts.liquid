@@ -30,6 +30,13 @@
           assign tier_discount_amount = selected_variant.price | times: tier_percent | divided_by: 100
           assign tier_unit_price = selected_variant.price | minus: tier_discount_amount
           assign tier_total_price = tier_unit_price | times: tier_quantity
+          assign measurement_quantity = selected_variant.unit_price_measurement.quantity_value | plus: 0
+          assign tier_measurement_text = ''
+          if selected_variant.unit_price_measurement != nil and measurement_quantity > 0
+            assign tier_measurement_price = tier_unit_price | times: selected_variant.unit_price_measurement.reference_value | times: 1.0 | divided_by: measurement_quantity | round
+            assign measurement_label = product.metafields.custom.unit_price_label.value | default: 'şişe'
+            assign tier_measurement_text = tier_measurement_price | money_without_currency | replace: '.', ',' | append: ' TL / ' | append: measurement_label
+          endif
         -%}
         {%- if tier_quantity > 0 and tier_percent > 0 -%}
           <button
@@ -40,6 +47,7 @@
             data-percent="{{ tier_percent }}"
             data-unit-price="{{ tier_unit_price | money }}"
             data-unit-price-cents="{{ tier_unit_price }}"
+            data-measurement-price="{{ tier_measurement_text | escape }}"
             data-original-price="{{ selected_variant.price | money }}"
             data-total-price="{{ tier_total_price | money }}"
             aria-pressed="false"
@@ -56,7 +64,7 @@
     </div>
 
     <div class="product-volume-discounts__summary" data-volume-summary aria-hidden="true">
-      Seçili <strong data-volume-summary-quantity></strong> koli toplamı:
+      <span class="volume-summary-full-label">Seçili <strong data-volume-summary-quantity></strong> koli toplamı:</span><span class="volume-summary-short-label">Toplam</span>
       <strong data-volume-summary-total></strong>
     </div>
   </div>

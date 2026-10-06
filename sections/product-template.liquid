@@ -972,6 +972,44 @@
   <script type="text/javascript">
     (function() {
       var productSection = document.getElementById('MainProduct-{{ section.id }}');
+      // Move the existing nodes on mobile so variant updates and wishlist bindings stay intact.
+      if (productSection && !productSection.closest('.quickview-block')) {
+        var mobileDetailsQuery = window.matchMedia('(max-width: 767px)');
+        var mobileDetailsMoves = [];
+        var detailsContainer = productSection.querySelector('.product_details_info');
+        var quantityBlock = detailsContainer && detailsContainer.querySelector('.product-qty');
+        var variantInfoBlock = detailsContainer && detailsContainer.querySelector('.product-variant-info');
+        var actionRow = detailsContainer && detailsContainer.querySelector('.product-action-row');
+        var trustBlocks = detailsContainer && detailsContainer.querySelectorAll('.purchase-trust-messages:not(.purchase-trust-messages--hide-mobile)');
+        var lastTrustBlock = trustBlocks && trustBlocks[trustBlocks.length - 1];
+
+        function registerMobileDetailsMove(node, target, className) {
+          if (!node || !target) return;
+          var originalPosition = document.createComment('Original product detail position');
+          node.parentNode.insertBefore(originalPosition, node);
+          mobileDetailsMoves.push({ node: node, target: target, originalPosition: originalPosition, className: className });
+        }
+
+        registerMobileDetailsMove(variantInfoBlock, quantityBlock, 'product-variant-info--below-quantity');
+        registerMobileDetailsMove(actionRow, lastTrustBlock, 'product-action-row--below-trust');
+
+        function updateMobileDetailsLayout() {
+          if (!productSection.isConnected) {
+            mobileDetailsQuery.removeEventListener('change', updateMobileDetailsLayout);
+            return;
+          }
+          mobileDetailsMoves.forEach(function(move) {
+            var anchor = mobileDetailsQuery.matches ? move.target : move.originalPosition;
+            anchor.parentNode.insertBefore(move.node, anchor.nextSibling);
+            move.node.classList.toggle(move.className, mobileDetailsQuery.matches);
+          });
+        }
+
+        if (mobileDetailsMoves.length) {
+          updateMobileDetailsLayout();
+          mobileDetailsQuery.addEventListener('change', updateMobileDetailsLayout);
+        }
+      }
       var packagingVideoMediaId = {{ packaging_video_media_id | json }};
       var productTitleHeading = productSection && productSection.querySelector('[data-product-variant-title]');
       var baseProductTitle = {{ product.title | json }};
@@ -1040,12 +1078,36 @@
         if (!volumeDiscounts || volumeDiscounts.closest('.quickview-block')) return;
 
         var quantityInput = productSection && productSection.querySelector('#Quantity-{{ section.id }}');
+        if (quantityInput && quantityInput.volumeSummaryLayoutCleanup) quantityInput.volumeSummaryLayoutCleanup();
         var summary = volumeDiscounts.querySelector('[data-volume-summary]');
         var summaryQuantity = volumeDiscounts.querySelector('[data-volume-summary-quantity]');
         var summaryTotal = volumeDiscounts.querySelector('[data-volume-summary-total]');
         var tiers = Array.prototype.slice.call(volumeDiscounts.querySelectorAll('[data-volume-tier]'));
 
         if (!quantityInput || !tiers.length) return;
+
+        if (summary) {
+          var summaryHome = document.createComment('Campaign summary position');
+          summary.before(summaryHome);
+          var summaryMedia = window.matchMedia('(max-width: 749px)');
+          volumeDiscounts.mobileSummary = summary;
+          function positionVolumeSummary() {
+            if (summaryMedia.matches) {
+              quantityInput.closest('.product-qty').appendChild(summary);
+            } else {
+              summaryHome.after(summary);
+            }
+            summary.classList.toggle('product-volume-discounts__summary--beside-quantity', summaryMedia.matches);
+          }
+          positionVolumeSummary();
+          summaryMedia.addEventListener('change', positionVolumeSummary);
+          quantityInput.volumeSummaryLayoutCleanup = function() {
+            summaryMedia.removeEventListener('change', positionVolumeSummary);
+            summaryHome.after(summary);
+            summary.classList.remove('product-volume-discounts__summary--beside-quantity');
+            summaryHome.remove();
+          };
+        }
 
         function updateMobileStickyVolumePrice(selectedTier) {
           var stickyPrice = document.querySelector('.mobile-sticky-price');
@@ -1059,6 +1121,16 @@
             var stickyPercent = stickyLabel && stickyLabel.querySelector('.percent-count');
 
             stickyNewPrice.textContent = selectedTier.dataset.unitPrice;
+            var stickyMeasurement = stickyPrice.querySelector('.unit-price');
+            if (stickyMeasurement) {
+              var measurementText = selectedTier.dataset.measurementPrice;
+              stickyMeasurement.classList.toggle('d-none', !measurementText);
+              if (measurementText) {
+                stickyMeasurement.querySelectorAll('.unit-price-mobile, .unit-price-desktop').forEach(function(label) {
+                  label.textContent = measurementText;
+                });
+              }
+            }
             if (!stickyOldPrice && stickyPriceBox) {
               stickyOldPrice = document.createElement('span');
               stickyOldPrice.className = 'old-price';
@@ -1216,6 +1288,7 @@
         if (!volumeDiscounts) return;
 
         volumeDiscounts.hidden = !isVisible;
+        if (volumeDiscounts.mobileSummary) volumeDiscounts.mobileSummary.hidden = !isVisible;
       }
 
       function resetProductQuantityToMinimum() {
