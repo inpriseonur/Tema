@@ -7,101 +7,6 @@
   endfor
 -%}
 
-{%- if visible_blocks > 0 or request.design_mode -%}
-  <section class="featured-collections-section">
-    <div class="container">
-      {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
-        <div class="featured-collections__header">
-          {%- if section.settings.heading != blank -%}
-            <h2>{{ section.settings.heading }}</h2>
-          {%- endif -%}
-          {%- if section.settings.subheading != blank -%}
-            <p>{{ section.settings.subheading }}</p>
-          {%- endif -%}
-        </div>
-      {%- endif -%}
-
-      <div class="featured-collections__grid" role="list">
-        {%- for block in section.blocks -%}
-          {%- assign featured_collection = block.settings.collection -%}
-          {%- if featured_collection != blank or block.settings.image != blank -%}
-            {%- liquid
-              assign card_image = block.settings.image
-              if card_image == blank and featured_collection != blank
-                assign card_image = featured_collection.image
-              endif
-              if card_image == blank and featured_collection != blank
-                assign card_image = featured_collection.products.first.featured_image
-              endif
-
-              assign card_title = block.settings.title
-              if card_title == blank and featured_collection != blank
-                assign card_title = featured_collection.title
-              endif
-
-              assign card_url = block.settings.link
-              if card_url == blank and featured_collection != blank
-                assign card_url = featured_collection.url
-              endif
-
-              assign card_alt = card_image.alt
-              if card_alt == blank
-                assign card_alt = card_title
-              endif
-            -%}
-
-            <{% if card_url != blank %}a{% else %}div{% endif %}
-              class="featured-collections__card{% if card_url == blank %} featured-collections__card--unlinked{% endif %}"
-              {% if card_url != blank %}href="{{ card_url }}"{% endif %}
-              role="listitem"
-              {% if card_url != blank and card_title != blank %}aria-label="{{ card_title | escape }}"{% endif %}
-              {{ block.shopify_attributes }}
-            >
-              <span class="featured-collections__media">
-                {%- if card_image != blank -%}
-                  {{
-                    card_image
-                    | image_url: width: 1200
-                    | image_tag:
-                      widths: '360, 480, 600, 720, 900, 1200',
-                      sizes: '(min-width: 1200px) 370px, (min-width: 768px) 30vw, 82vw',
-                      loading: 'lazy',
-                      decoding: 'async',
-                      class: 'featured-collections__image',
-                      alt: card_alt
-                  }}
-                {%- else -%}
-                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'featured-collections__placeholder' }}
-                {%- endif -%}
-              </span>
-
-              {%- if card_title != blank or block.settings.text != blank or card_url != blank and section.settings.show_link_text and block.settings.link_text != blank -%}
-                <span class="featured-collections__content">
-                  {%- if card_title != blank -%}
-                    <strong>{{ card_title }}</strong>
-                  {%- endif -%}
-                  {%- if block.settings.text != blank -%}
-                    <span>{{ block.settings.text }}</span>
-                  {%- endif -%}
-                  {%- if card_url != blank and section.settings.show_link_text and block.settings.link_text != blank -%}
-                    <span class="featured-collections__link-text">{{ block.settings.link_text }}</span>
-                  {%- endif -%}
-                </span>
-              {%- endif -%}
-            </{% if card_url != blank %}a{% else %}div{% endif %}>
-          {%- elsif request.design_mode -%}
-            <div class="featured-collections__card featured-collections__card--empty" role="listitem" {{ block.shopify_attributes }}>
-              <span class="featured-collections__media">
-                {{ 'collection-apparel-1' | placeholder_svg_tag: 'featured-collections__placeholder' }}
-              </span>
-            </div>
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-    </div>
-  </section>
-{%- endif -%}
-
 {% style %}
   #shopify-section-{{ section.id }} .featured-collections-section {
     padding-top: {{ section.settings.padding_top }}px;
@@ -272,6 +177,101 @@
     }
   }
 {% endstyle %}
+
+{%- if visible_blocks > 0 or request.design_mode -%}
+  <section class="featured-collections-section">
+    <div class="container">
+      {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+        <div class="featured-collections__header">
+          {%- if section.settings.heading != blank -%}
+            <h2>{{ section.settings.heading }}</h2>
+          {%- endif -%}
+          {%- if section.settings.subheading != blank -%}
+            <p>{{ section.settings.subheading }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="featured-collections__grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- assign featured_collection = block.settings.collection -%}
+          {%- if featured_collection != blank or block.settings.image != blank -%}
+            {%- liquid
+              assign card_image = block.settings.image
+              if card_image == blank and featured_collection != blank
+                assign card_image = featured_collection.image
+              endif
+              if card_image == blank and featured_collection != blank
+                assign card_image = featured_collection.products.first.featured_image
+              endif
+
+              assign card_title = block.settings.title
+              if card_title == blank and featured_collection != blank
+                assign card_title = featured_collection.title
+              endif
+
+              assign card_url = block.settings.link
+              if card_url == blank and featured_collection != blank
+                assign card_url = featured_collection.url
+              endif
+
+              assign card_alt = card_image.alt
+              if card_alt == blank
+                assign card_alt = card_title
+              endif
+            -%}
+
+            <{% if card_url != blank %}a{% else %}div{% endif %}
+              class="featured-collections__card{% if card_url == blank %} featured-collections__card--unlinked{% endif %}"
+              {% if card_url != blank %}href="{{ card_url }}"{% endif %}
+              role="listitem"
+              {% if card_url != blank and card_title != blank %}aria-label="{{ card_title | escape }}"{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <span class="featured-collections__media">
+                {%- if card_image != blank -%}
+                  {{
+                    card_image
+                    | image_url: width: 1200
+                    | image_tag:
+                      widths: '360, 480, 600, 720, 900, 1200',
+                      sizes: '(min-width: 1200px) 370px, (min-width: 768px) 30vw, 82vw',
+                      loading: 'lazy',
+                      decoding: 'async',
+                      class: 'featured-collections__image',
+                      alt: card_alt
+                  }}
+                {%- else -%}
+                  {{ 'collection-apparel-1' | placeholder_svg_tag: 'featured-collections__placeholder' }}
+                {%- endif -%}
+              </span>
+
+              {%- if card_title != blank or block.settings.text != blank or card_url != blank and section.settings.show_link_text and block.settings.link_text != blank -%}
+                <span class="featured-collections__content">
+                  {%- if card_title != blank -%}
+                    <strong>{{ card_title }}</strong>
+                  {%- endif -%}
+                  {%- if block.settings.text != blank -%}
+                    <span>{{ block.settings.text }}</span>
+                  {%- endif -%}
+                  {%- if card_url != blank and section.settings.show_link_text and block.settings.link_text != blank -%}
+                    <span class="featured-collections__link-text">{{ block.settings.link_text }}</span>
+                  {%- endif -%}
+                </span>
+              {%- endif -%}
+            </{% if card_url != blank %}a{% else %}div{% endif %}>
+          {%- elsif request.design_mode -%}
+            <div class="featured-collections__card featured-collections__card--empty" role="listitem" {{ block.shopify_attributes }}>
+              <span class="featured-collections__media">
+                {{ 'collection-apparel-1' | placeholder_svg_tag: 'featured-collections__placeholder' }}
+              </span>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
 
 {% schema %}
 {

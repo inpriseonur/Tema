@@ -66,498 +66,6 @@
     }
   }
 </style>
-<section class="slider-content">
-  <div class="container">
-    {%- if request.page_type == 'index' and section.settings.mobile_brand_links_enabled -%}
-      {%- capture mobile_brand_links -%}
-        {%- for link_index in (1..5) -%}
-          {%- liquid
-            assign label_key = 'mobile_brand_label_' | append: link_index
-            assign url_key = 'mobile_brand_url_' | append: link_index
-            assign tone_key = 'mobile_brand_tone_' | append: link_index
-            assign link_tone = section.settings[tone_key] | default: 'plain'
-            assign link_label = section.settings[label_key]
-            assign link_url = section.settings[url_key]
-            if link_url == blank
-              case link_index
-                when 1
-                  assign link_url = '/collections/all?sort_by=best-selling'
-                when 2
-                  assign link_url = '/collections/san-pellegrino-soda-cesitleri'
-                when 3
-                  assign link_url = '/products/perrier-do-al-mineralli-gazl-su-200-ml-24lu-koli'
-                when 4
-                  assign link_url = '/collections/san-benedetto-italyan-icecekleri'
-                when 5
-                  assign link_url = '/collections/flavz-meyve-sulari'
-              endcase
-            endif
-          -%}
-          {%- if link_label != blank -%}
-            <li><a class="home-mobile-brand-links__link--{{ link_tone | escape }}" href="{{ link_url | escape }}">{{ link_label | escape }}</a></li>
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endcapture -%}
-      {%- if mobile_brand_links != blank -%}
-        <nav class="home-mobile-brand-links" aria-label="Ürünler ve markalar">
-          <ul class="home-mobile-brand-links__list" role="list">{{ mobile_brand_links }}</ul>
-        </nav>
-      {%- endif -%}
-    {%- endif -%}
-    <div class="grid-wrap {% if section.settings.grid_full %} grid-full{%endif%}">
-      <div class="grid-wrapper">
-        <div class="home-slider swiper" id="home-slider">
-          <div class="swiper-wrapper">
-            {% for block in section.blocks %}
-            <div class="swiper-slide slide-{{ block.id }}">
-              <div class="slide-image">
-                {%- assign ga4_slider_promotion_name = block.settings.slider_title | default: block.settings.slider_sub_title | default: block.settings.slider_bg_img.alt | default: 'Ana sayfa slider' -%}
-                {%- assign ga4_slider_slot = 'home_hero_slider_' | append: forloop.index -%}
-                <a
-                  class="ratio"
-                  href="{{ block.settings.slider_button_url }}"
-                  aria-label="{{ block.settings.slider_button_url }}"
-                  data-ga4-promotion-click
-                  data-ga4-promotion-id="{{ ga4_slider_slot | escape }}"
-                  data-ga4-promotion-name="{{ ga4_slider_promotion_name | escape }}"
-                  data-ga4-creative-name="{{ ga4_slider_promotion_name | escape }}"
-                  data-ga4-creative-slot="{{ ga4_slider_slot | escape }}"
-                  data-ga4-click-area="Ana sayfa slider"
-                  data-ga4-source-page-type="home"
-                  data-ga4-source-page-name="Ana sayfa"
-                >
-                  {%- if block.settings.slider_bg_img -%}
-                  <img
-                  srcset="
-                  {%- if block.settings.slider_bg_img.width >= 375 -%}{{ block.settings.slider_bg_img | image_url: width: 375 }} 375w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 550 -%}{{ block.settings.slider_bg_img | image_url: width: 550 }} 550w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 750 -%}{{ block.settings.slider_bg_img | image_url: width: 750 }} 750w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 1100 -%}{{ block.settings.slider_bg_img | image_url: width: 1100 }} 1100w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 1500 -%}{{ block.settings.slider_bg_img | image_url: width: 1500 }} 1500w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 1780 -%}{{ block.settings.slider_bg_img | image_url: width: 1780 }} 1780w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 2000 -%}{{ block.settings.slider_bg_img | image_url: width: 2000 }} 2000w,{%- endif -%}
-                  {%- if block.settings.slider_bg_img.width >= 3000 -%}{{ block.settings.slider_bg_img | image_url: width: 3000 }} 3000w,{%- endif -%}
-                  {{ block.settings.slider_bg_img | image_url }} {{ block.settings.slider_bg_img.width }}w
-                  "
-                  src="{{ block.settings.slider_bg_img | image_url: width: 3840 }}"
-                  data-src="{{ block.settings.slider_bg_img | image_url: width: 3840 }}"
-                  alt="{{ block.settings.slider_bg_img.alt | escape }}"
-                  class="img-fluid desk-img lazyload"
-                  width="{{ block.settings.slider_bg_img.width }}"
-                  height="{{ block.settings.slider_bg_img.width | divided_by: block.settings.slider_bg_img.aspect_ratio }}"
-                  decoding="async"
-                  loading="lazy"
-                  sizes="100vw">
-                  {%- else -%}
-                  {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
-                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg desk-img' }}
-                  {%- endif -%}
-                  {%- if block.settings.slider_img -%}
-                  <img
-                  srcset="
-                  {%- if block.settings.slider_img.width >= 375 -%}{{ block.settings.slider_img | image_url: width: 375 }} 375w,{%- endif -%}
-                  {%- if block.settings.slider_img.width >= 500 -%}{{ block.settings.slider_img | image_url: width: 500 }} 550w,{%- endif -%}
-                  {{ block.settings.slider_img | image_url }} {{ block.settings.slider_img.width }}w
-                  "
-                  src="{{ block.settings.slider_img | image_url: width: 500 }}"
-                  data-src="{{ block.settings.slider_img | image_url: width: 500 }}"
-                  alt="{{ block.settings.slider_img.alt | escape }}"
-                  class="img-fluid mobile-img lazyload"
-                  width="{{ block.settings.slider_img.width }}"
-                  height="{{ block.settings.slider_img.width | divided_by: block.settings.slider_img.aspect_ratio }}"
-                  decoding="async"
-                  loading="lazy"
-                  sizes="50vw">
-                  {%- else -%}
-                  {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
-                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg mobile-img' }}
-                  {%- endif -%}
-                </a>
-                <div class="slider-text-info {% if block.settings.slider_content_position == "right" %}slider-text-right{% elsif block.settings.slider_content_position == "center" %}slider-text-center{% else %}slider-text-left{% endif %}">
-                  {%if block.settings.slider_sub_title != '' %}
-                  <span style="color:{{ block.settings.slider_subtitle_color }};">{{ block.settings.slider_sub_title }}</span>
-                  {%endif%}
-                  {%if block.settings.slider_title != '' %}
-                  <h1 style="color:{{ block.settings.slider_title_color }};">{{ block.settings.slider_title }}</h1>
-                  {%endif%}
-                  {% if block.settings.slider_button != '' %}
-                  <a href="{{ block.settings.slider_button_url }}" class="btn btn-style1">{{ block.settings.slider_button }}</a>
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-            {%- style -%}
-            .slide-{{ block.id }} .slide-image > a:before {
-              padding-bottom: {{ 1 | divided_by: block.settings.slider_bg_img.aspect_ratio | times: 100 }}%;
-              content: '';
-              display: block;
-            }
-            @media(max-width: 600px){
-              .slide-{{ block.id }} .slide-image > a:before {
-                padding-bottom: {{ 1 | divided_by: block.settings.slider_img.aspect_ratio | times: 100 }}%;
-                content: '';
-                display: block;
-              }
-            }
-            {%- endstyle -%}
-            {% endfor %}
-          </div>
-          {% if section.settings.dots %}
-          <div class="slider-dot"></div>
-          {% endif %}
-          {% if section.settings.nav %}
-          <div class="slider-arrow"> 
-            <button class="arrow-prev" aria-label="Slider arrow"><i class="fa fa-angle-double-left"></i></button>
-            <button class="arrow-next" aria-label="Slider arrow"><i class="fa fa-angle-double-right"></i></button>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-      <div class="grid-wrapper ser-wrapper">
-        <div class="product-list-item swiper" id="slider-pro">
-          <div class="swiper-wrapper">
-            {% assign product_limit = section.settings.select_product_limit %}
-            {% for product in collections[section.settings.select_product].products limit: product_limit %}
-            <div class="swiper-slide">
-              {% render 'product-list-item',
-                product: product,
-                section_id: section.id,
-                show_full_title: true,
-                ga4_list_id: 'home_side_slider',
-                ga4_list_name: 'Ana sayfa - slider yanı seçki',
-                ga4_click_area: 'Ana sayfa - slider yanı seçki',
-                ga4_source_page_type: 'home',
-                ga4_source_page_name: 'Ana sayfa',
-                ga4_item_category: collections[section.settings.select_product].title,
-                ga4_index: forloop.index
-              %}
-            </div>
-            {% else %}
-            {% for i in (1..product_limit) %}
-            <div class="swiper-slide">
-              <div class="single-product-wrap">
-                <div class="product-image">
-                  {%- capture placeholder -%}collection-{% cycle 1, 2, 3, 4, 5, 6 %}{%- endcapture -%}
-                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
-                </div>
-                <div class="product-content">
-                  <div class="product-title">
-                    <a href="javascript:void(0)">Product title</a>
-                  </div>
-                  <div class="price-box">
-                    <span class="new-price">$9.00</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {% endfor %}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="slider-product-buttons">
-          <button type="button" class="slider-product-button slider-product-button-prev-{{ section.id }}" aria-label="Önceki ürün"></button>
-          <button type="button" class="slider-product-button slider-product-button-next-{{ section.id }}" aria-label="Sonraki ürün"></button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- Hero Section End -->
-<script type="text/javascript">
-  addEventListener('DOMContentLoaded', (event) => {
-   var swiper = new Swiper('.swiper#home-slider', {
-    slidesPerView: 1,
-    loop: {{ section.settings.loop }},
-    grid: {
-      rows: 1,
-      fill: 'row' | 'column',
-    },
-    spaceBetween: 0,
-    observer: true,
-    observeParents: true,
-    watchSlidesProgress: true,
-    {% if section.settings.autoplay %}
-    autoplay: {
-      delay: {{ section.settings.autoplay_time }},
-      disableOnInteraction: false,
-      pauseOnMouseEnter: true
-    },
-    speed: {{ section.settings.autoplay_speed }},
-    {% endif %}
-    {% if section.settings.dots %}
-    pagination: {
-      el: ".slider-dot",
-    },
-    {% endif %}
-    {% if section.settings.nav %}
-    navigation: {
-      nextEl: ".arrow-next",
-      prevEl: ".arrow-prev",
-    },
-    {% endif %}
-  });
-   var swiper = new Swiper('#slider-pro', {
-    slidesPerView: 1,
-    grid: {
-      rows: 3,
-      fill: 'row' | 'column',
-    },
-    spaceBetween: 15,
-    observer: true,
-    observeParents: true,
-    {%- if settings.enable_rtl -%}
-    rtl: true,
-    {%- endif -%}
-    navigation: {
-      nextEl: '.slider-product-button-next-{{ section.id }}',
-      prevEl: '.slider-product-button-prev-{{ section.id }}',
-    },
-    breakpoints: {
-      0: {
-        slidesPerView: 1.5,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 12
-      },
-      320: {
-        slidesPerView: 1.5,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 12
-      },
-      360: {
-        slidesPerView: 1.5,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 12
-      },
-      540: {
-        slidesPerView: 1.5,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 12
-      },
-      640: {
-        slidesPerView: 1.5,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 12
-      },
-      768: {
-        slidesPerView: 2,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 30
-      },
-      1024: {
-        slidesPerView: 2,
-        grid: {
-          rows: 1,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 30
-      },
-      1199: {
-        slidesPerView: 1,
-        grid: {
-          rows: 3,
-          fill: 'row' | 'column',
-        },
-        spaceBetween: 12
-      }
-    }
-  });
- });
-</script>
-{% schema %}
-{
-  "name": "Slider",
-  "settings": [
-  {
-    "type": "header",
-    "content": "Mobil marka bağlantıları"
-  },
-  {
-    "type": "checkbox",
-    "id": "mobile_brand_links_enabled",
-    "label": "Mobil ana sayfada göster",
-    "default": true
-  },
-  {
-    "type": "paragraph",
-    "content": "Bağlantı boşsa aşağıda belirtilen varsayılan adres kullanılır. Bir kutucuğu gizlemek için adını boş bırakın."
-  },
-  { "type": "text", "id": "mobile_brand_label_1", "label": "1. bağlantı adı", "default": "Tüm ürünler" },
-  { "type": "url", "id": "mobile_brand_url_1", "label": "1. bağlantı", "info": "Varsayılan: /collections/all?sort_by=best-selling" },
-  { "type": "select", "id": "mobile_brand_tone_1", "label": "1. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
-  { "type": "text", "id": "mobile_brand_label_2", "label": "2. bağlantı adı", "default": "San Pellegrino" },
-  { "type": "url", "id": "mobile_brand_url_2", "label": "2. bağlantı", "info": "Varsayılan: /collections/san-pellegrino-soda-cesitleri" },
-  { "type": "select", "id": "mobile_brand_tone_2", "label": "2. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
-  { "type": "text", "id": "mobile_brand_label_3", "label": "3. bağlantı adı", "default": "Perrier" },
-  { "type": "url", "id": "mobile_brand_url_3", "label": "3. bağlantı", "info": "Varsayılan: /products/perrier-do-al-mineralli-gazl-su-200-ml-24lu-koli" },
-  { "type": "select", "id": "mobile_brand_tone_3", "label": "3. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
-  { "type": "text", "id": "mobile_brand_label_4", "label": "4. bağlantı adı", "default": "San Benedetto" },
-  { "type": "url", "id": "mobile_brand_url_4", "label": "4. bağlantı", "info": "Varsayılan: /collections/san-benedetto-italyan-icecekleri" },
-  { "type": "select", "id": "mobile_brand_tone_4", "label": "4. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
-  { "type": "text", "id": "mobile_brand_label_5", "label": "5. bağlantı adı", "default": "Flavz" },
-  { "type": "url", "id": "mobile_brand_url_5", "label": "5. bağlantı", "info": "Varsayılan: /collections/flavz-meyve-sulari" },
-  { "type": "select", "id": "mobile_brand_tone_5", "label": "5. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
-  {
-    "type": "header",
-    "content": "slider settings"
-  },
-  {
-    "type": "checkbox",
-    "id": "loop",
-    "label": "Slider loop",
-    "default": true
-  },
-  {
-    "type": "checkbox",
-    "id": "autoplay",
-    "label": "Slider autoplay",
-    "default": true
-  },
-  {
-    "type": "number",
-    "id": "autoplay_time",
-    "label": "Slider timer out",
-    "default": 5000
-  },
-  {
-    "type": "number",
-    "id": "autoplay_speed",
-    "label": "Slider speed",
-    "default": 1000
-  },
-  {
-    "type": "checkbox",
-    "id": "nav",
-    "label": "Slider arrow",
-    "default": true
-  },
-  {
-    "type": "checkbox",
-    "id": "dots",
-    "label": "Slider dots",
-    "default": true
-  },
-  {
-    "type": "header",
-    "content": "Slider product"
-  },
-  {
-    "type": "collection",
-    "id": "select_product",
-    "label": "Select collection"
-  },
-  {
-    "type": "number",
-    "id": "select_product_limit",
-    "label": "Product limit",
-    "default": 6
-  },
-  {
-    "type": "checkbox",
-    "id": "grid_full",
-    "label": "Slider full",
-    "default": false
-  }
-  ],
-  "blocks":[
-  {
-    "type": "slide",
-    "name": "Slide",
-    "settings": [
-    {
-      "type": "image_picker",
-      "id": "slider_bg_img",
-      "label": "Image",
-      "info": "Recommended Size: 1080x600px"
-    },
-    {
-      "type": "image_picker",
-      "id": "slider_img",
-      "label": "Mobile Image",
-      "info": "Recommended Size: 650x550px"
-    },
-    {
-      "type": "text",
-      "id": "slider_sub_title",
-      "label": "Sub Title",
-      "default": "Top Selling!"
-    },
-    {
-      "type": "color",
-      "id": "slider_subtitle_color",
-      "label": "Text color",
-      "default": "#fff"
-    },
-    {
-      "type": "text",
-      "id": "slider_title",
-      "label": "Title",
-      "default": "New Collection"
-    },
-    {
-      "type": "color",
-      "id": "slider_title_color",
-      "label": "Text color",
-      "default": "#fff"
-    },
-    {
-      "type": "text",
-      "id": "slider_button",
-      "label": "Button Text",
-      "default": "Shop Now"
-    },
-    {
-      "type": "url",
-      "id": "slider_button_url",
-      "label": "Button URL"
-    },
-    {
-      "type": "radio",
-      "id": "slider_content_position",
-      "label": "Content Position",
-      "options": [
-      {
-        "label": "left",
-        "value": "left"
-      },
-      {
-        "label": "Right",
-        "value": "right"
-      },
-      {
-        "label": "Center",
-        "value": "center"
-      }
-      ],
-      "default": "left"
-    }
-    ]
-  }
-  ],
-  "presets":[
-  {
-    "name": "Slider"
-  }
-  ]
-}
-{% endschema %}
 <style type="text/css">
   .slider-content {
     margin-top: 30px;
@@ -962,8 +470,22 @@
   #shopify-section-{{ section.id }} .slider-content .grid-wrap .grid-wrapper.ser-wrapper {
     margin-top: 10px;
   }
-  #shopify-section-{{ section.id }} #slider-pro .swiper-wrapper { align-items: stretch; }
-  #shopify-section-{{ section.id }} #slider-pro .swiper-slide { display: flex; height: auto; }
+  #shopify-section-{{ section.id }} #slider-pro {
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .swiper-wrapper { display: flex; align-items: stretch; }
+  #shopify-section-{{ section.id }} #slider-pro .swiper-slide { display: flex; flex-shrink: 0; height: auto; }
+  /* Match Swiper's 1.5 slides and 12px spacing before initialization. */
+  #shopify-section-{{ section.id }} #slider-pro:not(.swiper-initialized) .swiper-wrapper {
+    width: 100%;
+    margin: 0;
+    gap: 12px;
+  }
+  #shopify-section-{{ section.id }} #slider-pro:not(.swiper-initialized) .swiper-slide {
+    width: calc((100% - 6px) / 1.5);
+    max-width: none;
+    padding: 0;
+  }
   #shopify-section-{{ section.id }} #slider-pro .single-product-wrap {
     position: relative;
     display: grid;
@@ -1020,3 +542,495 @@
   }
 }
 </style>
+<section class="slider-content">
+  <div class="container">
+    {%- if request.page_type == 'index' and section.settings.mobile_brand_links_enabled -%}
+      {%- capture mobile_brand_links -%}
+        {%- for link_index in (1..5) -%}
+          {%- liquid
+            assign label_key = 'mobile_brand_label_' | append: link_index
+            assign url_key = 'mobile_brand_url_' | append: link_index
+            assign tone_key = 'mobile_brand_tone_' | append: link_index
+            assign link_tone = section.settings[tone_key] | default: 'plain'
+            assign link_label = section.settings[label_key]
+            assign link_url = section.settings[url_key]
+            if link_url == blank
+              case link_index
+                when 1
+                  assign link_url = '/collections/all?sort_by=best-selling'
+                when 2
+                  assign link_url = '/collections/san-pellegrino-soda-cesitleri'
+                when 3
+                  assign link_url = '/products/perrier-do-al-mineralli-gazl-su-200-ml-24lu-koli'
+                when 4
+                  assign link_url = '/collections/san-benedetto-italyan-icecekleri'
+                when 5
+                  assign link_url = '/collections/flavz-meyve-sulari'
+              endcase
+            endif
+          -%}
+          {%- if link_label != blank -%}
+            <li><a class="home-mobile-brand-links__link--{{ link_tone | escape }}" href="{{ link_url | escape }}">{{ link_label | escape }}</a></li>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if mobile_brand_links != blank -%}
+        <nav class="home-mobile-brand-links" aria-label="Ürünler ve markalar">
+          <ul class="home-mobile-brand-links__list" role="list">{{ mobile_brand_links }}</ul>
+        </nav>
+      {%- endif -%}
+    {%- endif -%}
+    <div class="grid-wrap {% if section.settings.grid_full %} grid-full{%endif%}">
+      <div class="grid-wrapper">
+        <div class="home-slider swiper" id="home-slider">
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+            <div class="swiper-slide slide-{{ block.id }}">
+              <div class="slide-image">
+                {%- assign ga4_slider_promotion_name = block.settings.slider_title | default: block.settings.slider_sub_title | default: block.settings.slider_bg_img.alt | default: 'Ana sayfa slider' -%}
+                {%- assign ga4_slider_slot = 'home_hero_slider_' | append: forloop.index -%}
+                <a
+                  class="ratio"
+                  href="{{ block.settings.slider_button_url }}"
+                  aria-label="{{ block.settings.slider_button_url }}"
+                  data-ga4-promotion-click
+                  data-ga4-promotion-id="{{ ga4_slider_slot | escape }}"
+                  data-ga4-promotion-name="{{ ga4_slider_promotion_name | escape }}"
+                  data-ga4-creative-name="{{ ga4_slider_promotion_name | escape }}"
+                  data-ga4-creative-slot="{{ ga4_slider_slot | escape }}"
+                  data-ga4-click-area="Ana sayfa slider"
+                  data-ga4-source-page-type="home"
+                  data-ga4-source-page-name="Ana sayfa"
+                >
+                  {%- if block.settings.slider_bg_img -%}
+                  <img
+                  srcset="
+                  {%- if block.settings.slider_bg_img.width >= 375 -%}{{ block.settings.slider_bg_img | image_url: width: 375 }} 375w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 550 -%}{{ block.settings.slider_bg_img | image_url: width: 550 }} 550w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 750 -%}{{ block.settings.slider_bg_img | image_url: width: 750 }} 750w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 1100 -%}{{ block.settings.slider_bg_img | image_url: width: 1100 }} 1100w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 1500 -%}{{ block.settings.slider_bg_img | image_url: width: 1500 }} 1500w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 1780 -%}{{ block.settings.slider_bg_img | image_url: width: 1780 }} 1780w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 2000 -%}{{ block.settings.slider_bg_img | image_url: width: 2000 }} 2000w,{%- endif -%}
+                  {%- if block.settings.slider_bg_img.width >= 3000 -%}{{ block.settings.slider_bg_img | image_url: width: 3000 }} 3000w,{%- endif -%}
+                  {{ block.settings.slider_bg_img | image_url }} {{ block.settings.slider_bg_img.width }}w
+                  "
+                  src="{{ block.settings.slider_bg_img | image_url: width: 3840 }}"
+                  data-src="{{ block.settings.slider_bg_img | image_url: width: 3840 }}"
+                  alt="{{ block.settings.slider_bg_img.alt | escape }}"
+                  class="img-fluid desk-img lazyload"
+                  width="{{ block.settings.slider_bg_img.width }}"
+                  height="{{ block.settings.slider_bg_img.width | divided_by: block.settings.slider_bg_img.aspect_ratio }}"
+                  decoding="async"
+                  loading="lazy"
+                  sizes="100vw">
+                  {%- else -%}
+                  {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg desk-img' }}
+                  {%- endif -%}
+                  {%- if block.settings.slider_img -%}
+                  <img
+                  srcset="
+                  {%- if block.settings.slider_img.width >= 375 -%}{{ block.settings.slider_img | image_url: width: 375 }} 375w,{%- endif -%}
+                  {%- if block.settings.slider_img.width >= 500 -%}{{ block.settings.slider_img | image_url: width: 500 }} 550w,{%- endif -%}
+                  {{ block.settings.slider_img | image_url }} {{ block.settings.slider_img.width }}w
+                  "
+                  src="{{ block.settings.slider_img | image_url: width: 500 }}"
+                  data-src="{{ block.settings.slider_img | image_url: width: 500 }}"
+                  alt="{{ block.settings.slider_img.alt | escape }}"
+                  class="img-fluid mobile-img lazyload"
+                  width="{{ block.settings.slider_img.width }}"
+                  height="{{ block.settings.slider_img.width | divided_by: block.settings.slider_img.aspect_ratio }}"
+                  decoding="async"
+                  loading="lazy"
+                  sizes="50vw">
+                  {%- else -%}
+                  {%- capture placeholder -%}hero-apparel-{% cycle 1, 2, 3 %}{%- endcapture -%}
+                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg mobile-img' }}
+                  {%- endif -%}
+                </a>
+                <div class="slider-text-info {% if block.settings.slider_content_position == "right" %}slider-text-right{% elsif block.settings.slider_content_position == "center" %}slider-text-center{% else %}slider-text-left{% endif %}">
+                  {%if block.settings.slider_sub_title != '' %}
+                  <span style="color:{{ block.settings.slider_subtitle_color }};">{{ block.settings.slider_sub_title }}</span>
+                  {%endif%}
+                  {%if block.settings.slider_title != '' %}
+                  <h1 style="color:{{ block.settings.slider_title_color }};">{{ block.settings.slider_title }}</h1>
+                  {%endif%}
+                  {% if block.settings.slider_button != '' %}
+                  <a href="{{ block.settings.slider_button_url }}" class="btn btn-style1">{{ block.settings.slider_button }}</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {%- style -%}
+            .slide-{{ block.id }} .slide-image > a:before {
+              padding-bottom: {{ 1 | divided_by: block.settings.slider_bg_img.aspect_ratio | times: 100 }}%;
+              content: '';
+              display: block;
+            }
+            @media(max-width: 600px){
+              .slide-{{ block.id }} .slide-image > a:before {
+                padding-bottom: {{ 1 | divided_by: block.settings.slider_img.aspect_ratio | times: 100 }}%;
+                content: '';
+                display: block;
+              }
+            }
+            {%- endstyle -%}
+            {% endfor %}
+          </div>
+          {% if section.settings.dots %}
+          <div class="slider-dot"></div>
+          {% endif %}
+          {% if section.settings.nav %}
+          <div class="slider-arrow">
+            <button class="arrow-prev" aria-label="Slider arrow"><i class="fa fa-angle-double-left"></i></button>
+            <button class="arrow-next" aria-label="Slider arrow"><i class="fa fa-angle-double-right"></i></button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="grid-wrapper ser-wrapper">
+        <div class="product-list-item swiper" id="slider-pro">
+          <div class="swiper-wrapper">
+            {% assign product_limit = section.settings.select_product_limit %}
+            {% for product in collections[section.settings.select_product].products limit: product_limit %}
+            <div class="swiper-slide">
+              {% render 'product-list-item',
+                product: product,
+                section_id: section.id,
+                show_full_title: true,
+                ga4_list_id: 'home_side_slider',
+                ga4_list_name: 'Ana sayfa - slider yanı seçki',
+                ga4_click_area: 'Ana sayfa - slider yanı seçki',
+                ga4_source_page_type: 'home',
+                ga4_source_page_name: 'Ana sayfa',
+                ga4_item_category: collections[section.settings.select_product].title,
+                ga4_index: forloop.index
+              %}
+            </div>
+            {% else %}
+            {% for i in (1..product_limit) %}
+            <div class="swiper-slide">
+              <div class="single-product-wrap">
+                <div class="product-image">
+                  {%- capture placeholder -%}collection-{% cycle 1, 2, 3, 4, 5, 6 %}{%- endcapture -%}
+                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+                <div class="product-content">
+                  <div class="product-title">
+                    <a href="javascript:void(0)">Product title</a>
+                  </div>
+                  <div class="price-box">
+                    <span class="new-price">$9.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="slider-product-buttons">
+          <button type="button" class="slider-product-button slider-product-button-prev-{{ section.id }}" aria-label="Önceki ürün"></button>
+          <button type="button" class="slider-product-button slider-product-button-next-{{ section.id }}" aria-label="Sonraki ürün"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Hero Section End -->
+<script type="text/javascript">
+  addEventListener('DOMContentLoaded', (event) => {
+   var swiper = new Swiper('.swiper#home-slider', {
+    slidesPerView: 1,
+    loop: {{ section.settings.loop }},
+    grid: {
+      rows: 1,
+      fill: 'row' | 'column',
+    },
+    spaceBetween: 0,
+    observer: true,
+    observeParents: true,
+    watchSlidesProgress: true,
+    {% if section.settings.autoplay %}
+    autoplay: {
+      delay: {{ section.settings.autoplay_time }},
+      disableOnInteraction: false,
+      pauseOnMouseEnter: true
+    },
+    speed: {{ section.settings.autoplay_speed }},
+    {% endif %}
+    {% if section.settings.dots %}
+    pagination: {
+      el: ".slider-dot",
+    },
+    {% endif %}
+    {% if section.settings.nav %}
+    navigation: {
+      nextEl: ".arrow-next",
+      prevEl: ".arrow-prev",
+    },
+    {% endif %}
+  });
+   var swiper = new Swiper('#slider-pro', {
+    slidesPerView: 1,
+    grid: {
+      rows: 3,
+      fill: 'row' | 'column',
+    },
+    spaceBetween: 15,
+    observer: true,
+    observeParents: true,
+    {%- if settings.enable_rtl -%}
+    rtl: true,
+    {%- endif -%}
+    navigation: {
+      nextEl: '.slider-product-button-next-{{ section.id }}',
+      prevEl: '.slider-product-button-prev-{{ section.id }}',
+    },
+    breakpoints: {
+      0: {
+        slidesPerView: 1.5,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 12
+      },
+      320: {
+        slidesPerView: 1.5,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 12
+      },
+      360: {
+        slidesPerView: 1.5,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 12
+      },
+      540: {
+        slidesPerView: 1.5,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 12
+      },
+      640: {
+        slidesPerView: 1.5,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 12
+      },
+      768: {
+        slidesPerView: 2,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 30
+      },
+      1024: {
+        slidesPerView: 2,
+        grid: {
+          rows: 1,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 30
+      },
+      1199: {
+        slidesPerView: 1,
+        grid: {
+          rows: 3,
+          fill: 'row' | 'column',
+        },
+        spaceBetween: 12
+      }
+    }
+  });
+ });
+</script>
+{% schema %}
+{
+  "name": "Slider",
+  "settings": [
+  {
+    "type": "header",
+    "content": "Mobil marka bağlantıları"
+  },
+  {
+    "type": "checkbox",
+    "id": "mobile_brand_links_enabled",
+    "label": "Mobil ana sayfada göster",
+    "default": true
+  },
+  {
+    "type": "paragraph",
+    "content": "Bağlantı boşsa aşağıda belirtilen varsayılan adres kullanılır. Bir kutucuğu gizlemek için adını boş bırakın."
+  },
+  { "type": "text", "id": "mobile_brand_label_1", "label": "1. bağlantı adı", "default": "Tüm ürünler" },
+  { "type": "url", "id": "mobile_brand_url_1", "label": "1. bağlantı", "info": "Varsayılan: /collections/all?sort_by=best-selling" },
+  { "type": "select", "id": "mobile_brand_tone_1", "label": "1. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_2", "label": "2. bağlantı adı", "default": "San Pellegrino" },
+  { "type": "url", "id": "mobile_brand_url_2", "label": "2. bağlantı", "info": "Varsayılan: /collections/san-pellegrino-soda-cesitleri" },
+  { "type": "select", "id": "mobile_brand_tone_2", "label": "2. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_3", "label": "3. bağlantı adı", "default": "Perrier" },
+  { "type": "url", "id": "mobile_brand_url_3", "label": "3. bağlantı", "info": "Varsayılan: /products/perrier-do-al-mineralli-gazl-su-200-ml-24lu-koli" },
+  { "type": "select", "id": "mobile_brand_tone_3", "label": "3. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_4", "label": "4. bağlantı adı", "default": "San Benedetto" },
+  { "type": "url", "id": "mobile_brand_url_4", "label": "4. bağlantı", "info": "Varsayılan: /collections/san-benedetto-italyan-icecekleri" },
+  { "type": "select", "id": "mobile_brand_tone_4", "label": "4. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_5", "label": "5. bağlantı adı", "default": "Flavz" },
+  { "type": "url", "id": "mobile_brand_url_5", "label": "5. bağlantı", "info": "Varsayılan: /collections/flavz-meyve-sulari" },
+  { "type": "select", "id": "mobile_brand_tone_5", "label": "5. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  {
+    "type": "header",
+    "content": "slider settings"
+  },
+  {
+    "type": "checkbox",
+    "id": "loop",
+    "label": "Slider loop",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "autoplay",
+    "label": "Slider autoplay",
+    "default": true
+  },
+  {
+    "type": "number",
+    "id": "autoplay_time",
+    "label": "Slider timer out",
+    "default": 5000
+  },
+  {
+    "type": "number",
+    "id": "autoplay_speed",
+    "label": "Slider speed",
+    "default": 1000
+  },
+  {
+    "type": "checkbox",
+    "id": "nav",
+    "label": "Slider arrow",
+    "default": true
+  },
+  {
+    "type": "checkbox",
+    "id": "dots",
+    "label": "Slider dots",
+    "default": true
+  },
+  {
+    "type": "header",
+    "content": "Slider product"
+  },
+  {
+    "type": "collection",
+    "id": "select_product",
+    "label": "Select collection"
+  },
+  {
+    "type": "number",
+    "id": "select_product_limit",
+    "label": "Product limit",
+    "default": 6
+  },
+  {
+    "type": "checkbox",
+    "id": "grid_full",
+    "label": "Slider full",
+    "default": false
+  }
+  ],
+  "blocks":[
+  {
+    "type": "slide",
+    "name": "Slide",
+    "settings": [
+    {
+      "type": "image_picker",
+      "id": "slider_bg_img",
+      "label": "Image",
+      "info": "Recommended Size: 1080x600px"
+    },
+    {
+      "type": "image_picker",
+      "id": "slider_img",
+      "label": "Mobile Image",
+      "info": "Recommended Size: 650x550px"
+    },
+    {
+      "type": "text",
+      "id": "slider_sub_title",
+      "label": "Sub Title",
+      "default": "Top Selling!"
+    },
+    {
+      "type": "color",
+      "id": "slider_subtitle_color",
+      "label": "Text color",
+      "default": "#fff"
+    },
+    {
+      "type": "text",
+      "id": "slider_title",
+      "label": "Title",
+      "default": "New Collection"
+    },
+    {
+      "type": "color",
+      "id": "slider_title_color",
+      "label": "Text color",
+      "default": "#fff"
+    },
+    {
+      "type": "text",
+      "id": "slider_button",
+      "label": "Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "slider_button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "radio",
+      "id": "slider_content_position",
+      "label": "Content Position",
+      "options": [
+      {
+        "label": "left",
+        "value": "left"
+      },
+      {
+        "label": "Right",
+        "value": "right"
+      },
+      {
+        "label": "Center",
+        "value": "center"
+      }
+      ],
+      "default": "left"
+    }
+    ]
+  }
+  ],
+  "presets":[
+  {
+    "name": "Slider"
+  }
+  ]
+}
+{% endschema %}
