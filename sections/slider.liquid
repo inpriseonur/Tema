@@ -1,5 +1,109 @@
+<style type="text/css">
+  .home-mobile-brand-links {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    .home-mobile-brand-links {
+      position: relative;
+      display: block;
+      margin-bottom: -3px;
+      min-width: 0;
+    }
+    .home-mobile-brand-links::after {
+      content: '';
+      position: absolute;
+      left: calc(50% - 50vw);
+      bottom: -6px;
+      width: 100vw;
+      height: 1px;
+      background-color: #e7e7e7;
+      pointer-events: none;
+    }
+    .home-mobile-brand-links__list {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      margin: 0;
+      padding: 3px 0;
+      list-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+    }
+    .home-mobile-brand-links__list::-webkit-scrollbar {
+      display: none;
+    }
+    .home-mobile-brand-links__list > li {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+    .home-mobile-brand-links__list a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 4px 8px;
+      border: 1px solid #e0e4eb;
+      border-radius: 14px;
+      background: #fff;
+      color: #142850;
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.2;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .home-mobile-brand-links__list a.home-mobile-brand-links__link--gold {
+      border-color: #c9a063;
+    }
+    .home-mobile-brand-links__list a.home-mobile-brand-links__link--navy {
+      border-color: #52678e;
+    }
+    .home-mobile-brand-links__list a:focus-visible {
+      outline: 2px solid #142850;
+      outline-offset: 1px;
+    }
+  }
+</style>
 <section class="slider-content">
   <div class="container">
+    {%- if request.page_type == 'index' and section.settings.mobile_brand_links_enabled -%}
+      {%- capture mobile_brand_links -%}
+        {%- for link_index in (1..5) -%}
+          {%- liquid
+            assign label_key = 'mobile_brand_label_' | append: link_index
+            assign url_key = 'mobile_brand_url_' | append: link_index
+            assign tone_key = 'mobile_brand_tone_' | append: link_index
+            assign link_tone = section.settings[tone_key] | default: 'plain'
+            assign link_label = section.settings[label_key]
+            assign link_url = section.settings[url_key]
+            if link_url == blank
+              case link_index
+                when 1
+                  assign link_url = '/collections/all?sort_by=best-selling'
+                when 2
+                  assign link_url = '/collections/san-pellegrino-soda-cesitleri'
+                when 3
+                  assign link_url = '/products/perrier-do-al-mineralli-gazl-su-200-ml-24lu-koli'
+                when 4
+                  assign link_url = '/collections/san-benedetto-italyan-icecekleri'
+                when 5
+                  assign link_url = '/collections/flavz-meyve-sulari'
+              endcase
+            endif
+          -%}
+          {%- if link_label != blank -%}
+            <li><a class="home-mobile-brand-links__link--{{ link_tone | escape }}" href="{{ link_url | escape }}">{{ link_label | escape }}</a></li>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if mobile_brand_links != blank -%}
+        <nav class="home-mobile-brand-links" aria-label="Ürünler ve markalar">
+          <ul class="home-mobile-brand-links__list" role="list">{{ mobile_brand_links }}</ul>
+        </nav>
+      {%- endif -%}
+    {%- endif -%}
     <div class="grid-wrap {% if section.settings.grid_full %} grid-full{%endif%}">
       <div class="grid-wrapper">
         <div class="home-slider swiper" id="home-slider">
@@ -210,7 +314,7 @@
     },
     breakpoints: {
       0: {
-        slidesPerView: 1,
+        slidesPerView: 1.5,
         grid: {
           rows: 1,
           fill: 'row' | 'column',
@@ -218,7 +322,7 @@
         spaceBetween: 12
       },
       320: {
-        slidesPerView: 1,
+        slidesPerView: 1.5,
         grid: {
           rows: 1,
           fill: 'row' | 'column',
@@ -226,7 +330,7 @@
         spaceBetween: 12
       },
       360: {
-        slidesPerView: 1,
+        slidesPerView: 1.5,
         grid: {
           rows: 1,
           fill: 'row' | 'column',
@@ -234,7 +338,7 @@
         spaceBetween: 12
       },
       540: {
-        slidesPerView: 1,
+        slidesPerView: 1.5,
         grid: {
           rows: 1,
           fill: 'row' | 'column',
@@ -242,7 +346,7 @@
         spaceBetween: 12
       },
       640: {
-        slidesPerView: 2,
+        slidesPerView: 1.5,
         grid: {
           rows: 1,
           fill: 'row' | 'column',
@@ -281,6 +385,35 @@
 {
   "name": "Slider",
   "settings": [
+  {
+    "type": "header",
+    "content": "Mobil marka bağlantıları"
+  },
+  {
+    "type": "checkbox",
+    "id": "mobile_brand_links_enabled",
+    "label": "Mobil ana sayfada göster",
+    "default": true
+  },
+  {
+    "type": "paragraph",
+    "content": "Bağlantı boşsa aşağıda belirtilen varsayılan adres kullanılır. Bir kutucuğu gizlemek için adını boş bırakın."
+  },
+  { "type": "text", "id": "mobile_brand_label_1", "label": "1. bağlantı adı", "default": "Tüm ürünler" },
+  { "type": "url", "id": "mobile_brand_url_1", "label": "1. bağlantı", "info": "Varsayılan: /collections/all?sort_by=best-selling" },
+  { "type": "select", "id": "mobile_brand_tone_1", "label": "1. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_2", "label": "2. bağlantı adı", "default": "San Pellegrino" },
+  { "type": "url", "id": "mobile_brand_url_2", "label": "2. bağlantı", "info": "Varsayılan: /collections/san-pellegrino-soda-cesitleri" },
+  { "type": "select", "id": "mobile_brand_tone_2", "label": "2. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_3", "label": "3. bağlantı adı", "default": "Perrier" },
+  { "type": "url", "id": "mobile_brand_url_3", "label": "3. bağlantı", "info": "Varsayılan: /products/perrier-do-al-mineralli-gazl-su-200-ml-24lu-koli" },
+  { "type": "select", "id": "mobile_brand_tone_3", "label": "3. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_4", "label": "4. bağlantı adı", "default": "San Benedetto" },
+  { "type": "url", "id": "mobile_brand_url_4", "label": "4. bağlantı", "info": "Varsayılan: /collections/san-benedetto-italyan-icecekleri" },
+  { "type": "select", "id": "mobile_brand_tone_4", "label": "4. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
+  { "type": "text", "id": "mobile_brand_label_5", "label": "5. bağlantı adı", "default": "Flavz" },
+  { "type": "url", "id": "mobile_brand_url_5", "label": "5. bağlantı", "info": "Varsayılan: /collections/flavz-meyve-sulari" },
+  { "type": "select", "id": "mobile_brand_tone_5", "label": "5. bağlantı rengi", "options": [{ "value": "plain", "label": "Sade" }, { "value": "gold", "label": "Altın" }, { "value": "navy", "label": "Lacivert" }], "default": "plain" },
   {
     "type": "header",
     "content": "slider settings"
@@ -610,6 +743,9 @@
 }
 
 @media (max-width: 767px) {
+  #shopify-section-{{ section.id }} .ser-wrapper .slider-product-buttons {
+    display: none;
+  }
   .slider-content .ser-wrapper .slider-product-button {
     width: 26px;
     height: 26px;
@@ -821,5 +957,66 @@
 .slider-content .home-slider .slider-dot span:hover,
 .slider-content .home-slider .slider-dot span.swiper-pagination-bullet-active {
   background-color: var(--color-secondary); 
+}
+@media (max-width: 767px) {
+  #shopify-section-{{ section.id }} .slider-content .grid-wrap .grid-wrapper.ser-wrapper {
+    margin-top: 10px;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .swiper-wrapper { align-items: stretch; }
+  #shopify-section-{{ section.id }} #slider-pro .swiper-slide { display: flex; height: auto; }
+  #shopify-section-{{ section.id }} #slider-pro .single-product-wrap {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+    align-items: center;
+    gap: 7px;
+    padding: 6px 7px;
+    box-shadow: none;
+    border-radius: 6px;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .product-image {
+    position: static;
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .product-image .ratio img { object-fit: contain; }
+  #shopify-section-{{ section.id }} #slider-pro .product-content {
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .product-title a {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .price-box { margin-top: 4px; line-height: 1.2; }
+  #shopify-section-{{ section.id }} #slider-pro .new-price {
+    font-size: 14px !important;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .old-price {
+    font-size: 10px !important;
+    padding-left: 0;
+    white-space: nowrap;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .product-volume-teaser--compact {
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #596273;
+    line-height: 1.2;
+  }
+  #shopify-section-{{ section.id }} #slider-pro .product-volume-teaser__amount {
+    white-space: nowrap;
+  }
 }
 </style>

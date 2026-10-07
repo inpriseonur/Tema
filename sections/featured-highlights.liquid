@@ -5,7 +5,7 @@
         {%- if block.settings.title != blank or block.settings.text != blank -%}
           {%- assign faq_target = block.settings.faq_target | strip -%}
           <div
-            class="featured-highlights__item{% if faq_target != blank %} featured-highlights__item--clickable{% endif %}"
+            class="featured-highlights__item{% if faq_target != blank %} featured-highlights__item--clickable{% endif %}{% if block.settings.show_mobile == false %} featured-highlights__item--hide-mobile{% endif %}"
             {% if faq_target != blank %}
               role="button"
               tabindex="0"
@@ -13,6 +13,7 @@
             {% endif %}
             {{ block.shopify_attributes }}
           >
+            {%- unless block.settings.icon == 'none' -%}
             <span class="featured-highlights__icon featured-highlights__icon--{{ block.settings.tone }}" aria-hidden="true">
               {%- case block.settings.icon -%}
                 {%- when 'tag' -%}
@@ -31,7 +32,8 @@
                   <i class="ti ti-check"></i>
               {%- endcase -%}
             </span>
-            <span class="featured-highlights__content">
+            {%- endunless -%}
+            <span class="featured-highlights__content{% if block.settings.title == blank %} featured-highlights__content--text-only{% endif %}">
               {%- if block.settings.title != blank -%}
                 <strong>{{ block.settings.title }}</strong>
               {%- endif -%}
@@ -156,28 +158,41 @@
 
   @media (max-width: 767px) {
     #shopify-section-{{ section.id }} .featured-highlights {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: flex;
+      gap: 8px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      overflow-x: auto;
+      scrollbar-width: none;
+      scroll-snap-type: x proximity;
+    }
+    #shopify-section-{{ section.id }} .featured-highlights::-webkit-scrollbar {
+      display: none;
     }
 
     #shopify-section-{{ section.id }} .featured-highlights__item {
-      gap: 9px;
+      flex: 0 0 auto;
+      min-height: 44px;
+      gap: 6px;
       padding: {{ section.settings.mobile_item_padding_y }}px {{ section.settings.mobile_item_padding_x }}px;
-      border-right: 1px solid {{ section.settings.border_color }};
-      border-bottom: 1px solid {{ section.settings.border_color }};
+      border: 0;
+      border-radius: 10px;
+      background: #f5f7f9;
+      scroll-snap-align: start;
+      white-space: nowrap;
     }
 
-    #shopify-section-{{ section.id }} .featured-highlights__item:nth-child(2n) {
-      border-right: 0;
-    }
-
-    #shopify-section-{{ section.id }} .featured-highlights__item:nth-last-child(-n+2) {
-      border-bottom: 0;
+    #shopify-section-{{ section.id }} .featured-highlights__item--hide-mobile {
+      display: none;
     }
 
     #shopify-section-{{ section.id }} .featured-highlights__icon {
-      width: {{ section.settings.mobile_icon_size }}px;
-      height: {{ section.settings.mobile_icon_size }}px;
-      flex-basis: {{ section.settings.mobile_icon_size }}px;
+      width: {{ section.settings.mobile_icon_font_size }}px;
+      height: {{ section.settings.mobile_icon_font_size }}px;
+      flex-basis: {{ section.settings.mobile_icon_font_size }}px;
+      background: transparent;
+      border-radius: 0;
     }
 
     #shopify-section-{{ section.id }} .featured-highlights__icon i {
@@ -186,10 +201,16 @@
 
     #shopify-section-{{ section.id }} .featured-highlights__content strong {
       font-size: {{ section.settings.mobile_title_size }}px;
+      font-weight: 500;
     }
 
     #shopify-section-{{ section.id }} .featured-highlights__content span {
-      font-size: {{ section.settings.mobile_text_size }}px;
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .featured-highlights__content--text-only span {
+      display: block;
+      font-size: {{ section.settings.mobile_title_size }}px;
     }
 
     {% unless section.settings.enable_mobile_links %}
@@ -410,16 +431,6 @@
     },
     {
       "type": "range",
-      "id": "mobile_icon_size",
-      "label": "Mobil ikon daire boyutu",
-      "min": 24,
-      "max": 44,
-      "step": 2,
-      "unit": "px",
-      "default": 34
-    },
-    {
-      "type": "range",
       "id": "mobile_icon_font_size",
       "label": "Mobil ikon boyutu",
       "min": 10,
@@ -437,16 +448,6 @@
       "step": 1,
       "unit": "px",
       "default": 12
-    },
-    {
-      "type": "range",
-      "id": "mobile_text_size",
-      "label": "Mobil alt metin boyutu",
-      "min": 9,
-      "max": 15,
-      "step": 1,
-      "unit": "px",
-      "default": 11
     },
     {
       "type": "header",
@@ -471,10 +472,17 @@
       "name": "Özellik",
       "settings": [
         {
+          "type": "checkbox",
+          "id": "show_mobile",
+          "label": "Mobilde göster",
+          "default": true
+        },
+        {
           "type": "select",
           "id": "icon",
           "label": "İkon",
           "options": [
+            { "value": "none", "label": "İkon yok" },
             { "value": "tag", "label": "Etiket" },
             { "value": "package", "label": "Paket" },
             { "value": "truck", "label": "Kamyon" },

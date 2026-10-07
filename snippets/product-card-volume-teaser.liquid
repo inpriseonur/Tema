@@ -44,12 +44,11 @@
     <span class="volume-discount-card-badge">Çok Al Az Öde</span>
   {%- elsif mode == 'compact' -%}
     <div class="product-volume-teaser product-volume-teaser--compact">
-      <span>{{ best_quantity }}+ koli {{ best_unit_price | money }}</span>
+      <span>{{ best_quantity }}+ kolide <span class="product-volume-teaser__amount">{{ best_unit_price | money }}/koli</span></span>
     </div>
   {%- else -%}
     <div class="product-volume-teaser">
-      <span class="product-volume-teaser__title">Çok Al Az Öde</span>
-      <span class="product-volume-teaser__value">{{ best_quantity }}+ koli {{ best_unit_price | money }}</span>
+      <span class="product-volume-teaser__value">{{ best_quantity }}+ kolide <span class="product-volume-teaser__amount">{{ best_unit_price | money }}/koli</span></span>
     </div>
   {%- endif -%}
 {%- endif -%}

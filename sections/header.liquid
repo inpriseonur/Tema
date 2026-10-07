@@ -696,4 +696,30 @@
       font-size: 12px;
     }
   }
+  /* Compact shared header on mobile screens. */
+  @media (max-width: 767px) {
+    .header-area .header-main {
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+    }
+    .header-area .header-main .logo img {
+      max-width: 96px !important;
+      height: auto !important;
+    }
+    .header-area .header-main .navbar-toggler,
+    .header-area .header-main .shopping-cart a.cart-count {
+      font-size: 18px;
+    }
+    .header-area .header-main .navbar-toggler i,
+    .header-area .header-main .shopping-cart a.cart-count i {
+      display: inline-block;
+      transform: scale(0.888889);
+    }
+    .header-area .header-main .shopping-cart a.cart-count span {
+      width: 15px;
+      height: 15px;
+      font-size: 10px;
+      top: -7px;
+    }
+  }
 </style>

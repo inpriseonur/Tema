@@ -1,5 +1,5 @@
 {%- liquid
-  
+
   assign ratio = 1
   if product.featured_media and settings.image_ratio == 'portrait'
   assign ratio = 0.9
@@ -63,24 +63,7 @@
         {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
       {%- endif -%}
     </a>
-    <div class="product-label">
-      {% render 'product-card-volume-teaser', product: product, mode: 'badge' %}
-       {% if settings.sale_percent_enable
-        and product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price
-        and product.available == true
-      %}
-          <span class="percent-count sale-title">
-            {{-
-              product.selected_or_first_available_variant.compare_at_price
-              | minus: product.selected_or_first_available_variant.price
-              | times: 100.0
-              | divided_by: product.selected_or_first_available_variant.compare_at_price
-              | round
-              | append: '%'
-            -}}
-          </span>
-      {% endif %}
-    </div>
+
     <div class="product-action">
       {% render 'wishlist-button', product: product %}
       {% render 'cart-button', product: product, section_id: section.id %}
