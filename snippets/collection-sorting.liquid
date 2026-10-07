@@ -8,7 +8,7 @@
   </div>
   <div class="collection-toolbar-summary">
     {%- assign toolbar_product_count = results.products_count | default: collection.products_count -%}
-    <span id="CollectionToolbarCount">{{ toolbar_product_count }} ürün listeleniyor</span>
+    <span id="CollectionToolbarCount">{{ toolbar_product_count }} ürün<span class="collection-count-detail"> listeleniyor</span></span>
   </div>
   {% if section.settings.tab_bar_enable %}
   <div class="product-view-mode">

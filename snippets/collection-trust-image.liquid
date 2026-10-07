@@ -1,0 +1,33 @@
+{%- if section.settings.custom_image_enable -%}
+  {%- if section.settings.custom_image -%}
+  <picture>
+    {%- if section.settings.custom_image_mobile -%}
+      <source
+        media="(max-width: 767px)"
+      width="{{ section.settings.custom_image_mobile.width }}"
+      height="{{ section.settings.custom_image_mobile.height }}"
+        srcset="{{ section.settings.custom_image_mobile | image_url: width: 900 }}"
+      >
+    {%- endif -%}
+    {{ section.settings.custom_image | image_url: width: 1920 | image_tag:
+      loading: 'lazy',
+      width: section.settings.custom_image.width,
+      height: section.settings.custom_image.height,
+      class: "img-fluid lazyload",
+      alt: section.settings.custom_image.alt | escape }}
+  </picture>
+  {%- else -%}
+  {{ 'hero-apparel-1' | placeholder_svg_tag }}
+  {%- endif -%}
+{% else %}
+{%- if collection.image -%}
+{{ collection.image | image_url: width: 1920 | image_tag:
+  loading: 'lazy',
+  width: collection.image.width,
+  height: collection.image.height,
+  class: "img-fluid lazyload",
+  alt: collection.image.alt | escape }}
+{%- else -%}
+{{ 'hero-apparel-1' | placeholder_svg_tag }}
+{%- endif -%}
+{% endif %}

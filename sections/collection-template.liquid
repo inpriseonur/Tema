@@ -1,3 +1,103 @@
+<style>
+#shopify-section-{{ section.id }} .collection-inline-trust { display: none; }
+@media (max-width: 767px) {
+  #shopify-section-{{ section.id }} .collection-image--top { display: none; }
+  #shopify-section-{{ section.id }} .shop-product-wrap ul.product-view > li.st-col-item {
+    margin-top: 12px;
+  }
+  #shopify-section-{{ section.id }} .collection-inline-trust {
+    flex: 0 0 calc(100% - 12px);
+    width: calc(100% - 12px);
+    margin: 4px 0 0 12px;
+  }
+  #shopify-section-{{ section.id }} .collection-inline-trust picture,
+  #shopify-section-{{ section.id }} .collection-inline-trust img,
+  #shopify-section-{{ section.id }} .collection-inline-trust svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+@media (max-width: 600px) {
+  #shopify-section-{{ section.id }} .collection-inline-trust--small { display: block; }
+}
+@media (min-width: 601px) and (max-width: 767px) {
+  #shopify-section-{{ section.id }} .collection-inline-trust--medium { display: block; }
+}
+</style>
+<style>
+/*=====================================
+  collection-template css
+======================================*/
+{% if section.settings.collection_bgcolor_enable %}
+.shop-page {
+  background-color: {{ section.settings.collection_bgcolor }};
+}
+{% endif %}
+.collection-title-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.collection-title-hidden + .collection-info {
+  margin-top: 0 !important;
+}
+.collection-image picture,
+.collection-image picture img {
+  display: block;
+  width: 100%;
+}
+.collection-image picture img {
+  height: auto;
+}
+@media (min-width: 768px) {
+  #shopify-section-{{ section.id }} .shop-page.section-ptb {
+    padding-top: 16px;
+  }
+  #shopify-section-{{ section.id }} .collection-image--top img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 240px;
+    margin-inline: auto;
+  }
+}
+.shop-product-wrap.grid-5 ul.product-view li.st-col-item {
+  width: calc(20% - 30px);
+}
+.shop-product-wrap.grid-4 ul.product-view li.st-col-item {
+  width: calc(25% - 30px);
+}
+.shop-product-wrap.grid-sm-2.grid-1 ul.product-view li.st-col-item {
+  width: calc(100% - 12px);
+}
+@media(max-width: 1199px){
+  .shop-product-wrap.grid-lg-2 ul.product-view li.st-col-item {
+    width: calc(50% - 30px);
+  }
+  .shop-product-wrap.grid-lg-3 ul.product-view li.st-col-item {
+    width: calc(33.33% - 30px);
+  }
+  .shop-product-wrap.grid-lg-4 ul.product-view li.st-col-item {
+    width: calc(25% - 30px);
+  }
+}
+@media(max-width: 600px){
+  .shop-product-wrap.grid-sm-2 ul.product-view li.st-col-item {
+    width: calc(50% - 12px);
+  }
+  .shop-product-wrap.grid-sm-1 ul.product-view li.st-col-item {
+    width: calc(100% - 12px);
+  }
+}
+</style>
 {%- if collection.handle == 'all' and collection.sort_by == blank and collection.default_sort_by != 'best-selling' -%}
 <script>
   (function() {
@@ -22,38 +122,8 @@
               {%- if section.settings.collection_info_enable -%}
               <div class="collection-info">
                 {%- if section.settings.banner_enable -%}
-                <div class="collection-image">
-                  {%- if section.settings.custom_image_enable -%}
-                    {%- if section.settings.custom_image -%}
-                    <picture>
-                      {%- if section.settings.custom_image_mobile -%}
-                        <source
-                          media="(max-width: 767px)"
-                          srcset="{{ section.settings.custom_image_mobile | image_url: width: 900 }}"
-                        >
-                      {%- endif -%}
-                      {{ section.settings.custom_image | image_url: width: 1920 | image_tag:
-                        loading: 'lazy',
-                        width: section.settings.custom_image.width,
-                        height: section.settings.custom_image.height,
-                        class: "img-fluid lazyload",
-                        alt: section.settings.custom_image.alt | escape }}
-                    </picture>
-                    {%- else -%}
-                    {{ 'hero-apparel-1' | placeholder_svg_tag }}
-                    {%- endif -%}
-                  {% else %}
-                  {%- if collection.image -%}
-                  {{ collection.image | image_url: width: 1920 | image_tag:
-                    loading: 'lazy',
-                    width: collection.image.width,
-                    height: collection.image.height,
-                    class: "img-fluid lazyload",
-                    alt: collection.image.alt | escape }}
-                  {%- else -%}
-                  {{ 'hero-apparel-1' | placeholder_svg_tag }}
-                  {%- endif -%}
-                  {% endif %}
+                <div class="collection-image collection-image--top">
+                  {% render 'collection-trust-image' %}
                 </div>
                 {%- endif -%}
                 {%- if section.settings.collection_desc_enable -%}
@@ -94,6 +164,20 @@
                             ga4_index: forloop.index
                           -%}
                         </li>
+                        {%- if section.settings.collection_info_enable and section.settings.banner_enable and paginate.current_page == 1 -%}
+                          {%- assign mobile_row_end = section.settings.product_view_sm | plus: 0 | at_most: collection.products.size -%}
+                          {%- assign tablet_row_end = section.settings.product_view_lg | plus: 0 | at_most: collection.products.size -%}
+                          {%- if forloop.index == mobile_row_end -%}
+                            <li class="collection-inline-trust collection-inline-trust--small">
+                              {% render 'collection-trust-image' %}
+                            </li>
+                          {%- endif -%}
+                          {%- if forloop.index == tablet_row_end -%}
+                            <li class="collection-inline-trust collection-inline-trust--medium">
+                              {% render 'collection-trust-image' %}
+                            </li>
+                          {%- endif -%}
+                        {%- endif -%}
                         {%- endfor -%}
                       </ul>
                     </div>
@@ -419,63 +503,3 @@
   ]
 }
 {% endschema %}
-<style>
-/*=====================================
-  collection-template css
-======================================*/
-{% if section.settings.collection_bgcolor_enable %}
-.shop-page {
-  background-color: {{ section.settings.collection_bgcolor }};
-}
-{% endif %}
-.collection-title-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-.collection-title-hidden + .collection-info {
-  margin-top: 0 !important;
-}
-.collection-image picture,
-.collection-image picture img {
-  display: block;
-  width: 100%;
-}
-.collection-image picture img {
-  height: auto;
-}
-.shop-product-wrap.grid-5 ul.product-view li.st-col-item {
-  width: calc(20% - 30px);
-}
-.shop-product-wrap.grid-4 ul.product-view li.st-col-item {
-  width: calc(25% - 30px);
-}
-.shop-product-wrap.grid-sm-2.grid-1 ul.product-view li.st-col-item {
-  width: calc(100% - 12px);
-}
-@media(max-width: 1199px){
-  .shop-product-wrap.grid-lg-2 ul.product-view li.st-col-item {
-    width: calc(50% - 30px);
-  }
-  .shop-product-wrap.grid-lg-3 ul.product-view li.st-col-item {
-    width: calc(33.33% - 30px);
-  }
-  .shop-product-wrap.grid-lg-4 ul.product-view li.st-col-item {
-    width: calc(25% - 30px);
-  }
-}
-@media(max-width: 600px){
-  .shop-product-wrap.grid-sm-2 ul.product-view li.st-col-item {
-    width: calc(50% - 12px);
-  }
-  .shop-product-wrap.grid-sm-1 ul.product-view li.st-col-item {
-    width: calc(100% - 12px);
-  }
-}
-</style>
