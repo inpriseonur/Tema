@@ -3,6 +3,27 @@
     padding-top: {{ section.settings.section_padding_top }}px;
     padding-bottom: {{ section.settings.section_padding_bottom }}px;
 }
+#shopify-section-{{ section.id }} .new-product__heading {
+    margin: 0 0 8px;
+    color: var(--color-primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+@media (min-width: 1199px) {
+    #shopify-section-{{ section.id }} .new-product__heading {
+        font-size: 15px;
+        line-height: 17px;
+    }
+}
+@media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .new-product__heading { font-size: 11.5px; }
+}
 @media(max-width: 1199px) {
     .new-product {
         padding-top: {{ section.settings.section_padding_top_xs }}px;
@@ -218,8 +239,31 @@
     }
 }
 @media (min-width: 1199px) {
+    #shopify-section-{{ section.id }} .new-product-slider,
     #shopify-section-{{ section.id }} .new-product-slider:not(.owl-loaded):not(.owl-loading) {
-        --initial-columns: 4;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 12px;
+        align-items: stretch;
+        overflow: visible;
+    }
+    #shopify-section-{{ section.id }} .new-product-slider > .item {
+        min-width: 0;
+    }
+    #shopify-section-{{ section.id }} .new-product-slider .product-content .product-title a {
+        font-size: 13px;
+    }
+    #shopify-section-{{ section.id }} .new-product-slider .price-box .new-price,
+    #shopify-section-{{ section.id }} .new-product-slider .price-box .old-price,
+    #shopify-section-{{ section.id }} .new-product-slider .product-volume-teaser__amount {
+        white-space: nowrap;
+    }
+}
+@media (min-width: 1400px) {
+    #shopify-section-{{ section.id }} .new-product-slider,
+    #shopify-section-{{ section.id }} .new-product-slider:not(.owl-loaded):not(.owl-loading) {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 }
 </style>
@@ -227,11 +271,10 @@
   <div class="container">
     <div class="row">
       <div class="col-xl-12 col-lg-12 col-md-12">
-        <div class="section-title">
-          {% if section.settings.section_title !='' %}
-          <h2>{{ section.settings.section_title }}</h2>
-          {% endif %}
-        </div>
+        {%- assign list_heading = section.settings.section_title | strip -%}
+        {%- if list_heading != blank -%}
+          <h2 class="new-product__heading">{{ list_heading | escape }}</h2>
+        {%- endif -%}
         {% assign category_product = collections[section.settings.label_product] %}
         <div class="new-product-slider owl-carousel" id="new-pro-{{ section.id }}">
           {% assign category_product_limit = section.settings.category_product_limit_handle %}
@@ -256,8 +299,11 @@
   </div>
 </section>
 <script type="text/javascript">
-addEventListener('DOMContentLoaded', (event) => {
-  $('#new-pro-{{ section.id }}').owlCarousel({
+(() => {
+  const element = document.getElementById('new-pro-{{ section.id }}');
+  if (!element) return;
+  const desktop = window.matchMedia('(min-width: 1199px)');
+  const options = {
     rewind: true,
     margin: 30,
     items: 4,
@@ -293,16 +339,38 @@ addEventListener('DOMContentLoaded', (event) => {
         },
         979:{
           items: 3
-        },
-        1199:{
-          items: 4
-        },
-        1599:{
-          items: 4
         }
       }
-  });
-});
+  };
+
+  function updateLayout() {
+    if (!element.isConnected || !window.jQuery || !window.jQuery.fn.owlCarousel) return;
+    const slider = window.jQuery(element);
+    if (desktop.matches) {
+      if (slider.data('owl.carousel')) slider.trigger('destroy.owl.carousel');
+    } else if (!slider.data('owl.carousel')) {
+      slider.owlCarousel(options);
+    }
+  }
+
+  function onSectionUnload(event) {
+    if (!event.target.contains(element)) return;
+    desktop.removeEventListener('change', updateLayout);
+    document.removeEventListener('DOMContentLoaded', updateLayout);
+    document.removeEventListener('shopify:section:unload', onSectionUnload);
+    if (window.jQuery && window.jQuery(element).data('owl.carousel')) {
+      window.jQuery(element).trigger('destroy.owl.carousel');
+    }
+  }
+
+  desktop.addEventListener('change', updateLayout);
+  document.addEventListener('shopify:section:unload', onSectionUnload);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateLayout, { once: true });
+  } else {
+    updateLayout();
+  }
+})();
 </script>
 
 {% schema %}
@@ -377,6 +445,10 @@ addEventListener('DOMContentLoaded', (event) => {
   {
     "type": "header",
     "content": "slider settings"
+  },
+  {
+    "type": "paragraph",
+    "content": "Kaydırma ayarları mobil ve tablet içindir. Masaüstünde ürünler 12 px aralıkla grid olarak listelenir: 1199–1399 px ekranlarda 4, daha geniş ekranlarda 5 sütun."
   },
   {
     "type": "checkbox",

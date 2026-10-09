@@ -1,0 +1,370 @@
+<style>
+  #shopify-section-{{ section.id }} .slider-products {
+    display: block;
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  #shopify-section-{{ section.id }} .slider-products__heading {
+    margin: 0 0 8px;
+    color: var(--color-primary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+  #shopify-section-{{ section.id }} .slider-products__column { position: relative; min-width: 0; }
+  #shopify-section-{{ section.id }} .slider-products__carousel { overflow: hidden; }
+  #shopify-section-{{ section.id }} .slider-products__carousel .swiper-wrapper { display: flex; }
+  #shopify-section-{{ section.id }} .slider-products__carousel .swiper-slide { flex-shrink: 0; min-width: 0; }
+  #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-wrapper {
+    width: 100%; margin: 0; gap: 30px;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-slide {
+    width: calc((100% - 30px) / 2); max-width: none; padding: 0;
+  }
+  #shopify-section-{{ section.id }} .slider-products__button {
+    position: absolute; top: 50%; z-index: 2; width: 28px; height: 28px;
+    padding: 0; display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(6,31,79,.16); border-radius: 4px;
+    color: var(--color-primary); background: rgba(255,255,255,.92);
+    box-shadow: 0 4px 12px rgba(6,31,79,.08); transform: translateY(-50%);
+  }
+  #shopify-section-{{ section.id }} .slider-products__button:hover { color: #fff; background: var(--color-primary); }
+  #shopify-section-{{ section.id }} .slider-products__button.swiper-button-disabled { opacity: .35; pointer-events: none; }
+  #shopify-section-{{ section.id }} .slider-products__button.swiper-button-lock,
+  #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) + .slider-products__buttons { display: none; }
+  #shopify-section-{{ section.id }} .slider-products__button-prev-{{ section.id }} { left: -10px; }
+  #shopify-section-{{ section.id }} .slider-products__button-next-{{ section.id }} { right: -10px; }
+  #shopify-section-{{ section.id }} .slider-products__button:after { font: normal normal normal 18px/1 FontAwesome; }
+  #shopify-section-{{ section.id }} .slider-products__button-prev-{{ section.id }}:after { content: "\f104"; }
+  #shopify-section-{{ section.id }} .slider-products__button-next-{{ section.id }}:after { content: "\f105"; }
+  @media (min-width: 1199px) {
+    #shopify-section-{{ section.id }} .slider-products__heading {
+      font-size: 15px;
+      line-height: 17px;
+    }
+    #shopify-section-{{ section.id }} .slider-products__column { width: 100%; }
+    #shopify-section-{{ section.id }} .slider-products__carousel .swiper-wrapper {
+      height: auto; align-items: stretch;
+    }
+    #shopify-section-{{ section.id }} .slider-products__carousel .swiper-slide {
+      display: flex; height: auto;
+    }
+    #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap {
+      min-height: {{ section.settings.desktop_card_min_height }}px;
+    }
+    #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-slide {
+      width: calc((100% - 60px) / 3);
+    }
+  }
+  @media (min-width: 1400px) {
+    #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-slide {
+      width: calc((100% - 90px) / 4);
+    }
+  }
+  @media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .slider-products__heading { font-size: 11.5px; }
+    #shopify-section-{{ section.id }} .slider-products {
+      padding-top: {{ section.settings.mobile_padding_top }}px;
+      padding-bottom: {{ section.settings.mobile_padding_bottom }}px;
+    }
+    #shopify-section-{{ section.id }} .slider-products__buttons { display: none; }
+  }
+@media (min-width: 1199px) {
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap {
+    width: 100%;
+    height: auto;
+    border-color: #edf0f4;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap:hover {
+    border-color: rgba(6, 31, 79, 0.18);
+    box-shadow: 0 6px 18px rgba(6, 31, 79, 0.08);
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .product-image {
+    width: 41%;
+    padding: 1px 0 1px 8px;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .product-image .ratio img {
+    object-fit: contain;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .product-image .product-label .sale-title {
+    top: 8px;
+    right: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 3px 10px;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .product-content {
+    width: 59%;
+    padding: 0 12px 0 10px;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .product-content .product-title a {
+    display: -webkit-box;
+    min-height: 38px;
+    overflow: hidden;
+    color: #061f4f;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .product-content .price-box {
+    margin-top: 5px;
+    line-height: 1.1;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .price-box .new-price {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap .price-box .old-price {
+    display: block;
+    margin-top: 2px;
+    padding-left: 0;
+    color: #8d8d8d;
+    font-size: 13px;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 767px) {
+  #shopify-section-{{ section.id }} .slider-products__carousel {
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .swiper-wrapper { display: flex; align-items: stretch; }
+  #shopify-section-{{ section.id }} .slider-products__carousel .swiper-slide { display: flex; flex-shrink: 0; height: auto; }
+  /* Match Swiper's 1.5 slides and 12px spacing before initialization. */
+  #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-wrapper {
+    width: 100%;
+    margin: 0;
+    gap: 12px;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-slide {
+    width: calc((100% - 6px) / 1.5);
+    max-width: none;
+    padding: 0;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+    align-items: center;
+    gap: 7px;
+    padding: 1px 7px;
+    box-shadow: none;
+    border-radius: 6px;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-image {
+    position: static;
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-image .ratio img { object-fit: contain; }
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-content {
+    min-width: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-title a {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .price-box { margin-top: 4px; line-height: 1.2; }
+  #shopify-section-{{ section.id }} .slider-products__carousel .new-price {
+    font-size: 14px !important;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .old-price {
+    font-size: 10px !important;
+    padding-left: 0;
+    white-space: nowrap;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-volume-teaser--compact {
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #596273;
+    line-height: 1.2;
+  }
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-volume-teaser__amount {
+    white-space: nowrap;
+  }
+}
+</style>
+<pg-home-carousel class="slider-products" data-kind="products">
+  <div class="container">
+    {%- assign list_heading = section.settings.list_heading | strip -%}
+    {%- if list_heading != blank -%}
+      <h2 class="slider-products__heading">{{ list_heading | escape }}</h2>
+    {%- endif -%}
+    <div class="slider-products__column">
+        <div class="product-list-item swiper slider-products__carousel" id="slider-products-{{ section.id }}">
+          <div class="swiper-wrapper">
+            {% assign product_limit = section.settings.select_product_limit %}
+            {% for product in collections[section.settings.select_product].products limit: product_limit %}
+            <div class="swiper-slide">
+              {% render 'product-list-item',
+                product: product,
+                section_id: section.id,
+                show_full_title: true,
+                ga4_list_id: 'home_side_slider',
+                ga4_list_name: 'Ana sayfa - slider yanı seçki',
+                ga4_click_area: 'Ana sayfa - slider yanı seçki',
+                ga4_source_page_type: 'home',
+                ga4_source_page_name: 'Ana sayfa',
+                ga4_item_category: collections[section.settings.select_product].title,
+                ga4_index: forloop.index
+              %}
+            </div>
+            {% else %}
+            {% for i in (1..product_limit) %}
+            <div class="swiper-slide">
+              <div class="single-product-wrap">
+                <div class="product-image">
+                  {%- capture placeholder -%}collection-{% cycle 1, 2, 3, 4, 5, 6 %}{%- endcapture -%}
+                  {{ placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+                <div class="product-content">
+                  <div class="product-title">
+                    <a href="javascript:void(0)">Product title</a>
+                  </div>
+                  <div class="price-box">
+                    <span class="new-price">$9.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="slider-products__buttons">
+          <button type="button" class="slider-products__button slider-products__button-prev-{{ section.id }}" aria-label="Önceki ürün"></button>
+          <button type="button" class="slider-products__button slider-products__button-next-{{ section.id }}" aria-label="Sonraki ürün"></button>
+        </div>
+    </div>
+  </div>
+  <script type="application/json" data-carousel-options>{"slidesPerView":1.5,"spaceBetween":12,"navigation":true,"breakpoints":{"768":{"slidesPerView":2,"spaceBetween":30},"1199":{"slidesPerView":3,"spaceBetween":30},"1400":{"slidesPerView":4,"spaceBetween":30}}}</script>
+</pg-home-carousel>
+{% schema %}
+{
+  "name": "Slider products",
+  "enabled_on": {
+    "templates": [
+      "index"
+    ]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "list_heading",
+      "label": "Liste başlığı",
+      "info": "Kartların üzerinde gösterilir. Başlığı gizlemek için boş bırakın."
+    },
+    {
+      "type": "collection",
+      "id": "select_product",
+      "label": "Koleksiyon"
+    },
+    {
+      "type": "range",
+      "id": "select_product_limit",
+      "label": "Ürün limiti",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Masaüstü düzeni"
+    },
+    {
+      "type": "paragraph",
+      "content": "Yatay kartlar tek sırada gösterilir: 1199–1399 px ekranlarda 3, daha geniş ekranlarda 4 kart. Ürün limiti daha yüksekse kalan ürünler kaydırılır. Mobilde 1,5 ürün görünümü korunur."
+    },
+    {
+      "type": "range",
+      "id": "desktop_card_min_height",
+      "label": "Kartın minimum yüksekliği",
+      "min": 120,
+      "max": 240,
+      "step": 4,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Masaüstü üst boşluk",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Masaüstü alt boşluk",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_top",
+      "label": "Mobil üst boşluk",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_bottom",
+      "label": "Mobil alt boşluk",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slider products"
+    }
+  ]
+}
+{% endschema %}

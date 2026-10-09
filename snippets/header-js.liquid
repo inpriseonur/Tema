@@ -4,6 +4,9 @@
 <script type="text/javascript" src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer="defer"></script>
 <script type="text/javascript" src="{{ 'owl.carousel.min.js' | asset_url }}" defer="defer"></script>
 <script type="text/javascript" src="{{ 'swiper-bundle.min.js' | asset_url }}" defer="defer"></script>
+{%- if request.page_type == 'index' -%}
+<script src="{{ 'pg-home-carousel.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
 <script type="text/javascript" src="{{ 'jquery.magnific-popup.min.js' | asset_url }}" defer="defer"></script>
 <script type="text/javascript" src="{{ 'jquery.countTo.js' | asset_url }}" defer="defer"></script>
 <script type="text/javascript" src="{{ 'api.jquery.js' | shopify_asset_url }}" defer="defer"></script>
