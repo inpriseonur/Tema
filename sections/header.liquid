@@ -446,7 +446,7 @@
   }
   @media (min-width: 1200px) {
     .header-area .header-main {
-      padding: 14px 0;
+      padding: 10px 0;
       border-top: 0;
     }
     .header-area .header-main-area {
@@ -519,12 +519,9 @@
     .main-menu-area {
       border-bottom: 1px solid rgba(6, 31, 70, 0.06);
     }
-    .main-menu-area .main-navigation {
-      min-height: 48px;
-    }
     .main-menu-area ul.main-menu li.menu-link a.link-title {
-      padding-top: 14px;
-      padding-bottom: 14px;
+      padding-top: 10px;
+      padding-bottom: 10px;
       font-weight: 600;
       transition: color 0.2s ease;
     }
@@ -568,6 +565,14 @@
     min-height: 51px;
     justify-content: space-between;
     gap: 20px;
+  }
+  @media (min-width: 1200px) {
+    .main-menu-area .main-navigation {
+      min-height: 43px;
+    }
+    .main-menu-area ul.main-menu li.menu-link a.link-title .sp-link-title::after {
+      bottom: -10px;
+    }
   }
   .main-menu-area .main-navigation > nav.mainwrap {
     flex: 1 1 auto;

@@ -474,7 +474,7 @@
           <span class="total-label-group">
             <span class="total-label">{{ 'sections.cart.subtotal' | t }}</span>
             {%- if mobile_tax_note != blank -%}
-              <small class="total-tax-note" title="{{ mobile_tax_note | escape }}">({{ mobile_tax_note | escape }})</small>
+              <small class="total-tax-note" title="{{ mobile_tax_note | escape }}">{{ mobile_tax_note | escape }}</small>
             {%- endif -%}
           </span>
           <span class="total-price">{{ cart.total_price | money }}</span>

@@ -1,8 +1,10 @@
 <section class="featured-highlights-section" style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;">
   <div class="container">
     <div class="featured-highlights">
+      {%- assign rendered_highlights_count = 0 -%}
       {%- for block in section.blocks -%}
         {%- if block.settings.title != blank or block.settings.text != blank -%}
+          {%- assign rendered_highlights_count = rendered_highlights_count | plus: 1 -%}
           {%- assign faq_target = block.settings.faq_target | strip -%}
           <div
             class="featured-highlights__item{% if faq_target != blank %} featured-highlights__item--clickable{% endif %}{% if block.settings.show_mobile == false %} featured-highlights__item--hide-mobile{% endif %}"
@@ -66,6 +68,27 @@
     padding: {{ section.settings.item_padding_y }}px {{ section.settings.item_padding_x }}px;
     border-right: 1px solid {{ section.settings.border_color }};
   }
+
+  {% if section.settings.desktop_content_alignment == 'center' %}
+    {% assign centered_columns = rendered_highlights_count | at_most: section.settings.columns_desktop | at_least: 1 %}
+    @media (min-width: 1200px) {
+      #shopify-section-{{ section.id }} .featured-highlights {
+        width: fit-content;
+        max-width: 100%;
+        margin-inline: auto;
+        grid-template-columns: repeat({{ centered_columns }}, minmax(0, 1fr));
+        column-gap: {{ section.settings.desktop_highlight_gap | default: 0 }}px;
+      }
+
+      #shopify-section-{{ section.id }} .featured-highlights__item {
+        justify-content: center;
+      }
+
+      #shopify-section-{{ section.id }} .featured-highlights__content {
+        text-align: left;
+      }
+    }
+  {% endif %}
 
   #shopify-section-{{ section.id }} .featured-highlights__item--clickable {
     cursor: pointer;
@@ -173,7 +196,7 @@
 
     #shopify-section-{{ section.id }} .featured-highlights__item {
       flex: 0 0 auto;
-      min-height: 44px;
+      min-height: 36px;
       gap: 6px;
       padding: {{ section.settings.mobile_item_padding_y }}px {{ section.settings.mobile_item_padding_x }}px;
       border: 0;
@@ -213,11 +236,15 @@
       font-size: {{ section.settings.mobile_title_size }}px;
     }
 
-    {% unless section.settings.enable_mobile_links %}
+    {% if section.settings.enable_mobile_links %}
+      #shopify-section-{{ section.id }} .featured-highlights__item--clickable {
+        min-height: 44px;
+      }
+    {% else %}
       #shopify-section-{{ section.id }} .featured-highlights__item--clickable {
         cursor: default;
       }
-    {% endunless %}
+    {% endif %}
   }
 </style>
 
@@ -340,6 +367,28 @@
       "content": "Desktop"
     },
     {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "label": "Masaüstü içerik hizası",
+      "info": "1200 px ve üzerindeki ekranlarda Ortalı seçeneği özelliklerin tamamını bir grup olarak sayfanın ortasına yerleştirir.",
+      "options": [
+        { "value": "left", "label": "Sola hizalı" },
+        { "value": "center", "label": "Ortalı" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "desktop_highlight_gap",
+      "label": "Özellikler arası ek boşluk",
+      "info": "Ortalı masaüstü görünümünde uygulanır. Mevcut yatay iç boşluğa eklenir; 0 mevcut aralığı korur.",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
       "type": "range",
       "id": "item_padding_x",
       "label": "Yatay iç boşluk",
@@ -423,11 +472,11 @@
       "type": "range",
       "id": "mobile_item_padding_y",
       "label": "Mobil dikey iç boşluk",
-      "min": 8,
+      "min": 6,
       "max": 24,
       "step": 2,
       "unit": "px",
-      "default": 12
+      "default": 6
     },
     {
       "type": "range",

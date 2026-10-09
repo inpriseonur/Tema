@@ -156,11 +156,16 @@
     right: -15px;
 }
 @media(max-width: 767px) {
+    #shopify-section-{{ section.id }} .new-product-slider .single-product-wrap {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
     .new-product .new-product-slider .single-product-wrap .product-image .ratio {
-        --ratio-percent: 82% !important;
+        /* Reuse at most the 12px saved from vertical padding and content spacing. */
+        --ratio-percent: min(90%, calc(82% + 12px)) !important;
     }
     .new-product .new-product-slider .single-product-wrap .product-content {
-        margin-top: 6px;
+        margin-top: 4px;
     }
     .new-product .new-product-slider .single-product-wrap .product-content .product-title a {
         height: 32px;
@@ -197,16 +202,21 @@
         padding: 3px 8px;
         font-size: 11px;
     }
-    .new-product .new-product-slider .owl-nav button {
-        height: 26px;
-        width: 26px;
-        font-size: 16px;
+    #shopify-section-{{ section.id }} .new-product-slider .owl-nav {
+        display: none;
     }
-    .new-product .new-product-slider .owl-nav button.owl-prev {
-        left: -10px;
+}
+
+@media (min-width: 320px) and (max-width: 767px) {
+    /* Narrow the frame by 12px while preserving the image and text widths. */
+    #shopify-section-{{ section.id }} .new-product-slider .single-product-wrap {
+        padding-left: 4px;
+        padding-right: 4px;
     }
-    .new-product .new-product-slider .owl-nav button.owl-next {
-        right: -10px;
+    /* Keep Owl's 26px sizing inset at the trailing edge for a next-card preview. */
+    #shopify-section-{{ section.id }} .new-product-slider .owl-stage {
+        padding-inline-start: 0 !important;
+        padding-inline-end: 26px !important;
     }
 }
 
@@ -226,6 +236,14 @@
 @media (min-width: 320px) {
     #shopify-section-{{ section.id }} .new-product-slider:not(.owl-loaded):not(.owl-loading) {
         --initial-columns: 2;
+    }
+}
+@media (min-width: 320px) and (max-width: 767px) {
+    #shopify-section-{{ section.id }} .new-product-slider:not(.owl-loaded):not(.owl-loading) {
+        --initial-gap: 10px;
+    }
+    #shopify-section-{{ section.id }} .new-product-slider:not(.owl-loaded):not(.owl-loading) > .item {
+        flex-basis: calc((100% - 36px) / 2);
     }
 }
 @media (min-width: 768px) {
@@ -320,19 +338,26 @@
     responsive:{
         0:{
           items: 1,
-          margin: 12
+          margin: 12,
+          nav: false
         },
         320:{
           items: 2,
-          margin: 12
+          margin: 10,
+          stagePadding: 13,
+          nav: false
         },
         479:{
           items: 2,
-          margin: 12
+          margin: 10,
+          stagePadding: 13,
+          nav: false
         },
         540:{
           items: 2,
-           margin: 12
+          margin: 10,
+          stagePadding: 13,
+          nav: false
         },
         768:{
           items: 2

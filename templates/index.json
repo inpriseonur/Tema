@@ -141,7 +141,7 @@
                 "text_size": 10,
                 "enable_mobile_links": false,
                 "mobile_item_padding_x": 8,
-                "mobile_item_padding_y": 8,
+                "mobile_item_padding_y": 6,
                 "mobile_icon_font_size": 10,
                 "mobile_title_size": 10,
                 "title_color": "#1a1a1a",

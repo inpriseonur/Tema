@@ -151,24 +151,25 @@
   }
   #shopify-section-{{ section.id }} .slider-products__carousel .swiper-wrapper { display: flex; align-items: stretch; }
   #shopify-section-{{ section.id }} .slider-products__carousel .swiper-slide { display: flex; flex-shrink: 0; height: auto; }
-  /* Match Swiper's 1.5 slides and 12px spacing before initialization. */
+  /* Match Swiper's 1.5 slides and 6px spacing before initialization. */
   #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-wrapper {
     width: 100%;
     margin: 0;
-    gap: 12px;
+    gap: 6px;
   }
   #shopify-section-{{ section.id }} .slider-products__carousel:not(.swiper-initialized) .swiper-slide {
-    width: calc((100% - 6px) / 1.5);
+    width: calc((100% - 3px) / 1.5);
     max-width: none;
     padding: 0;
   }
   #shopify-section-{{ section.id }} .slider-products__carousel .single-product-wrap {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+    /* Keep the image width: deduct the 7px inner gap and 6px gained for text. */
+    grid-template-columns: minmax(0, calc((100% - 13px) * 0.43)) minmax(0, 1fr);
     align-items: center;
     gap: 7px;
-    padding: 1px 7px;
+    padding: 1px 5px;
     box-shadow: none;
     border-radius: 6px;
   }
@@ -178,6 +179,8 @@
     width: 100%;
     padding: 0;
   }
+  /* Enlarge the image horizontally without adding the portrait frame's height. */
+  #shopify-section-{{ section.id }} .slider-products__carousel .product-image .ratio { --ratio-percent: 100% !important; }
   #shopify-section-{{ section.id }} .slider-products__carousel .product-image .ratio img { object-fit: contain; }
   #shopify-section-{{ section.id }} .slider-products__carousel .product-content {
     min-width: 0;
@@ -271,7 +274,7 @@
         </div>
     </div>
   </div>
-  <script type="application/json" data-carousel-options>{"slidesPerView":1.5,"spaceBetween":12,"navigation":true,"breakpoints":{"768":{"slidesPerView":2,"spaceBetween":30},"1199":{"slidesPerView":3,"spaceBetween":30},"1400":{"slidesPerView":4,"spaceBetween":30}}}</script>
+  <script type="application/json" data-carousel-options>{"slidesPerView":1.5,"spaceBetween":6,"navigation":true,"breakpoints":{"768":{"slidesPerView":2,"spaceBetween":30},"1199":{"slidesPerView":3,"spaceBetween":30},"1400":{"slidesPerView":4,"spaceBetween":30}}}</script>
 </pg-home-carousel>
 {% schema %}
 {

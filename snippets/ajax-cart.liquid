@@ -210,7 +210,7 @@
         </div>
         {%- assign drawer_tax_note = 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url | strip_html | strip -%}
         {%- if drawer_tax_note != blank -%}
-          <small class="drawer-tax-note" title="{{ drawer_tax_note | escape }}">({{ drawer_tax_note | escape }})</small>
+          <small class="drawer-tax-note" title="{{ drawer_tax_note | escape }}">{{ drawer_tax_note | escape }}</small>
         {%- endif -%}
         <div class="mini-cart-button" {{ block.shopify_attributes }}>
           <noscript>

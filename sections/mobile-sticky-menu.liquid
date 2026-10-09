@@ -163,7 +163,7 @@
 }
 .mobile-sticky-menu ul.grid-wrap li.grid-wrapper {
   flex: 1;
-  padding: 10px 0;
+  padding: 6px 0;
   border-right: none;
 }
 .mobile-sticky-menu a.icon-block {
@@ -215,7 +215,7 @@
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: -35px;
+  top: -31px;
   border: 4px solid #fafcff;
   box-shadow: 0 6px 18px rgba(6,31,79,0.20);
   font-size: 22px;
@@ -264,8 +264,8 @@
 }
 
 @media(max-width: 600px){
-  body {
-    padding-bottom: calc(74px + env(safe-area-inset-bottom));
+  body:not(.template-product):not(.template-cart) {
+    padding-bottom: calc(66px + env(safe-area-inset-bottom));
   }
   .mobile-sticky-menu {
     display: block;
