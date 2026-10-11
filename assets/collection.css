@@ -328,6 +328,61 @@
   background-color: #fff;
 }
 
+/* The fixed filter drawer leaves this outer wrapper empty in the page flow. */
+.shop-page .shop-sidebar-inner.shop-sidebar-without {
+  border: 0;
+}
+
+/* Collection-only pagination; the shared pagination snippet serves other pages. */
+.shop-page .paginatoin-area ul.pagination-box {
+  gap: 4px;
+}
+
+.shop-page .paginatoin-area ul.pagination-box li {
+  margin: 0;
+}
+
+.shop-page .paginatoin-area ul.pagination-box li.number a,
+.shop-page .paginatoin-area ul.pagination-box li.np-icon a {
+  width: 40px;
+  height: 40px;
+  color: var(--color-primary);
+  background-color: transparent;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.shop-page .paginatoin-area ul.pagination-box li.number.active a,
+.shop-page .paginatoin-area ul.pagination-box li.number:hover a,
+.shop-page .paginatoin-area ul.pagination-box li.np-icon:hover a {
+  color: var(--color-primary);
+}
+
+.shop-page .paginatoin-area ul.pagination-box li.number.active a {
+  background-color: #faf3e5;
+  font-weight: 600;
+}
+
+@media (hover: hover) {
+  .shop-page .paginatoin-area ul.pagination-box li.number:not(.active):hover a,
+  .shop-page .paginatoin-area ul.pagination-box li.np-icon:hover a {
+    background-color: #f5f7f9;
+  }
+}
+
+.shop-page .paginatoin-area ul.pagination-box li a:focus-visible {
+  outline: 2px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .shop-page .paginatoin-area ul.pagination-box li.number a,
+  .shop-page .paginatoin-area ul.pagination-box li.np-icon a {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .shop-page .shop-sidebar-wrap {
   padding: 0;
 }
