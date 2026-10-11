@@ -115,7 +115,17 @@
         <p class="cart-volume-offer__message"><strong>{{ missing }} koli daha ekle</strong>, %{{ percent }} indirim ile koli fiyatın <strong>{{ offer_price | money }}</strong> olsun.</p>
       {%- endif -%}
     {%- unless completed -%}
-      <button type="button" class="cart-volume-offer__button" data-volume-offer data-variant="{{ variant_id }}" data-line="{{ campaign_item.index | plus: 1 }}" data-quantity="{{ line_quantity }}" aria-label="{{ campaign_product.title | escape }} {{ campaign_variant.title | escape }}: {{ missing }} koli daha ekle">Ekle <span aria-hidden="true">+</span></button>
+      <button type="button" class="cart-volume-offer__button" data-volume-offer
+        data-variant="{{ variant_id }}"
+        data-line="{{ campaign_item.index | plus: 1 }}"
+        data-quantity="{{ line_quantity }}"
+        data-product-id="{{ campaign_product.id }}"
+        data-product-name="{{ campaign_product.title | escape }}"
+        data-quantity-before="{{ quantity }}"
+        data-quantity-to-add="{{ missing }}"
+        data-quantity-target="{{ target_quantity }}"
+        data-offer-discount-percent="{{ percent }}"
+        aria-label="{{ campaign_product.title | escape }} {{ campaign_variant.title | escape }}: {{ missing }} koli daha ekle">Ekle <span aria-hidden="true">+</span></button>
     {%- endunless -%}
   </div>
 {%- endfor -%}

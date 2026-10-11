@@ -40,10 +40,23 @@ class CartProduct extends HTMLElement {
       button.disabled = true;
       button.setAttribute('aria-busy', 'true');
       const input = this.querySelector(`#Quantity-${line}`);
-      this.refreshQty(line, quantity, 'updates[]', {
+      const volumeOffer = {
         variant: button.dataset.variant,
-        key: input && input.dataset.lineKey
-      });
+        key: input && input.dataset.lineKey,
+        analytics: {
+          pg_click_area: 'Sepet koli avantajı',
+          pg_source_page_type: 'cart',
+          pg_item_id: button.dataset.productId,
+          pg_item_name: button.dataset.productName,
+          pg_variant_id: button.dataset.variant,
+          pg_quantity_before: Number(button.dataset.quantityBefore),
+          pg_quantity_to_add: Number(button.dataset.quantityToAdd),
+          pg_quantity_target: Number(button.dataset.quantityTarget),
+          pg_offer_discount_percent: Number(button.dataset.offerDiscountPercent)
+        }
+      };
+      this.trackVolumeOffer('cart_volume_offer_click', volumeOffer);
+      this.refreshQty(line, quantity, 'updates[]', volumeOffer);
     });
     Array.from(document.querySelectorAll('.checkout-btn .read-agree')).forEach(e => e.addEventListener('click',  function () {
       if($('.cust-checkbox').is(':checked')) {
@@ -161,6 +174,15 @@ class CartProduct extends HTMLElement {
       }
     ];
   }
+  trackVolumeOffer(eventName, volumeOffer) {
+    if (!volumeOffer.analytics || typeof window.gtag !== 'function') return;
+    // Analytics must never interrupt the cart update or its confirmation.
+    try {
+      window.gtag('event', eventName, volumeOffer.analytics);
+    } catch (error) {
+      // Cart operations remain available if the analytics integration fails.
+    }
+  }
   refreshQty(line, quantity, name, volumeOffer) {
     this.loadingShow(line);
     const body = JSON.stringify({
@@ -190,6 +212,7 @@ class CartProduct extends HTMLElement {
           if (updatedItem && String(updatedItem.variant_id) === volumeOffer.variant && updatedItem.quantity === quantity) {
             this.volumeAccepted.add(volumeOffer.variant);
             this.saveVolumeOffers();
+            this.trackVolumeOffer('cart_volume_offer_success', volumeOffer);
           }
         }
         this.classList.toggle('is-empty', parsedState.item_count === 0);
@@ -203,6 +226,7 @@ class CartProduct extends HTMLElement {
           elementToReplace.innerHTML =
             this.callSectionInnerHTML(parsedState.sections[section.section], section.selector);
         }));
+        if (cartFooter) this.updateMobileTotal(parsedState.sections[cartFooter.dataset.id]);
         const volumeContents = this.querySelector('[data-volume-cart-variants]');
         if (volumeContents) volumeContents.dataset.volumeCartVariants = JSON.stringify(parsedState.items.map((item) => item.variant_id));
         const updatedValue = parsedState.items[line - 1] ? parsedState.items[line - 1].quantity : undefined;
@@ -217,12 +241,15 @@ class CartProduct extends HTMLElement {
         }
         this.reLiveRegions(line, message);
         const lineItem = document.getElementById(`cartpro-${line}`) || document.getElementById(`ajaxcart-item-${line}`);
-        if (lineItem && lineItem.querySelector(`[name="${name}"]`)) {
-          cartDrawerWrapper ? triggerClick(cartDrawerWrapper, lineItem.querySelector(`[name="${name}"]`)) : lineItem.querySelector(`[name="${name}"]`).focus();
-        } else if (parsedState.item_count === 0 && cartDrawerWrapper) {
-          triggerClick(cartDrawerWrapper.querySelector('.cart-body-empty'), cartDrawerWrapper.querySelector('a'))
-        } else if (document.querySelector('.cart-item') && cartDrawerWrapper) {
-          triggerClick(cartDrawerWrapper, document.querySelector('.cart-item__name'))
+        // Offer buttons update quantity without reopening the mobile keyboard.
+        if (!volumeOffer) {
+          if (lineItem && lineItem.querySelector(`[name="${name}"]`)) {
+            cartDrawerWrapper ? triggerClick(cartDrawerWrapper, lineItem.querySelector(`[name="${name}"]`)) : lineItem.querySelector(`[name="${name}"]`).focus();
+          } else if (parsedState.item_count === 0 && cartDrawerWrapper) {
+            triggerClick(cartDrawerWrapper.querySelector('.cart-body-empty'), cartDrawerWrapper.querySelector('a'))
+          } else if (document.querySelector('.cart-item') && cartDrawerWrapper) {
+            triggerClick(cartDrawerWrapper, document.querySelector('.cart-item__name'))
+          }
         }
         live(SP_OBJECT.ajxcartRefresh, {source: 'ajax-items'});
       }).catch(() => {
@@ -233,6 +260,14 @@ class CartProduct extends HTMLElement {
       .finally(() => {
         this.loadingOff(line);
       });
+  }
+  updateMobileTotal(sectionHtml) {
+    const mobileTotal = document.querySelector('.mobile-sticky-cart .total-price');
+    if (!mobileTotal || typeof sectionHtml !== 'string') return;
+    // Use Shopify's discounted, formatted total from the same response as desktop.
+    const sectionDocument = new DOMParser().parseFromString(sectionHtml, 'text/html');
+    const updatedTotal = sectionDocument.querySelector('.mobile-sticky-cart .total-price');
+    if (updatedTotal) mobileTotal.textContent = updatedTotal.textContent;
   }
   reLiveRegions(line, message) {
     const lineItemError = document.getElementById(`cart-pro-err-${line}`) || document.getElementById(`ajaxcart-lineitemerror-${line}`);
