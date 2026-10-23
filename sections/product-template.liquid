@@ -624,7 +624,7 @@
                   <qty-box class="quantity qty-box">
                     <button class="qty-bt" name="minus" type="button">-</button>
                     <input class="qty-box-input" type="number" name="quantity" id="Quantity-{{ section.id }}" data-cart-quantity="{{ cart_qty }}" data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}" min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
-                      {% if product.selected_or_first_available_variant.quantity_rule.max != null %} data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" {% endif %} step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}" value="{{ product.selected_or_first_available_variant.quantity_rule.min }}" label="quantity" form="{{ product_form_id }}"/>
+                      {% if product.selected_or_first_available_variant.quantity_rule.max != null %} data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" {% endif %} step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}" value="{{ product.selected_or_first_available_variant.quantity_rule.min }}" aria-label="{{ 'products.product.quantity.label' | t | escape }}" form="{{ product_form_id }}"/>
                     <button class="qty-bt" name="plus" type="button">+</button>
                   </qty-box>
                   {%- comment -%}Mobilde adet seçicinin yanında geri sayım; geri sayım yoksa fiyat avantajı mesajı{%- endcomment -%}
@@ -1074,36 +1074,12 @@
         if (!volumeDiscounts || volumeDiscounts.closest('.quickview-block')) return;
 
         var quantityInput = productSection && productSection.querySelector('#Quantity-{{ section.id }}');
-        if (quantityInput && quantityInput.volumeSummaryLayoutCleanup) quantityInput.volumeSummaryLayoutCleanup();
         var summary = volumeDiscounts.querySelector('[data-volume-summary]');
         var summaryQuantity = volumeDiscounts.querySelector('[data-volume-summary-quantity]');
         var summaryTotal = volumeDiscounts.querySelector('[data-volume-summary-total]');
         var tiers = Array.prototype.slice.call(volumeDiscounts.querySelectorAll('[data-volume-tier]'));
 
         if (!quantityInput || !tiers.length) return;
-
-        if (summary) {
-          var summaryHome = document.createComment('Campaign summary position');
-          summary.before(summaryHome);
-          var summaryMedia = window.matchMedia('(max-width: 749px)');
-          volumeDiscounts.mobileSummary = summary;
-          function positionVolumeSummary() {
-            if (summaryMedia.matches) {
-              quantityInput.closest('.product-qty').appendChild(summary);
-            } else {
-              summaryHome.after(summary);
-            }
-            summary.classList.toggle('product-volume-discounts__summary--beside-quantity', summaryMedia.matches);
-          }
-          positionVolumeSummary();
-          summaryMedia.addEventListener('change', positionVolumeSummary);
-          quantityInput.volumeSummaryLayoutCleanup = function() {
-            summaryMedia.removeEventListener('change', positionVolumeSummary);
-            summaryHome.after(summary);
-            summary.classList.remove('product-volume-discounts__summary--beside-quantity');
-            summaryHome.remove();
-          };
-        }
 
         function updateMobileStickyVolumePrice(selectedTier) {
           var stickyPrice = document.querySelector('.mobile-sticky-price');
@@ -1284,7 +1260,6 @@
         if (!volumeDiscounts) return;
 
         volumeDiscounts.hidden = !isVisible;
-        if (volumeDiscounts.mobileSummary) volumeDiscounts.mobileSummary.hidden = !isVisible;
       }
 
       function resetProductQuantityToMinimum() {

@@ -614,17 +614,26 @@ class StRecomPro extends HTMLElement {
   constructor() {
     super();
   }
+  clearLoadingState() {
+    if (!this.querySelector('.related-loading')) return;
+    const section = this.closest('.related-product');
+    if (section) section.hidden = true;
+    this.replaceChildren();
+  }
   connectedCallback() {
     const sthandleIntersection = (entries, observer) => {
       if (!entries[0].isIntersecting) return;
       observer.unobserve(this);
       fetch(this.dataset.url)
-        .then((response) => response.text())
+        .then((response) => {
+          if (!response.ok) throw new Error('Related products request failed');
+          return response.text();
+        })
         .then((text) => {
           const html = document.createElement('div');
           html.innerHTML = text;
           const recommrela = html.querySelector('relative-pro');
-          if (recommrela && recommrela.innerHTML.trim().length) {
+          if (recommrela && recommrela.querySelector('.product-related-slider .swiper-slide')) {
             this.innerHTML = recommrela.innerHTML;
             if($(".shopify-product-reviews-badge").length > 0 && typeof window.SPR == 'function'){
               window.SPR.registerCallbacks(), window.SPR.initRatingHandler(), window.SPR.initDomEls(), window.SPR.loadProducts(), window.SPR.loadBadges();
@@ -706,6 +715,8 @@ class StRecomPro extends HTMLElement {
                 }
               }
             });
+          } else {
+            this.clearLoadingState();
           }
           setTimeout(function () {
               $(".wishlist-custom-action").each(function() {
@@ -727,6 +738,7 @@ class StRecomPro extends HTMLElement {
           }
         })
         .catch((e) => {
+          this.clearLoadingState();
           console.error(e);
         });
     };

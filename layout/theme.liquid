@@ -808,6 +808,31 @@
             inventory.style.marginLeft = '15px';
           }
 
+          // Relocate the original quantity control, retaining its form and event bindings.
+          var productSection = btn.closest('.product-main-template');
+          var quantityBox = productSection && productSection.querySelector('.product-qty qty-box');
+          var submitButton = btn.querySelector('button[name="add"]');
+          if (quantityBox && submitButton && !productSection.closest('.quickview-block')) {
+            var quantityHome = document.createComment('Original quantity position');
+            var quantityContainer = quantityBox.parentElement;
+            quantityBox.before(quantityHome);
+            var quantityMedia = window.matchMedia('(max-width: 749px)');
+            function positionStickyQuantity() {
+              if (quantityMedia.matches) {
+                submitButton.before(quantityBox);
+                btn.appendChild(shippingNote);
+              } else {
+                quantityHome.after(quantityBox);
+                topRow.appendChild(shippingNote);
+              }
+              btn.classList.toggle('mobile-purchase-bar--with-quantity', quantityMedia.matches);
+              quantityContainer.classList.toggle('product-qty--in-purchase-bar', quantityMedia.matches);
+              productSection.classList.toggle('has-sticky-quantity', quantityMedia.matches);
+            }
+            positionStickyQuantity();
+            quantityMedia.addEventListener('change', positionStickyQuantity);
+          }
+
           // Varyant değiştiğinde klonları güncellemek için Observer
           var observer = new MutationObserver(function() {
             priceClone.innerHTML = priceBox.innerHTML;
