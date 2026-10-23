@@ -650,6 +650,7 @@ class StRecomPro extends HTMLElement {
             }
             var swiper = new Swiper('#related-slider', {
               slidesPerView: 5,
+              threshold: 6,
               grid: {
                 rows: 1,
                 fill: 'row' | 'column',
@@ -664,44 +665,12 @@ class StRecomPro extends HTMLElement {
               },
               breakpoints: {
                 0: {
-                  slidesPerView: 1,
+                  slidesPerView: 'auto',
                   grid: {
                     rows: 1,
                     fill: 'row' | 'column',
                   },
-                  spaceBetween: 12
-                },
-                320: {
-                  slidesPerView: 1,
-                  grid: {
-                    rows: 1,
-                    fill: 'row' | 'column',
-                  },
-                  spaceBetween: 12
-                },
-                360: {
-                  slidesPerView: 2,
-                  grid: {
-                    rows: 1,
-                    fill: 'row' | 'column',
-                  },
-                  spaceBetween: 12
-                },
-                540: {
-                  slidesPerView: 2,
-                  grid: {
-                    rows: 1,
-                    fill: 'row' | 'column',
-                  },
-                  spaceBetween: 12
-                },
-                640: {
-                  slidesPerView: 2,
-                  grid: {
-                    rows: 1,
-                    fill: 'row' | 'column',
-                  },
-                  spaceBetween: 12
+                  spaceBetween: 10
                 },
                 768: {
                   slidesPerView: 2,
