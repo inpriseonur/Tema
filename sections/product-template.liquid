@@ -64,6 +64,7 @@
           <div class="detail-wrap">
             <div class="product_details">
               <div class="product_detail_img">
+                <div class="mobile-gallery-actions" data-mobile-gallery-actions></div>
                 <div class="product_img_top">
                   <div class="custom-badge-overlay">
                     {%- for block in section.blocks -%}
@@ -707,13 +708,13 @@
                   
                   {%- when 'product_wishlist' -%}
                   <div class="product-action-row" {{ block.shopify_attributes }}>
-                    <button class="wishlist wishlist-custom-action form-btn"  data-handle="{{ product.handle }}" aria-label="{{ product.handle }}">
+                    <button type="button" class="wishlist wishlist-custom-action form-btn" data-handle="{{ product.handle }}" aria-label="Favorilere ekle veya çıkar">
                       <i class="fa fa-heart-o"></i>
                       {% if block.settings.wishlist_title %}
                       <span>{{ block.settings.wishlist_title }}</span>
                       {% endif %}
                     </button>
-                    <a href="https://wa.me/905412450690" target="_blank" rel="noopener noreferrer" class="product-whatsapp-link">
+                    <a href="https://wa.me/905412450690" target="_blank" rel="noopener noreferrer" class="product-whatsapp-link" aria-label="WhatsApp'tan sor">
                       <i class="fa fa-whatsapp"></i>
                       <span>WhatsApp'tan Sor</span>
                     </a>
@@ -976,18 +977,17 @@
         var quantityBlock = detailsContainer && detailsContainer.querySelector('.product-qty');
         var variantInfoBlock = detailsContainer && detailsContainer.querySelector('.product-variant-info');
         var actionRow = detailsContainer && detailsContainer.querySelector('.product-action-row');
-        var trustBlocks = detailsContainer && detailsContainer.querySelectorAll('.purchase-trust-messages:not(.purchase-trust-messages--hide-mobile)');
-        var lastTrustBlock = trustBlocks && trustBlocks[trustBlocks.length - 1];
+        var galleryActions = productSection.querySelector('[data-mobile-gallery-actions]');
 
-        function registerMobileDetailsMove(node, target, className) {
+        function registerMobileDetailsMove(node, target, className, appendToTarget) {
           if (!node || !target) return;
           var originalPosition = document.createComment('Original product detail position');
           node.parentNode.insertBefore(originalPosition, node);
-          mobileDetailsMoves.push({ node: node, target: target, originalPosition: originalPosition, className: className });
+          mobileDetailsMoves.push({ node: node, target: target, originalPosition: originalPosition, className: className, appendToTarget: appendToTarget });
         }
 
         registerMobileDetailsMove(variantInfoBlock, quantityBlock, 'product-variant-info--below-quantity');
-        registerMobileDetailsMove(actionRow, lastTrustBlock, 'product-action-row--below-trust');
+        registerMobileDetailsMove(actionRow, galleryActions, 'product-action-row--gallery', true);
 
         function updateMobileDetailsLayout() {
           if (!productSection.isConnected) {
@@ -996,7 +996,11 @@
           }
           mobileDetailsMoves.forEach(function(move) {
             var anchor = mobileDetailsQuery.matches ? move.target : move.originalPosition;
-            anchor.parentNode.insertBefore(move.node, anchor.nextSibling);
+            if (mobileDetailsQuery.matches && move.appendToTarget) {
+              anchor.appendChild(move.node);
+            } else {
+              anchor.parentNode.insertBefore(move.node, anchor.nextSibling);
+            }
             move.node.classList.toggle(move.className, mobileDetailsQuery.matches);
           });
         }
