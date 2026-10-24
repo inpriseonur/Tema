@@ -26,7 +26,8 @@
             <div class="tab-pane fade{% if forloop.first == true %} active show{% endif %}" id="tab-{{ block.id }}" role="tabpanel">
               <div class="pro-tab-slider swiper" id="pro-tab-{{ block.id }}">
                 <div class="swiper-wrapper">
-                  {% for product in collections[block.settings.tab_product].products %}
+                  {% assign category_product = collections[block.settings.tab_product] %}
+                  {% for product in category_product.products limit: section.settings.featured_product_limit_handle %}
                   <div class="swiper-slide">
                     {% assign ga4_featured_list_id = 'home_featured_product_tab_' | append: block.settings.tab_product %}
                     {% assign ga4_featured_list_name = section.settings.section_title | append: ' - ' | append: category_product.title %}
@@ -51,14 +52,20 @@
               </div>
             </div>
             <script>
-            addEventListener('DOMContentLoaded', (event) => {
-              var swiper = new Swiper('#pro-tab-{{ block.id }}', {
+            (() => {
+              const element = document.getElementById('pro-tab-{{ block.id }}');
+              if (!element) return;
+              const sectionElement = element.closest('.shopify-section');
+              const desktop = window.matchMedia('(min-width: 1199px)');
+              let swiper;
+              const options = {
                 slidesPerView: {{ section.settings.slide_product_limit }},
                 grid: {
                   rows: {{ section.settings.product_col }},
                   fill: 'row' | 'column',
                 },
                 spaceBetween: 30,
+                threshold: 6,
                 observer: true,
                 observeParents: true,
                 {%- if settings.enable_rtl -%}
@@ -71,46 +78,19 @@
                 breakpoints: {
                   0: {
                     slidesPerView: 1,
-                    grid: {
-                      rows: {{ section.settings.product_col }},
-                      fill: 'row' | 'column',
-                    },
-                    spaceBetween: 12
+                    grid: { rows: 1, fill: 'row' },
+                    spaceBetween: 12,
+                    navigation: { enabled: false }
                   },
                   320: {
-                    slidesPerView: 1,
-                    grid: {
-                      rows: {{ section.settings.product_col }},
-                      fill: 'row' | 'column',
-                    },
-                    spaceBetween: 12
-                  },
-                  360: {
-                    slidesPerView: 2,
-                    grid: {
-                      rows: {{ section.settings.product_col }},
-                      fill: 'row' | 'column',
-                    },
-                    spaceBetween: 12
-                  },
-                  540: {
-                    slidesPerView: 2,
-                    grid: {
-                      rows: {{ section.settings.product_col }},
-                      fill: 'row' | 'column',
-                    },
-                    spaceBetween: 12
-                  },
-                  640: {
-                    slidesPerView: 2,
-                    grid: {
-                      rows: {{ section.settings.product_col }},
-                      fill: 'row' | 'column',
-                    },
-                    spaceBetween: 12
+                    slidesPerView: 'auto',
+                    grid: { rows: 1, fill: 'row' },
+                    spaceBetween: 10,
+                    navigation: { enabled: false }
                   },
                   768: {
                     slidesPerView: 2,
+                    navigation: { enabled: true },
                     grid: {
                       rows: {{ section.settings.product_col }},
                       fill: 'row' | 'column',
@@ -134,8 +114,40 @@
                     spaceBetween: 30
                   }
                 }
-              });
-            });
+              };
+
+              function updateLayout() {
+                if (!element.isConnected) return;
+                if (desktop.matches) {
+                  if (swiper) {
+                    swiper.destroy(true, true);
+                    swiper = null;
+                  }
+                } else if (!swiper && typeof Swiper !== 'undefined') {
+                  swiper = new Swiper(element, options);
+                } else if (swiper) {
+                  swiper.update();
+                }
+              }
+
+              function onSectionUnload(event) {
+                if (!event.target.contains(element)) return;
+                desktop.removeEventListener('change', updateLayout);
+                document.removeEventListener('DOMContentLoaded', updateLayout);
+                document.removeEventListener('shopify:section:unload', onSectionUnload);
+                if (sectionElement) sectionElement.removeEventListener('shown.bs.tab', updateLayout);
+                if (swiper) swiper.destroy(true, true);
+              }
+
+              desktop.addEventListener('change', updateLayout);
+              document.addEventListener('shopify:section:unload', onSectionUnload);
+              if (sectionElement) sectionElement.addEventListener('shown.bs.tab', updateLayout);
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateLayout, { once: true });
+              } else {
+                updateLayout();
+              }
+            })();
             </script>
             {% endcase %}
             {% endfor %}
@@ -210,6 +222,10 @@
   {
     "type": "header",
     "content": "Product"
+  },
+  {
+    "type": "paragraph",
+    "content": "Kaydırma ayarları mobil ve tablet içindir. Masaüstünde ürünler 12 px aralıkla grid olarak listelenir: 1199–1399 px ekranlarda 4, daha geniş ekranlarda 5 sütun."
   },
   {
     "type": "select",
@@ -472,8 +488,38 @@
     pointer-events: none;
 }
 @media(max-width: 767px){
+  #shopify-section-{{ section.id }} .pro-tab-slider {
+    overflow: hidden;
+  }
+  #shopify-section-{{ section.id }} .pro-tab-slider .swiper-wrapper {
+    display: flex;
+    width: 100%;
+  }
+  #shopify-section-{{ section.id }} .pro-tab-slider .swiper-slide {
+    flex-shrink: 0;
+    width: 100%;
+  }
+  #shopify-section-{{ section.id }} .pro-tab-slider:not(.swiper-initialized) .swiper-slide {
+    margin-inline-end: 12px;
+  }
+  #shopify-section-{{ section.id }} .product-tab-buttons {
+    display: none;
+  }
+  #shopify-section-{{ section.id }} .single-product-wrap {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  #shopify-section-{{ section.id }} .single-product-wrap .product-image {
+    width: 100%;
+  }
+  #shopify-section-{{ section.id }} .single-product-wrap .product-image .ratio {
+    --ratio-percent: min(90%, calc(82% + 12px)) !important;
+  }
+  #shopify-section-{{ section.id }} .single-product-wrap .product-image .ratio img {
+    object-fit: contain;
+  }
   #shopify-section-{{ section.id }} .product-area .single-product-wrap .product-content {
-    margin-top: 6px;
+    margin-top: 4px;
   }
   #shopify-section-{{ section.id }} .product-area .product-content .price-box,
   #shopify-section-{{ section.id }} .product-area .product-content .product-volume-teaser {
@@ -511,4 +557,64 @@
     font-size: 11px;
   }
 }
+
+  @media (min-width: 320px) and (max-width: 767px) {
+    /* Match the homepage card width and 26px trailing preview before/after init. */
+    #shopify-section-{{ section.id }} .pro-tab-slider .swiper-slide {
+      width: calc((100% - 36px) / 2);
+    }
+    #shopify-section-{{ section.id }} .pro-tab-slider:not(.swiper-initialized) .swiper-slide {
+      margin-inline-end: 10px;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap {
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+  }
+
+  @media (min-width: 1199px) {
+    #shopify-section-{{ section.id }} .pro-tab-slider {
+      overflow: visible;
+    }
+    #shopify-section-{{ section.id }} .pro-tab-slider .swiper-wrapper {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
+      gap: 12px;
+      height: auto;
+    }
+    #shopify-section-{{ section.id }} .pro-tab-slider .swiper-slide {
+      min-width: 0;
+      width: auto;
+      margin: 0;
+    }
+    #shopify-section-{{ section.id }} .product-tab-buttons {
+      display: none;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap .product-image {
+      width: 100%;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap .product-image .ratio {
+      --ratio-percent: 88% !important;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap .product-image .ratio img {
+      object-fit: contain;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap .product-content {
+      margin-top: 12px;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap .product-content .product-title a {
+      font-size: 13px;
+    }
+    #shopify-section-{{ section.id }} .single-product-wrap .price-box .new-price,
+    #shopify-section-{{ section.id }} .single-product-wrap .price-box .old-price,
+    #shopify-section-{{ section.id }} .product-volume-teaser__amount {
+      white-space: nowrap;
+    }
+  }
+  @media (min-width: 1400px) {
+    #shopify-section-{{ section.id }} .pro-tab-slider .swiper-wrapper {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
 </style>
