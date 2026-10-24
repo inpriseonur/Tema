@@ -365,77 +365,25 @@ class Swatchoption extends HTMLElement {
     }
   }
   updateImage() {
-    var product_id = this.swatch.featured_image.product_id;
-    if (this.swatch && this.swatch.featured_image) {
-      if(jQuery('.product_details .swiper-slide').length >= 1){
-        var productSliderEl = document.querySelector("#slider-small-"+product_id);
-        var isQuickView = productSliderEl && productSliderEl.closest('.quickview-block');
-        var useAutoHeight = window.innerWidth < 1200 || isQuickView;
-        var swiperOptions = {
-          spaceBetween: 0,
-          slidesPerView: 1,
-          autoHeight: useAutoHeight,
-          slideToClickedSlide: true,
-          navigation: {
-            nextEl: ".button-next",
-            prevEl: ".button-prev"
-          }
-        };
+    if (!this.swatch || !this.swatch.featured_media) return;
+    const section = this.closest('.product-main-template');
+    const gallery = section && section.querySelector('.slider-big');
+    if (!gallery) return;
 
-        var useVerticalThumbs = !isQuickView && window.innerWidth >= 1200;
+    const mediaId = String(this.swatch.featured_media.id);
+    // The initial gallery setup may still be pending after an early variant click.
+    gallery.dataset.variantMediaId = mediaId;
+    const swiper = gallery.swiper;
+    if (!swiper || swiper.destroyed) return;
 
-        if (window.innerWidth > 749) {
-          var swiper = new Swiper(".slider-small-"+product_id, {
-            direction: useVerticalThumbs ? "vertical" : "horizontal",
-            spaceBetween: useVerticalThumbs ? 10 : 15,
-            slidesPerView: useVerticalThumbs ? 3 : 4,
-            mousewheel: useVerticalThumbs,
-            freeMode: useVerticalThumbs,
-            navigation: useVerticalThumbs ? {
-              nextEl: ".thumb-button-next",
-              prevEl: ".thumb-button-prev"
-            } : false,
-            slideToClickedSlide: true,
-            breakpoints: {
-              0: { slidesPerView: 3 },
-              320: { slidesPerView: 3 },
-              480: { slidesPerView: 4 },
-              1200: { slidesPerView: useVerticalThumbs ? 3 : 4 }
-            }
-          });
-          swiperOptions.thumbs = { swiper: swiper };
-        }
+    const index = Array.from(swiper.slides).findIndex((slide) => slide.dataset.imageId === mediaId);
+    if (index < 0) return;
+    swiper.slideTo(index, 500, true);
 
-        var swiper2 = new Swiper(".slider-big-"+product_id, swiperOptions);
-        const unGroupMedia = document.querySelector(`#slider-small-`+product_id+` .swiper-slide[data-image-id="`+this.swatch.featured_media.id+`"]`);
-        // console.log(unGroupMedia.realIndex);
-        const mediaIndex = unGroupMedia.getAttribute('data-index');
-        if(mediaIndex == 1){
-          swiper2.destroy();
-          var swiperOptionsLoop = {
-            spaceBetween: 0,
-            slidesPerView: 1,
-            autoHeight: useAutoHeight,
-            slideToClickedSlide: true,
-            loop: true,
-            loopedSlides: 50,
-            navigation: {
-              nextEl: ".button-next",
-              prevEl: ".button-prev"
-            }
-          };
-          if (window.innerWidth > 749) {
-             swiperOptionsLoop.thumbs = { swiper: swiper };
-          }
-          var swiper2 = new Swiper(".slider-big-"+product_id, swiperOptionsLoop);
-        }else{
-          var new_index = parseInt(mediaIndex) - 1;
-          if (swiper) {
-            swiper.slideTo(Math.max(new_index - 1, 0), 500, true);
-          }
-          swiper2.slideTo(new_index,500, true);
-      }
-      }
+    const thumbnailGallery = section.querySelector('.slider-small');
+    const thumbnails = thumbnailGallery && thumbnailGallery.swiper;
+    if (thumbnails && !thumbnails.destroyed) {
+      thumbnails.slideTo(Math.max(index - 1, 0), 500, true);
     }
   }
   updateDiscount() {

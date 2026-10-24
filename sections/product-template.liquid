@@ -1474,6 +1474,7 @@
 
       setTimeout(function () {
         var mainGalleryElement = productSection && productSection.querySelector('.slider-big-{{ product.id }}');
+        if (!mainGalleryElement) return;
         var isNormalDesktopGallery = productSection && !productSection.closest('.quickview-block') && window.innerWidth >= 1200;
         var swiperOptions = {
           spaceBetween: 0,
@@ -1502,21 +1503,21 @@
         }
 
         var selectedVariantInitialSlide = 0;
-        {%- if current_variant.featured_media -%}
-          var selectedVariantMedia = document.querySelector('#slider-small-{{ product.id }} .swiper-slide[data-image-id="{{ current_variant.featured_media.id }}"]');
-          if (selectedVariantMedia) {
-            selectedVariantInitialSlide = Math.max(parseInt(selectedVariantMedia.getAttribute('data-index'), 10) - 1, 0);
-            swiperOptions.initialSlide = selectedVariantInitialSlide;
-          }
-        {%- endif -%}
+        var selectedVariantMediaId = mainGalleryElement.dataset.variantMediaId || {{ current_variant.featured_media.id | json }};
+        var selectedVariantMediaIndex = Array.from(mainGalleryElement.querySelectorAll('.swiper-wrapper > .swiper-slide')).findIndex(function(slide) {
+          return slide.dataset.imageId === String(selectedVariantMediaId);
+        });
+        if (selectedVariantMediaIndex >= 0) selectedVariantInitialSlide = selectedVariantMediaIndex;
+        swiperOptions.initialSlide = selectedVariantInitialSlide;
 
-        var quickViewSliderEl = document.querySelector('#slider-small-{{ product.id }}');
+        var quickViewSliderEl = productSection.querySelector('.slider-small-{{ product.id }}');
         var isQuickView = quickViewSliderEl && quickViewSliderEl.closest('.quickview-block');
         var useVerticalThumbs = !isQuickView && window.innerWidth >= 1200;
 
         if (window.innerWidth > 749) {
-          var swiper = new Swiper(".slider-small-{{ product.id }}", {
+          var swiper = new Swiper(quickViewSliderEl, {
             direction: useVerticalThumbs ? "vertical" : "horizontal",
+            threshold: 6,
             spaceBetween: useVerticalThumbs ? 10 : 15,
             slidesPerView: useVerticalThumbs ? 3 : 5,
             initialSlide: selectedVariantInitialSlide,
@@ -1536,7 +1537,7 @@
           swiperOptions.thumbs = { swiper: swiper };
         }
 
-        var swiper2 = new Swiper(".slider-big-{{ product.id }}", swiperOptions);
+        var swiper2 = new Swiper(mainGalleryElement, swiperOptions);
         var mainGalleryPrev = mainGalleryElement && mainGalleryElement.querySelector('.button-prev');
         var mainGalleryNext = mainGalleryElement && mainGalleryElement.querySelector('.button-next');
 
