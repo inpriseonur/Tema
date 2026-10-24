@@ -651,15 +651,15 @@ class StRecomPro extends HTMLElement {
                     rows: 1,
                     fill: 'row' | 'column',
                   },
-                  spaceBetween: 30
+                  spaceBetween: 12
                 },
-                1499: {
-                  slidesPerView: 4,
+                1400: {
+                  slidesPerView: 5,
                   grid: {
                     rows: 1,
                     fill: 'row' | 'column',
                   },
-                  spaceBetween: 30
+                  spaceBetween: 12
                 }
               }
             });
