@@ -111,7 +111,7 @@
 </script>
 {%- endif -%}
 
-<div class="main-content-wrap shop-page section-ptb">
+<div class="main-content-wrap shop-page section-ptb" data-collection-controls data-shop-url="{{ shop.url | escape }}" data-default-sort="{{ collection.default_sort_by | escape }}">
   <div class="container">
     <div class="row">
       <div class="col">
@@ -138,7 +138,7 @@
               </div>
               {%- endif -%}
             </div>
-            {%- if section.settings.tab_bar_enable or section.settings.short_by_enable -%}
+            {%- if section.settings.tab_bar_enable or section.settings.short_by_enable or section.blocks.size > 0 -%}
             {%- render 'collection-sorting', results: collection -%}
             {%- endif -%}
             <div class="get-data-products">
@@ -214,6 +214,7 @@
             <div id="main-collection-filters" data-id="{{ section.id }}">
               {% render 'collection-sidebar', results: collection %}
               <script src="{{ 'collection-sidebar.js' | asset_url }}" defer="defer"></script>
+              <script src="{{ 'collection-controls.js' | asset_url }}" defer="defer"></script>
               {% if section.settings.sidebar_banner_enable %}
               <div class="sidebar-banner banner-hover{% if section.settings.sidebar_handle == 'without_sidebar' %} sidebar-without-banner{% endif %}">
                 <a href="{{ section.settings.sidebar_banner_url }}" class="sidebar-img banner-img">
@@ -293,6 +294,17 @@
 {% schema %}
 {
   "name": "Collection",
+  "blocks": [
+    {
+      "type": "quick_link",
+      "name": "Hızlı bağlantı",
+      "limit": 16,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Başlık" },
+        { "type": "url", "id": "url", "label": "Bağlantı", "info": "Koleksiyon veya satıcı/kategori filtresi uygulanmış koleksiyon URL’si kullanabilirsiniz." }
+      ]
+    }
+  ],
   "settings": [
     {
       "type": "header",

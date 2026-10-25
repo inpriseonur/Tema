@@ -9,8 +9,10 @@
   assign default_presentation = 'text'
 -%}
 <div class="shop-sidebar-inner{% if section.settings.sidebar_handle == 'without_sidebar' %} shop-sidebar-without{% endif %}">
-  <div class="shop-sidebar-wrap filter-sidebar{% if section.settings.sidebar_handle == 'without_sidebar' %} filter-sidebar-without{% endif %}">
-    <button class="close-filter-sidebar{% if section.settings.sidebar_handle == 'without_sidebar' %} close-filter-without{% endif %}" type="button"><i class="ti ti-close"></i></button>
+  <div class="collection-filter-backdrop" data-collection-filter-backdrop hidden></div>
+  <div class="shop-sidebar-wrap filter-sidebar{% if section.settings.sidebar_handle == 'without_sidebar' %} filter-sidebar-without{% endif %}" id="CollectionFilterPanel-{{ section.id }}" data-collection-filter-panel tabindex="-1" aria-label="{{ 'collections.facets.panel_title' | t }}">
+    <div class="collection-filter-heading"><h2 id="CollectionFilterTitle-{{ section.id }}">{{ 'collections.facets.panel_title' | t }}</h2></div>
+    <button class="close-filter-sidebar{% if section.settings.sidebar_handle == 'without_sidebar' %} close-filter-without{% endif %}" type="button" data-collection-filter-close aria-label="{{ 'collections.facets.close' | t }}"><i class="ti ti-close" aria-hidden="true"></i></button>
     {%- if section.settings.collection_categories_enable -%}
     <div class="shop-sidebar shop-collection">
       {%- if section.settings.collection_categories_title != '' -%}
@@ -40,7 +42,22 @@
     </div>
     {%- endif -%}
     <stfilter-ele class="facets">
-      <form id="stFacetFiltersForm">
+      <form id="stFacetFiltersForm" data-collection-filter-form>
+        {% if section.settings.short_by_enable %}
+          <fieldset class="collection-mobile-sort" data-collection-mobile-sort>
+            <legend>{{ 'collections.sorting.title' | t }}</legend>
+            <div class="collection-filter-options">
+              {% for option in results.sort_options %}
+                <label class="collection-filter-option">
+                  <input type="radio" name="sort_by" value="{{ option.value | escape }}"{% if option.value == sort_by %} checked{% endif %}>
+                  <span>{{ option.name | escape }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% else %}
+          <input type="hidden" name="sort_by" value="{{ sort_by | escape }}">
+        {% endif %}
         {%- if results.terms -%}
         <input type="hidden" name="q" value="{{ results.terms | escape }}">
         <input name="options[prefix]" type="hidden" value="last">
@@ -52,22 +69,6 @@
             {% if results.current_vendor or results.current_type %}
             <input type="hidden" name="q" value="{{ results.current_vendor }}{{ results.current_type }}">
             {% endif %}
-            <div class="sidebar-header">
-              <span id="pro-count" class="product-count-text">
-                {%- if results.results_count -%}
-                {{ 'collections.facets.results_with_count' | t: terms: results.terms, count: results.results_count }}
-                {%- elsif results.products_count == results.all_products_count -%}
-                {{ 'collections.facets.product_count_simple' | t: count: results.products_count }}
-                {%- else -%}
-                {{ 'collections.facets.product_count' | t: product_count: results.products_count, count: results.all_products_count }}
-                {%- endif -%}
-              </span>
-              <span class="ajax-loading">
-                <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                </svg>
-              </span>
-            </div>
             <div class="active-flt">
               <ul>
                 <li>
@@ -196,11 +197,16 @@
                 </div>
               </range-slider>
             </div>
+          </div>
             {% endcase %}
             {%- endfor -%}
-          </div>
         </div>
       </form>
     </stfilter-ele>
+    <div class="collection-filter-footer">
+      <p class="collection-filter-error" data-collection-filter-error role="alert" hidden>{{ 'collections.facets.request_error' | t }}</p>
+      <button type="button" class="collection-filter-clear" data-collection-filter-clear>{{ 'collections.facets.clear_all' | t }}</button>
+      <button type="button" class="collection-filter-apply" data-collection-filter-apply>{{ 'collections.facets.show_products' | t }}</button>
+    </div>
   </div>
 </div>
