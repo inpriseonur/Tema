@@ -319,13 +319,18 @@
 }
 
 .slider-content .home-slider .slider-dot {
-  bottom: 30px;
+  bottom: 12px;
   left: 0;
   right: 0;
   line-height: 0;
   position: absolute;
   z-index: 1;
   text-align: center;
+}
+@media (max-width: 767px) {
+  .slider-content .home-slider .slider-dot {
+    bottom: 8px;
+  }
 }
 .slider-content .home-slider .slider-dot span {
   width: 6px;
