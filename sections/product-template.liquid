@@ -542,8 +542,9 @@
                     {%- if cd_days >= 0 -%}
                       <div class="price-countdown"
                            data-end-date="{{ product_countdown_end_date | date: '%Y-%m-%d' }}"
+                           data-countdown-template="{{ block.settings.countdown_message | escape }}"
                            style="color: {{ block.settings.countdown_text_color }};">
-                        <span class="countdown-icon">{{ block.settings.countdown_icon }}</span>
+                        <span class="countdown-icon">{%- assign pg_icon_prefix = block.settings.countdown_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ block.settings.countdown_icon | strip | escape }}"></i>{%- else -%}{{ block.settings.countdown_icon }}{%- endif -%}</span>
                         <span class="countdown-text">
                           {%- if cd_days == 0 -%}
                             {{ block.settings.countdown_message | replace: '[days] gün', 'gün' | replace: '[days]', '' }}  
@@ -558,7 +559,7 @@
                   {%- if block.settings.price_advantage_enabled and block.settings.price_advantage_message != blank -%}
                     <div class="price-advantage-message" style="color: {{ block.settings.price_advantage_text_color }};">
                       {%- if block.settings.price_advantage_icon != blank -%}
-                        <span class="price-advantage-message__icon">{{ block.settings.price_advantage_icon }}</span>
+                        <span class="price-advantage-message__icon">{%- assign pg_icon_prefix = block.settings.price_advantage_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ block.settings.price_advantage_icon | strip | escape }}"></i>{%- else -%}{{ block.settings.price_advantage_icon }}{%- endif -%}</span>
                       {%- endif -%}
                       <span class="price-advantage-message__text">{{ block.settings.price_advantage_message }}</span>
                     </div>
@@ -648,8 +649,9 @@
                       {%- if mobile_countdown_visible -%}
                         <div class="qty-countdown-mobile"
                              data-end-date="{{ mobile_product_countdown_end_date | date: '%Y-%m-%d' }}"
+                             data-countdown-template="{{ inner_block.settings.countdown_message | escape }}"
                              style="color: {{ inner_block.settings.countdown_text_color }};">
-                          <span class="countdown-icon">{{ inner_block.settings.countdown_icon }}</span>
+                          <span class="countdown-icon">{%- assign pg_icon_prefix = inner_block.settings.countdown_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ inner_block.settings.countdown_icon | strip | escape }}"></i>{%- else -%}{{ inner_block.settings.countdown_icon }}{%- endif -%}</span>
                           <span class="countdown-text">
                             {%- if mcd_days == 0 -%}
                               {{ inner_block.settings.countdown_message | replace: '[days] gün', 'gün' | replace: '[days]', '' }}
@@ -661,7 +663,7 @@
                         {%- if inner_block.settings.price_advantage_enabled and inner_block.settings.price_advantage_message != blank -%}
                           <div class="qty-countdown-mobile price-advantage-mobile price-advantage-mobile--stacked price-advantage-mobile--fallback" style="display: none; color: {{ inner_block.settings.price_advantage_text_color }};">
                             {%- if inner_block.settings.price_advantage_icon != blank -%}
-                              <span class="countdown-icon">{{ inner_block.settings.price_advantage_icon }}</span>
+                              <span class="countdown-icon">{%- assign pg_icon_prefix = inner_block.settings.price_advantage_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ inner_block.settings.price_advantage_icon | strip | escape }}"></i>{%- else -%}{{ inner_block.settings.price_advantage_icon }}{%- endif -%}</span>
                             {%- endif -%}
                             <span class="countdown-text">{{ inner_block.settings.price_advantage_message }}</span>
                           </div>
@@ -669,7 +671,7 @@
                       {%- elsif inner_block.settings.price_advantage_enabled and inner_block.settings.price_advantage_message != blank -%}
                         <div class="qty-countdown-mobile price-advantage-mobile price-advantage-mobile--stacked" style="color: {{ inner_block.settings.price_advantage_text_color }};">
                           {%- if inner_block.settings.price_advantage_icon != blank -%}
-                            <span class="countdown-icon">{{ inner_block.settings.price_advantage_icon }}</span>
+                            <span class="countdown-icon">{%- assign pg_icon_prefix = inner_block.settings.price_advantage_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ inner_block.settings.price_advantage_icon | strip | escape }}"></i>{%- else -%}{{ inner_block.settings.price_advantage_icon }}{%- endif -%}</span>
                           {%- endif -%}
                           <span class="countdown-text">{{ inner_block.settings.price_advantage_message }}</span>
                         </div>
@@ -1649,7 +1651,15 @@
             hiddenFallbackEl.style.display = 'none';
           }
           var textEl = el.querySelector('.countdown-text');
-          if (textEl) {
+          var countdownTemplate = el.getAttribute('data-countdown-template');
+          if (textEl && countdownTemplate && countdownTemplate.indexOf('[days]') !== -1) {
+            /* Şablondan yeniden kur: mesajdaki diğer rakamlara (örn. 11.11) dokunma; Liquid ile aynı kurallar */
+            if (diff === 0) {
+              textEl.textContent = countdownTemplate.replace('[days] gün', 'gün').replace('[days]', '');
+            } else {
+              textEl.textContent = countdownTemplate.replace('[days]', diff);
+            }
+          } else if (textEl) {
             if (diff === 0) {
               textEl.textContent = textEl.textContent.replace(/son\s*\d+\s*gün/, 'son gün').replace(/\d+\s*gün/, 'gün');
             } else {
@@ -2340,7 +2350,8 @@
         "type": "text",
         "id": "countdown_icon",
         "label": "Emoji / İkon",
-        "default": "⏳"
+        "default": "⏳",
+        "info": "Emoji veya Themify ikon adı yazın (örn: ti-time). HTML kodu yazmayın."
       },
       {
         "type": "header",
@@ -2368,7 +2379,8 @@
         "type": "text",
         "id": "price_advantage_icon",
         "label": "Emoji / İkon",
-        "default": "✓"
+        "default": "✓",
+        "info": "Emoji veya Themify ikon adı yazın (örn: ti-time). HTML kodu yazmayın."
       }
     ]
   },
