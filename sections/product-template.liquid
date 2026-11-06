@@ -647,7 +647,7 @@
                         {%- endif -%}
                       {%- endif -%}
                       {%- if mobile_countdown_visible -%}
-                        <div class="qty-countdown-mobile"
+                        <div class="qty-countdown-mobile{% unless product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %} is-no-deal{% endunless %}"
                              data-end-date="{{ mobile_product_countdown_end_date | date: '%Y-%m-%d' }}"
                              data-countdown-template="{{ inner_block.settings.countdown_message | escape }}"
                              style="color: {{ inner_block.settings.countdown_text_color }};{%- if inner_block.settings.countdown_sticky_bg_color != blank -%} --sticky-countdown-bg: {{ inner_block.settings.countdown_sticky_bg_color }};{%- endif -%}">
@@ -763,6 +763,21 @@
                     {%- endif -%}
                   </div>
                   {%- unless is_bundle_product -%}
+                    {%- comment -%}Mobil fırsat kartı: Çok Al Az Öde olmayan, indirimli ve geri sayımı aktif varyantlar için{%- endcomment -%}
+                    {%- for deal_price_block in section.blocks -%}
+                      {%- if deal_price_block.type == 'product_price' -%}
+                        {%- for deal_variant in product.variants -%}
+                          {%- liquid
+                            assign deal_is_selected = false
+                            if deal_variant.id == product.selected_or_first_available_variant.id
+                              assign deal_is_selected = true
+                            endif
+                          -%}
+                          {% render 'product-deal-card', product: product, deal_variant: deal_variant, price_block: deal_price_block, is_selected: deal_is_selected %}
+                        {%- endfor -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
                     {% render 'product-volume-discounts', product: product, section_id: section.id %}
                     <div class="product-volume-discount-templates" hidden>
                       {%- for volume_variant in product.variants -%}
@@ -1249,6 +1264,34 @@
       var volumeDiscountVariantIds = {{ volume_discount_variant_ids_array | json }};
       var activeVolumeVariantId = getSelectedProductVariantId();
 
+      {%- liquid
+        assign compare_price_variant_ids = ''
+        for variant in product.variants
+          if variant.compare_at_price > variant.price
+            if compare_price_variant_ids != ''
+              assign compare_price_variant_ids = compare_price_variant_ids | append: ','
+            endif
+            assign compare_price_variant_ids = compare_price_variant_ids | append: variant.id
+          endif
+        endfor
+        assign compare_price_variant_ids_array = compare_price_variant_ids | split: ','
+      -%}
+      var comparePriceVariantIds = {{ compare_price_variant_ids_array | json }};
+
+      /* Fırsat kartı ve sticky geri sayım şeridi yalnızca indirimli (compare-at) varyantta görünür */
+      function syncDealVisibilityForVariantId(variantId) {
+        if (!variantId || !productSection) return;
+
+        productSection.querySelectorAll('[data-deal-card]').forEach(function(card) {
+          card.hidden = card.dataset.variantId !== variantId || card.dataset.dealExpired === 'true';
+        });
+
+        var variantHasDeal = comparePriceVariantIds.indexOf(variantId) !== -1;
+        productSection.querySelectorAll('.qty-countdown-mobile[data-end-date]').forEach(function(countdown) {
+          countdown.classList.toggle('is-no-deal', !variantHasDeal);
+        });
+      }
+
       function getVolumeDiscountInsertAnchor() {
         if (!productSection) return null;
 
@@ -1281,6 +1324,8 @@
       function syncVolumeDiscountsForVariantId(variantId) {
         variantId = variantId ? String(variantId) : '';
         if (!variantId || !productSection) return;
+
+        syncDealVisibilityForVariantId(variantId);
 
         if (activeVolumeVariantId && activeVolumeVariantId !== variantId) {
           resetProductQuantityToMinimum();
@@ -1666,6 +1711,27 @@
               textEl.textContent = textEl.textContent.replace(/\d+/, diff);
             }
           }
+        }
+      });
+
+      /* Fırsat kartı: aynı gün hesabı; süre dolduysa kartı kalıcı gizle */
+      document.querySelectorAll('[data-deal-card][data-end-date]').forEach(function(card) {
+        var parts = card.getAttribute('data-end-date').split('-');
+        var now = new Date();
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var end = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        var diff = Math.round((end - today) / (1000 * 60 * 60 * 24));
+        if (diff < 0) {
+          card.dataset.dealExpired = 'true';
+          card.hidden = true;
+          return;
+        }
+        var daysEl = card.querySelector('[data-deal-days]');
+        var daysTemplate = daysEl && daysEl.getAttribute('data-countdown-template');
+        if (daysTemplate) {
+          daysEl.textContent = diff === 0
+            ? daysTemplate.replace('[days] gün', 'gün').replace('[days]', '')
+            : daysTemplate.replace('[days]', diff);
         }
       });
     })();
@@ -2357,6 +2423,58 @@
         "label": "Emoji / İkon",
         "default": "⏳",
         "info": "Emoji veya Themify ikon adı yazın (örn: ti-time). HTML kodu yazmayın."
+      },
+      {
+        "type": "header",
+        "content": "Mobil Fırsat Kartı"
+      },
+      {
+        "type": "paragraph",
+        "content": "Mobilde, indirimli (karşılaştırma fiyatı olan) ve geri sayımı aktif varyantta Çok Al Az Öde yerine gösterilir. Varyantta Çok Al Az Öde varsa kart gösterilmez. Kart beyaz zeminlidir; kazanç ve kalan gün metni rengi geri sayım metin renginden alınır."
+      },
+      {
+        "type": "checkbox",
+        "id": "deal_card_enabled",
+        "label": "Fırsat kartını göster",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "deal_card_title",
+        "label": "Kart başlığı",
+        "default": "Kampanya fiyatı",
+        "info": "Ürünün subtitle alanı doluysa subtitle kullanılır; boşsa bu başlık gösterilir."
+      },
+      {
+        "type": "text",
+        "id": "deal_card_days_text",
+        "label": "Kalan gün metni",
+        "default": "son [days] gün",
+        "info": "[days] otomatik hesaplanır. Son gün \"son gün\" yazar."
+      },
+      {
+        "type": "text",
+        "id": "deal_card_saving_text",
+        "label": "Kazanç metni",
+        "default": "[amount] kazanç",
+        "info": "[amount] eski fiyat ile yeni fiyat farkıdır."
+      },
+      {
+        "type": "checkbox",
+        "id": "deal_card_show_percent",
+        "label": "İndirim yüzdesini göster",
+        "default": true,
+        "info": "Yüzde aşağı yuvarlanır (örn. %30,5 → %30); gerçek indirimden büyük gösterilmez."
+      },
+      {
+        "type": "range",
+        "id": "deal_card_min_percent",
+        "label": "Rozet için minimum indirim yüzdesi",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "%",
+        "default": 10
       },
       {
         "type": "header",

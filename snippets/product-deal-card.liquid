@@ -1,0 +1,89 @@
+{%- comment -%}
+  Mobil fırsat kartı: varyantta indirim (compare-at) + aktif geri sayım varsa ve
+  Çok Al Az Öde (volume_discount_tiers) yoksa gösterilir. Masaüstünde CSS ile gizlidir.
+
+  Parametreler:
+  - product: ürün
+  - deal_variant: kartın hazırlanacağı varyant
+  - price_block: product_price bloğu (geri sayım ve kart ayarları)
+  - is_selected: seçili varyant mı (değilse hidden render edilir)
+{%- endcomment -%}
+{%- liquid
+  assign deal_show = false
+  assign deal_end_date = product.metafields.custom.countdown_end_date.value
+
+  if price_block.settings.deal_card_enabled and price_block.settings.countdown_enabled and deal_end_date != blank and deal_variant.available
+    if deal_variant.compare_at_price > deal_variant.price and deal_variant.metafields.custom.volume_discount_tiers.value == blank
+      assign deal_today_ts = 'now' | date: '%Y-%m-%d' | date: '%s' | plus: 0
+      assign deal_end_ts = deal_end_date | date: '%s' | plus: 0
+      assign deal_days = deal_end_ts | minus: deal_today_ts | divided_by: 86400
+      if deal_days >= 0
+        assign deal_show = true
+      endif
+    endif
+  endif
+-%}
+
+{%- if deal_show -%}
+  {%- liquid
+    assign deal_title = product.metafields.descriptors.subtitle.value | default: price_block.settings.deal_card_title
+    assign deal_days_template = price_block.settings.deal_card_days_text
+    if deal_days == 0
+      assign deal_days_text = deal_days_template | replace: '[days] gün', 'gün' | replace: '[days]', ''
+    else
+      assign deal_days_text = deal_days_template | replace: '[days]', deal_days
+    endif
+
+    assign deal_saving = deal_variant.compare_at_price | minus: deal_variant.price | money_without_trailing_zeros
+    assign deal_saving_text = price_block.settings.deal_card_saving_text | replace: '[amount]', deal_saving
+
+    comment
+      Yüzde AŞAĞI yuvarlanır (tam sayı bölmesi): gösterilen oran gerçek indirimi asla aşmaz.
+    endcomment
+    assign deal_percent = deal_variant.compare_at_price | minus: deal_variant.price | times: 100 | divided_by: deal_variant.compare_at_price
+    assign deal_min_percent = price_block.settings.deal_card_min_percent | default: 10
+    assign deal_show_percent = false
+    if price_block.settings.deal_card_show_percent and deal_percent >= deal_min_percent
+      assign deal_show_percent = true
+    endif
+
+    assign deal_unit_text = ''
+    assign deal_measurement_quantity = deal_variant.unit_price_measurement.quantity_value | plus: 0
+    if deal_variant.unit_price_measurement != nil and deal_measurement_quantity > 0
+      assign deal_unit_label = product.metafields.custom.unit_price_label.value | default: 'şişe'
+      assign deal_unit_text = deal_variant.unit_price | money_without_currency | replace: '.', ',' | append: ' TL / ' | append: deal_unit_label
+    endif
+  -%}
+  <div
+    class="product-deal-card"
+    data-deal-card
+    data-variant-id="{{ deal_variant.id }}"
+    data-end-date="{{ deal_end_date | date: '%Y-%m-%d' }}"
+    style="{%- if price_block.settings.countdown_text_color != blank -%}--deal-accent: {{ price_block.settings.countdown_text_color }};{%- endif -%}"
+    {% unless is_selected %}hidden{% endunless %}
+  >
+    <div class="product-deal-card__head">
+      {%- if deal_title != blank -%}
+        <span class="product-deal-card__title">{{ deal_title | escape }}</span>
+      {%- endif -%}
+      {%- if deal_days_template != blank -%}
+        <span class="product-deal-card__days" data-deal-days data-countdown-template="{{ deal_days_template | escape }}">{{ deal_days_text }}</span>
+      {%- endif -%}
+    </div>
+    <div class="product-deal-card__prices">
+      <span class="product-deal-card__price">{{ deal_variant.price | money }}</span>
+      <s class="product-deal-card__compare">{{ deal_variant.compare_at_price | money }}</s>
+      {%- if deal_show_percent -%}
+        <span class="product-deal-card__percent">%{{ deal_percent }}</span>
+      {%- endif -%}
+    </div>
+    <div class="product-deal-card__meta">
+      {%- if price_block.settings.deal_card_saving_text != blank -%}
+        <strong class="product-deal-card__saving">{{ deal_saving_text }}</strong>
+      {%- endif -%}
+      {%- if deal_unit_text != '' -%}
+        <span class="product-deal-card__unit">{{ deal_unit_text }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
