@@ -403,7 +403,8 @@ class Swatchoption extends HTMLElement {
         $comparePrice.insertAfter($productPrice);
       }
       $comparePrice.html(Shopify.formatMoney(this.swatch.compare_at_price, window.money_format)).removeClass('d-none').show();
-      $ProductDiscount.html(((this.swatch.compare_at_price - this.swatch.price)*100.0/(this.swatch.compare_at_price)).toFixed());
+      /* İndirim yüzdesi aşağı yuvarlanır: gösterilen oran gerçek indirimi aşmaz */
+      $ProductDiscount.html(Math.floor((this.swatch.compare_at_price - this.swatch.price) * 100 / this.swatch.compare_at_price));
       $ProductDiscount.removeClass('d-none').show();
       $Productlabel.removeClass('d-none').show();
     }else{

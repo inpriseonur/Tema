@@ -498,15 +498,12 @@
                       >
                         <span class="percent-count sale-title" id="ProductDiscount">
                           {%- if selected_has_compare_price -%}
+                            {%- comment -%}Aşağı yuvarlanır (tam sayı bölmesi): gerçek indirimi aşmaz{%- endcomment -%}
                             {{-
                               selected_variant.compare_at_price
                               | minus: selected_variant.price
-                              | times: 100.0
-                              | divided_by: selected_variant.compare_at_price
-                              | money_without_currency
-                              | replace: ',', '.'
                               | times: 100
-                              | remove: '.0'
+                              | divided_by: selected_variant.compare_at_price
                             -}}
                           {%- endif -%}
                         </span>
@@ -540,7 +537,7 @@
                     {%- assign cd_diff = cd_end_ts | minus: cd_today_ts -%}
                     {%- assign cd_days = cd_diff | divided_by: 86400 -%}
                     {%- if cd_days >= 0 -%}
-                      <div class="price-countdown"
+                      <div class="price-countdown{% unless selected_variant.compare_at_price > selected_variant.price %} is-no-deal{% endunless %}"
                            data-end-date="{{ product_countdown_end_date | date: '%Y-%m-%d' }}"
                            data-countdown-template="{{ block.settings.countdown_message | escape }}"
                            style="color: {{ block.settings.countdown_text_color }};">
@@ -1287,7 +1284,7 @@
         });
 
         var variantHasDeal = comparePriceVariantIds.indexOf(variantId) !== -1;
-        productSection.querySelectorAll('.qty-countdown-mobile[data-end-date]').forEach(function(countdown) {
+        productSection.querySelectorAll('.qty-countdown-mobile[data-end-date], .price-countdown[data-end-date]').forEach(function(countdown) {
           countdown.classList.toggle('is-no-deal', !variantHasDeal);
         });
       }

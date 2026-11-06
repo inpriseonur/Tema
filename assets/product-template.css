@@ -833,8 +833,13 @@ body.template-product .product-main-template .product-social-proof-row > .produc
 }
 
 
-.product_details_info .pro-price-label .product-label span::after {
+.product_details_info .pro-price-label .product-label span::before {
   content: "%";
+}
+
+/* İndirimsiz varyantta (örn. 4'lü paket) fiyat altı geri sayım mesajını gösterme */
+.price-countdown.is-no-deal {
+  display: none !important;
 }
 
 .product_details_info .product-description {
