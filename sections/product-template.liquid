@@ -650,7 +650,7 @@
                         <div class="qty-countdown-mobile"
                              data-end-date="{{ mobile_product_countdown_end_date | date: '%Y-%m-%d' }}"
                              data-countdown-template="{{ inner_block.settings.countdown_message | escape }}"
-                             style="color: {{ inner_block.settings.countdown_text_color }};">
+                             style="color: {{ inner_block.settings.countdown_text_color }};{%- if inner_block.settings.countdown_sticky_bg_color != blank -%} --sticky-countdown-bg: {{ inner_block.settings.countdown_sticky_bg_color }};{%- endif -%}">
                           <span class="countdown-icon">{%- assign pg_icon_prefix = inner_block.settings.countdown_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ inner_block.settings.countdown_icon | strip | escape }}"></i>{%- else -%}{{ inner_block.settings.countdown_icon }}{%- endif -%}</span>
                           <span class="countdown-text">
                             {%- if mcd_days == 0 -%}
@@ -661,7 +661,7 @@
                           </span>
                         </div>
                         {%- if inner_block.settings.price_advantage_enabled and inner_block.settings.price_advantage_message != blank -%}
-                          <div class="qty-countdown-mobile price-advantage-mobile price-advantage-mobile--stacked price-advantage-mobile--fallback" style="display: none; color: {{ inner_block.settings.price_advantage_text_color }};">
+                          <div class="qty-countdown-mobile price-advantage-mobile price-advantage-mobile--stacked price-advantage-mobile--fallback" style="display: none; color: {{ inner_block.settings.price_advantage_text_color }};{%- if inner_block.settings.countdown_sticky_bg_color != blank -%} --sticky-countdown-bg: {{ inner_block.settings.countdown_sticky_bg_color }};{%- endif -%}">
                             {%- if inner_block.settings.price_advantage_icon != blank -%}
                               <span class="countdown-icon">{%- assign pg_icon_prefix = inner_block.settings.price_advantage_icon | strip | slice: 0, 3 -%}{%- if pg_icon_prefix == 'ti-' -%}<i class="{{ inner_block.settings.price_advantage_icon | strip | escape }}"></i>{%- else -%}{{ inner_block.settings.price_advantage_icon }}{%- endif -%}</span>
                             {%- endif -%}
@@ -2343,8 +2343,13 @@
       {
         "type": "color",
         "id": "countdown_text_color",
-        "label": "Metin Rengi",
-        "default": "#C0392B"
+        "label": "Metin Rengi"
+      },
+      {
+        "type": "color",
+        "id": "countdown_sticky_bg_color",
+        "label": "Mobil sticky şerit arka plan rengi",
+        "info": "Mobilde sepete ekle çubuğunun üstündeki geri sayım şeridinin arka planı. Boş bırakılırsa beyaz görünür."
       },
       {
         "type": "text",

@@ -784,7 +784,8 @@
             if (!countdownFallback || !countdownFallback.classList.contains('price-advantage-mobile--fallback')) countdownFallback = null;
             var countdownGroup = document.createElement('div');
             countdownGroup.className = 'mobile-sticky-countdown';
-            wrapper.prepend(countdownGroup);
+            // Şerit olarak çubuğun üst kenarına yapışık durur; çubuk yüksekliğini etkilemez.
+            btn.prepend(countdownGroup);
             var countdownMedia = window.matchMedia('(max-width: 749px)');
             function positionStickyCountdown() {
               if (countdownMedia.matches) {
