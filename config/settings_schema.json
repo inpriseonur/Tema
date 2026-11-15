@@ -636,6 +636,21 @@
         "label": "Istanbul Free Shipping Success Message",
         "default": "İstanbul içi <b>Ücretsiz Özel Teslimat</b> kazandınız!",
         "info": "HTML etiketleri kullanılabilir."
+      },
+      {
+        "type": "header",
+        "content": "Sipariş adedi limiti"
+      },
+      {
+        "type": "paragraph",
+        "content": "Limit, varyant metafield'ı custom.max_order_quantity (tam sayı) ile tanımlanır. Boş bırakılan varyantlarda limit yoktur."
+      },
+      {
+        "type": "text",
+        "id": "order_limit_message",
+        "label": "Limit aşım mesajı",
+        "default": "Bu üründen tek siparişte en fazla [max] adet alabilirsiniz.",
+        "info": "Limit adedi için [max] kullanın."
       }
     ]
   },

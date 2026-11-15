@@ -150,15 +150,24 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Ekleniyor...';
 
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: parseInt(vid), quantity: qty })
-      })
-      .then(function(r) { return r.json(); })
-      .then(function() {
-        /* Sayfayı yenile — sepet tablosu ve toplam güncellensin */
-        window.location.reload();
+      var limitCheck = window.PGOrderLimit ? window.PGOrderLimit.check(vid, qty) : Promise.resolve({ ok: true });
+      limitCheck.then(function(result) {
+        if (!result.ok) {
+          window.PGOrderLimit.notify(window.PGOrderLimit.getMessage(result.limit));
+          btn.innerHTML = '<i class="fa fa-plus"></i> Ekle';
+          btn.disabled = false;
+          return;
+        }
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: parseInt(vid), quantity: qty })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function() {
+          /* Sayfayı yenile — sepet tablosu ve toplam güncellensin */
+          window.location.reload();
+        });
       })
       .catch(function() {
         btn.innerHTML = '<i class="fa fa-plus"></i> Ekle';

@@ -617,13 +617,24 @@
                   {%- when 'quantity_selector' -%}
                   <div id="Quantity-Form-{{ section.id }}" class="product-qty" {{ block.shopify_attributes }}>
                   {%- assign cart_qty = cart | item_count_for_variant: product.selected_or_first_available_variant.id -%}
+                  {%- liquid
+                    assign pg_order_limit = product.selected_or_first_available_variant.metafields.custom.max_order_quantity.value | plus: 0
+                    assign pg_qty_max = product.selected_or_first_available_variant.quantity_rule.max
+                    if pg_order_limit > 0
+                      if pg_qty_max == null
+                        assign pg_qty_max = pg_order_limit
+                      elsif pg_order_limit < pg_qty_max
+                        assign pg_qty_max = pg_order_limit
+                      endif
+                    endif
+                  -%}
                   <h6 class="qty-head">
                     {{ 'products.product.quantity.label' | t }}
                   </h6>
                   <qty-box class="quantity qty-box">
                     <button class="qty-bt" name="minus" type="button">-</button>
                     <input class="qty-box-input" type="number" name="quantity" id="Quantity-{{ section.id }}" data-cart-quantity="{{ cart_qty }}" data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}" min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
-                      {% if product.selected_or_first_available_variant.quantity_rule.max != null %} data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" {% endif %} step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}" value="{{ product.selected_or_first_available_variant.quantity_rule.min }}" aria-label="{{ 'products.product.quantity.label' | t | escape }}" form="{{ product_form_id }}"/>
+                      {% if product.selected_or_first_available_variant.quantity_rule.max != null %} data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}" {% endif %}{% if pg_qty_max != null %} max="{{ pg_qty_max }}" {% endif %}{% if pg_order_limit > 0 %} data-order-limit="{{ pg_order_limit }}" {% endif %} step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}" value="{{ product.selected_or_first_available_variant.quantity_rule.min }}" aria-label="{{ 'products.product.quantity.label' | t | escape }}" form="{{ product_form_id }}"/>
                     <button class="qty-bt" name="plus" type="button">+</button>
                   </qty-box>
                   {%- comment -%}Mobilde adet seçicinin yanında geri sayım; geri sayım yoksa fiyat avantajı mesajı{%- endcomment -%}
@@ -1275,6 +1286,26 @@
       -%}
       var comparePriceVariantIds = {{ compare_price_variant_ids_array | json }};
 
+      {%- liquid
+        assign order_limit_pairs = ''
+        for variant in product.variants
+          assign variant_order_limit = variant.metafields.custom.max_order_quantity.value | plus: 0
+          if variant_order_limit > 0
+            if order_limit_pairs != ''
+              assign order_limit_pairs = order_limit_pairs | append: ','
+            endif
+            assign order_limit_pairs = order_limit_pairs | append: '"' | append: variant.id | append: '":' | append: variant_order_limit
+          endif
+        endfor
+      -%}
+      /* Sipariş adedi limiti (assets/order-limit.js) */
+      window.PGOrderLimits = Object.assign(window.PGOrderLimits || {}, { {{ order_limit_pairs }} });
+
+      function syncOrderLimitForVariantId(variantId) {
+        if (!window.PGOrderLimit || !productSection) return;
+        window.PGOrderLimit.applyToInput(productSection.querySelector('#Quantity-{{ section.id }}'), variantId);
+      }
+
       /* Fırsat kartı ve sticky geri sayım şeridi yalnızca indirimli (compare-at) varyantta görünür */
       function syncDealVisibilityForVariantId(variantId) {
         if (!variantId || !productSection) return;
@@ -1323,6 +1354,7 @@
         if (!variantId || !productSection) return;
 
         syncDealVisibilityForVariantId(variantId);
+        syncOrderLimitForVariantId(variantId);
 
         if (activeVolumeVariantId && activeVolumeVariantId !== variantId) {
           resetProductQuantityToMinimum();

@@ -331,6 +331,7 @@
     </style>
     {{ content_for_header }}
     <script type="text/javascript" src="{{ 'plugins.min.js' | asset_url }}" defer></script>
+    <script type="text/javascript" src="{{ 'order-limit.js' | asset_url }}" defer></script>
     {%- render 'header-js' -%}
     {% if template contains 'customers' or 'cart' %}
     {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
@@ -651,6 +652,7 @@
       
       window.money_format = '{{ shop.money_format }}';
       window.pro_id = '{{ product.id }}';
+      window.PGOrderLimitMessage = {{ settings.order_limit_message | json }};
       window.routes = {
         increase_cart_url: '{{ routes.cart_add_url }}',
         edite_cart_url: '{{ routes.cart_change_url }}',

@@ -136,8 +136,22 @@
                           {% # theme-check-disable %}
                           data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
                           min="{{ item.variant.quantity_rule.min }}"
-                          {% if item.variant.quantity_rule.max != null %}
-                            max="{{ item.variant.quantity_rule.max }}"
+                          {%- liquid
+                            assign pg_line_limit = item.variant.metafields.custom.max_order_quantity.value | plus: 0
+                            assign pg_line_max = item.variant.quantity_rule.max
+                            if pg_line_limit > 0
+                              if pg_line_max == null
+                                assign pg_line_max = pg_line_limit
+                              elsif pg_line_limit < pg_line_max
+                                assign pg_line_max = pg_line_limit
+                              endif
+                            endif
+                          -%}
+                          {% if pg_line_max != null %}
+                            max="{{ pg_line_max }}"
+                          {% endif %}
+                          {% if pg_line_limit > 0 %}
+                            data-order-limit="{{ pg_line_limit }}"
                           {% endif %}
                           step="{{ item.variant.quantity_rule.increment }}"
                           {% # theme-check-enable %}
@@ -299,23 +313,36 @@
       var vid = this.dataset.variantId;
       var qty = parseInt(this.dataset.qty) || 1;
       if (!vid) return;
-      this.disabled = true;
-      this.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: parseInt(vid), quantity: qty })
+      var addBtn = this;
+      var addBtnHtml = addBtn.innerHTML;
+      addBtn.disabled = true;
+      addBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+      var limitCheck = window.PGOrderLimit ? window.PGOrderLimit.check(vid, qty) : Promise.resolve({ ok: true });
+      limitCheck.then(function(result) {
+        if (result.ok) return true;
+        window.PGOrderLimit.notify(window.PGOrderLimit.getMessage(result.limit));
+        addBtn.innerHTML = addBtnHtml;
+        addBtn.disabled = false;
+        return false;
       })
-      .then(function(r) { return r.json(); })
-      .then(function() {
-        return fetch('/cart?sections=ajax-cart,ajax-cart-icon')
-          .then(function(r) { return r.json(); })
-          .then(function(sections) {
-            var cart = document.querySelector('ajax-cart');
-            if (cart && cart.renderContents) {
-              cart.renderContents({ sections: sections });
-            } else { window.location.reload(); }
-          });
+      .then(function(canAdd) {
+        if (!canAdd) return;
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: parseInt(vid), quantity: qty })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function() {
+          return fetch('/cart?sections=ajax-cart,ajax-cart-icon')
+            .then(function(r) { return r.json(); })
+            .then(function(sections) {
+              var cart = document.querySelector('ajax-cart');
+              if (cart && cart.renderContents) {
+                cart.renderContents({ sections: sections });
+              } else { window.location.reload(); }
+            });
+        });
       })
       .catch(function() { window.location.reload(); });
     });

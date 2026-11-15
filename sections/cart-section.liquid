@@ -123,8 +123,22 @@
                                       label="quantity"
                                       data-cart-quantity="{{ cart | item_count_for_variant: item.variant.id }}"
                                       min="{{ item.variant.quantity_rule.min }}"
-                                      {% if item.variant.quantity_rule.max != null %}
-                                        max="{{ item.variant.quantity_rule.max }}"
+                                      {%- liquid
+                                        assign pg_line_limit = item.variant.metafields.custom.max_order_quantity.value | plus: 0
+                                        assign pg_line_max = item.variant.quantity_rule.max
+                                        if pg_line_limit > 0
+                                          if pg_line_max == null
+                                            assign pg_line_max = pg_line_limit
+                                          elsif pg_line_limit < pg_line_max
+                                            assign pg_line_max = pg_line_limit
+                                          endif
+                                        endif
+                                      -%}
+                                      {% if pg_line_max != null %}
+                                        max="{{ pg_line_max }}"
+                                      {% endif %}
+                                      {% if pg_line_limit > 0 %}
+                                        data-order-limit="{{ pg_line_limit }}"
                                       {% endif %}
                                       step="{{ item.variant.quantity_rule.increment }}"
                                       aria-label="{{ 'products.product.quantity.input_label' | t: product: item.product.title | escape }}"
@@ -272,8 +286,16 @@
                 function hAdd(){
                   var b=this, vid=b.dataset.vid; if(!vid) return;
                   b.disabled=true; b.innerHTML='<span class="spinner-border spinner-border-sm"></span>';
-                  fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:parseInt(vid),quantity:1})})
-                    .then(function(){window.location.reload();})
+                  var limitCheck=window.PGOrderLimit?window.PGOrderLimit.check(vid,1):Promise.resolve({ok:true});
+                  limitCheck.then(function(res){
+                    if(!res.ok){
+                      window.PGOrderLimit.notify(window.PGOrderLimit.getMessage(res.limit));
+                      b.innerHTML='<i class="fa fa-plus"></i> Ekle'; b.disabled=false;
+                      return;
+                    }
+                    return fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:parseInt(vid),quantity:1})})
+                      .then(function(){window.location.reload();});
+                  })
                     .catch(function(){b.innerHTML='<i class="fa fa-plus"></i> Ekle'; b.disabled=false;});
                 }
                 function fMoney(c){
