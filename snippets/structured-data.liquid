@@ -5,8 +5,7 @@
     Judge.me kendi Product şemasını (puan ve yorumlar) ayrı basıyor. Aynı @id kullanıldığı için
     Google iki bloğu tek ürün olarak birleştirir; puan/yorum burada tekrar edilmez.
   - Koleksiyon: BreadcrumbList
-  İade politikası bilinçli olarak eklenmedi: mağaza politikası bozulabilir ve indirimli ürünleri
-  istisna tutuyor, içeceklerin durumu net değil. Gerekirse Search Console > Ayarlar'dan tanımlanmalı.
+  İade: 14 gün, kargoyla iade (TR), iade kargo ücreti mağazaya ait (FreeReturn).
 {%- endcomment -%}
 {%- assign sd_shop_url = request.origin | default: shop.url -%}
 
@@ -107,6 +106,14 @@
             "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
             "transitTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY" }
           }
+        },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "TR",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 14,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/FreeReturn"
         }
       }{%- unless forloop.last -%},{%- endunless -%}
       {%- endfor -%}
