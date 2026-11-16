@@ -1,0 +1,143 @@
+{%- comment -%}
+  Google için yapısal veri (JSON-LD).
+  - Ana sayfa: Organization + WebSite
+  - Ürün: Product + Offer (her varyant için fiyat, stok, ücretsiz kargo) + BreadcrumbList
+    Judge.me kendi Product şemasını (puan ve yorumlar) ayrı basıyor. Aynı @id kullanıldığı için
+    Google iki bloğu tek ürün olarak birleştirir; puan/yorum burada tekrar edilmez.
+  - Koleksiyon: BreadcrumbList
+  İade politikası bilinçli olarak eklenmedi: mağaza politikası bozulabilir ve indirimli ürünleri
+  istisna tutuyor, içeceklerin durumu net değil. Gerekirse Search Console > Ayarlar'dan tanımlanmalı.
+{%- endcomment -%}
+{%- assign sd_shop_url = request.origin | default: shop.url -%}
+
+{%- if request.page_type == 'index' -%}
+  {%- comment -%} Çıktı etiketinin içinde süslü parantez yazılamadığı için arama adresi capture ile kuruluyor {%- endcomment -%}
+  {%- capture sd_search_target -%}{{ sd_shop_url }}{{ routes.search_url }}?q={search_term_string}{%- endcapture -%}
+  {%- assign sd_logo = settings.logo_header | default: shop.brand.logo -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": {{ sd_shop_url | append: '/#organization' | json }},
+        "name": {{ shop.name | json }},
+        "url": {{ sd_shop_url | append: '/' | json }}
+        {%- if sd_logo != blank -%},
+        "logo": {{ sd_logo | image_url: width: 600 | prepend: 'https:' | json }}
+        {%- endif -%}
+      },
+      {
+        "@type": "WebSite",
+        "@id": {{ sd_shop_url | append: '/#website' | json }},
+        "name": {{ shop.name | json }},
+        "url": {{ sd_shop_url | append: '/' | json }},
+        "inLanguage": "tr-TR",
+        "publisher": { "@id": {{ sd_shop_url | append: '/#organization' | json }} },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": {{ sd_search_target | json }}
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  }
+  </script>
+
+{%- elsif request.page_type == 'product' and product -%}
+  {%- assign sd_product_path = '/products/' | append: product.handle -%}
+  {%- assign sd_product_url = sd_shop_url | append: sd_product_path -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": {{ sd_product_path | append: '#product' | json }},
+    "name": {{ product.title | json }},
+    "url": {{ sd_product_url | json }},
+    {%- if product.description != blank %}
+    "description": {{ product.description | strip_html | strip_newlines | truncate: 5000 | json }},
+    {%- endif %}
+    {%- if product.vendor != blank %}
+    "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+    {%- endif %}
+    {%- if product.media.size > 0 %}
+    "image": [
+      {%- for media in product.media limit: 5 -%}
+        {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ],
+    {%- endif %}
+    {%- assign sd_first = product.selected_or_first_available_variant -%}
+    {%- if sd_first.sku != blank %}
+    "sku": {{ sd_first.sku | json }},
+    {%- endif %}
+    "offers": [
+      {%- for variant in product.variants -%}
+      {
+        "@type": "Offer",
+        "url": {{ sd_product_url | append: '?variant=' | append: variant.id | json }},
+        {%- if product.variants.size > 1 %}
+        "name": {{ variant.title | json }},
+        {%- endif %}
+        {%- if variant.sku != blank %}
+        "sku": {{ variant.sku | json }},
+        {%- endif %}
+        {%- assign sd_barcode = variant.barcode | strip -%}
+        {%- if sd_barcode.size == 13 %}
+        "gtin13": {{ sd_barcode | json }},
+        {%- elsif sd_barcode.size == 12 %}
+        "gtin12": {{ sd_barcode | json }},
+        {%- elsif sd_barcode.size == 8 %}
+        "gtin8": {{ sd_barcode | json }},
+        {%- endif %}
+        "price": {{ variant.price | divided_by: 100.0 | json }},
+        "priceCurrency": {{ cart.currency.iso_code | default: 'TRY' | json }},
+        "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": {{ shop.name | json }} },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": { "@type": "MonetaryAmount", "value": 0, "currency": "TRY" },
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "TR" },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
+            "transitTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY" }
+          }
+        }
+      }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": {{ sd_shop_url | append: '/' | json }} },
+      {%- if collection and collection.handle != blank %}
+      { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ sd_shop_url | append: '/collections/' | append: collection.handle | json }} },
+      { "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ sd_product_url | json }} }
+      {%- else %}
+      { "@type": "ListItem", "position": 2, "name": {{ product.title | json }}, "item": {{ sd_product_url | json }} }
+      {%- endif %}
+    ]
+  }
+  </script>
+
+{%- elsif request.page_type == 'collection' and collection and collection.handle != blank -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": {{ sd_shop_url | append: '/' | json }} },
+      { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ sd_shop_url | append: '/collections/' | append: collection.handle | json }} }
+    ]
+  }
+  </script>
+{%- endif -%}
