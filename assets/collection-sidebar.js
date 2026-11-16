@@ -125,13 +125,19 @@ class stFacetFiltersForm extends HTMLElement {
     this.debouncedOnSubmit = stdebounce((event) => {
       this.triggerSendHand(event);
     }, 500);
-    this.querySelector('form').addEventListener('input', this.debouncedOnSubmit.bind(this));
+    this.querySelector('form').addEventListener('input', (event) => {
+      if (this.isMobileCollection()) return;
+      this.debouncedOnSubmit(event);
+    });
     const facetWrapper = this.querySelector('#st-wrapper');
     if (facetWrapper) facetWrapper.addEventListener('keyup', escClick);
   }
+  isMobileCollection() {
+    return !!this.closest('[data-collection-controls]') && window.matchMedia('(max-width: 767px)').matches;
+  }
   static setListeners() {
     const stOnHistChange = (event) => {
-      const searchParams = event.state ? event.state.searchParams : stFacetFiltersForm.searchParamsInitial;
+      const searchParams = typeof event.state?.searchParams === 'string' ? event.state.searchParams : window.location.search.slice(1);
       if (searchParams === stFacetFiltersForm.searchParamsPrev) return;
       stFacetFiltersForm.renderPage(searchParams, null, false);
     }
@@ -142,39 +148,58 @@ class stFacetFiltersForm extends HTMLElement {
       element.classList.toggle('disabled', disable);
     });
   }
-  static renderPage(searchParams, event, stUpdateURLHash = true) {
-    stFacetFiltersForm.searchParamsPrev = searchParams;
-    const stSections = stFacetFiltersForm.stGetSections();
-    const stCountContainer = document.getElementById('pro-count');
-    document.getElementById('ProductGridContainer').querySelector('.collection').classList.add('loading');
-    if (stCountContainer){
-      stCountContainer.classList.add('loading');
+  static async renderPage(searchParams, event, stUpdateURLHash = true) {
+    const requestId = ++stFacetFiltersForm.requestId;
+    if (stFacetFiltersForm.requestController) stFacetFiltersForm.requestController.abort();
+    const controller = new AbortController();
+    stFacetFiltersForm.requestController = controller;
+    const grid = document.getElementById('ProductGridContainer');
+    const collection = grid && grid.querySelector('.collection');
+    if (!grid || !collection) return false;
+    collection.classList.add('loading');
+    grid.setAttribute('aria-busy', 'true');
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const section = stFacetFiltersForm.stGetSections()[0].section;
+      const url = `${window.location.pathname}?section_id=${section}&${searchParams}`;
+      const cached = stFacetFiltersForm.filterData.find((entry) => entry.url === url);
+      let html;
+      if (cached) {
+        html = cached.html;
+      } else {
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error('Collection request failed');
+        html = await response.text();
+      }
+      if (requestId !== stFacetFiltersForm.requestId) return false;
+      const parsed = new DOMParser().parseFromString(html, 'text/html');
+      if (!parsed.getElementById('ProductGridContainer') || !parsed.querySelector('#stFacetFiltersForm')) {
+        throw new Error('Invalid collection response');
+      }
+      if (!cached) {
+        stFacetFiltersForm.filterData.push({ html, url });
+        stFacetFiltersForm.filterData = stFacetFiltersForm.filterData.slice(-10);
+      }
+      stFacetFiltersForm.renderFilters(html, event);
+      stFacetFiltersForm.stRenderProGridCont(html);
+      stFacetFiltersForm.stIncludeProCount(html);
+      stFacetFiltersForm.searchParamsPrev = searchParams;
+      if (stUpdateURLHash) stFacetFiltersForm.stUpdateURLHash(searchParams);
+      document.dispatchEvent(new CustomEvent('collection:updated', { detail: { searchParams } }));
+      return true;
+    } catch (error) {
+      if (requestId === stFacetFiltersForm.requestId) {
+        document.dispatchEvent(new CustomEvent('collection:update-error'));
+      }
+      return false;
+    } finally {
+      clearTimeout(timeout);
+      if (requestId === stFacetFiltersForm.requestId) {
+        grid.querySelector('.collection')?.classList.remove('loading');
+        grid.removeAttribute('aria-busy');
+        stFacetFiltersForm.stToggActive(false);
+      }
     }
-    stSections.forEach((section) => {
-      const url = `${window.location.pathname}?section_id=${section.section}&${searchParams}`;
-      const stfilterDataUrl = element => element.url === url;
-      stFacetFiltersForm.filterData.some(stfilterDataUrl) ?
-        stFacetFiltersForm.stRenderSecFromCache(stfilterDataUrl, event) :
-        stFacetFiltersForm.stRenderSecFromFetch(url, event);
-    });
-    if (stUpdateURLHash) stFacetFiltersForm.stUpdateURLHash(searchParams);
-  }
-  static stRenderSecFromFetch(url, event) {
-    fetch(url)
-      .then(response => response.text())
-      .then((responseText) => {
-        const html = responseText;
-        stFacetFiltersForm.filterData = [...stFacetFiltersForm.filterData, { html, url }];
-        stFacetFiltersForm.renderFilters(html, event);
-        stFacetFiltersForm.stRenderProGridCont(html);
-        stFacetFiltersForm.stIncludeProCount(html);
-      });
-  }
-  static stRenderSecFromCache(stfilterDataUrl, event) {
-    const html = stFacetFiltersForm.filterData.find(stfilterDataUrl).html;
-    stFacetFiltersForm.renderFilters(html, event);
-    stFacetFiltersForm.stRenderProGridCont(html);
-    stFacetFiltersForm.stIncludeProCount(html);
   }
   static stRenderProGridCont(html) {
     document.getElementById('ProductGridContainer').innerHTML = new DOMParser().parseFromString(html, 'text/html').getElementById('ProductGridContainer').innerHTML;
@@ -207,10 +232,12 @@ class stFacetFiltersForm extends HTMLElement {
   }
   static stIncludeProCount(html) {
     const parsedHTML = new DOMParser().parseFromString(html, 'text/html');
-    const count = parsedHTML.getElementById('pro-count').innerHTML
+    const source = parsedHTML.getElementById('pro-count');
     const container = document.getElementById('pro-count');
-    container.innerHTML = count;
-    container.classList.remove('loading');
+    if (source && container) {
+      container.innerHTML = source.innerHTML;
+      container.classList.remove('loading');
+    }
     const toolbarCountSource = parsedHTML.getElementById('CollectionToolbarCount');
     const toolbarCountContainer = document.getElementById('CollectionToolbarCount');
     if (toolbarCountSource && toolbarCountContainer) {
@@ -228,7 +255,8 @@ class stFacetFiltersForm extends HTMLElement {
     const facetsToRender = Array.from(stfacetDetailsEle).filter(element => !matchesIndex(element));
     const countsToRender = Array.from(stfacetDetailsEle).find(matchesIndex);
     facetsToRender.forEach((element) => {
-      document.querySelector(`.st-filter[data-index="${element.dataset.index}"]`).innerHTML = element.innerHTML;
+      const target = document.querySelector(`.st-filter[data-index="${element.dataset.index}"]`);
+      if (target) target.innerHTML = element.innerHTML;
     });
     stFacetFiltersForm.stIncludeActiveFacets(parsedHTML);
     if (countsToRender) stFacetFiltersForm.stIncludeCounts(countsToRender, event.target.closest('.st-filter'));
@@ -238,7 +266,8 @@ class stFacetFiltersForm extends HTMLElement {
     stActiveFacetEleSele.forEach((selector) => {
       const stActiveFacetEle = html.querySelector(selector);
       if (!stActiveFacetEle) return;
-      document.querySelector(selector).innerHTML = stActiveFacetEle.innerHTML;
+      const target = document.querySelector(selector);
+      if (target) target.innerHTML = stActiveFacetEle.innerHTML;
     })
     stFacetFiltersForm.stToggActive(false);
   }
@@ -261,17 +290,28 @@ class stFacetFiltersForm extends HTMLElement {
   }
   triggerSendHand(event) {
     event.preventDefault();
+    if (this.isMobileCollection()) return;
     const formData = new FormData(event.target.closest('form'));
     const searchParams = new URLSearchParams(formData).toString();
-    stFacetFiltersForm.renderPage(searchParams, event);
+    const params = new URLSearchParams(searchParams);
+    params.delete('page');
+    stFacetFiltersForm.renderPage(params.toString(), event);
   }
   StonActiveFilterTrigger(event) {
     event.preventDefault();
+    if (this.isMobileCollection()) {
+      this.dispatchEvent(new CustomEvent('collection:draft-clear', {
+        bubbles: true,
+        detail: { url: event.currentTarget.href }
+      }));
+      return;
+    }
     stFacetFiltersForm.stToggActive();
     const url = event.currentTarget.href.indexOf('?') == -1 ? '' : event.currentTarget.href.slice(event.currentTarget.href.indexOf('?') + 1);
     stFacetFiltersForm.renderPage(url);
   }
 }
+stFacetFiltersForm.requestId = 0;
 stFacetFiltersForm.filterData = [];
 stFacetFiltersForm.searchParamsInitial = window.location.search.slice(1);
 stFacetFiltersForm.searchParamsPrev = window.location.search.slice(1);

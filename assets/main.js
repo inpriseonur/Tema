@@ -31,10 +31,12 @@
   $(".filter-sidebar").removeClass("active");
   });
   $("button.filter-button").on('click', function() {
+    if (this.hasAttribute('data-collection-filter-open') && window.matchMedia('(max-width: 767px)').matches) return;
     $(".filter-sidebar").addClass("active");
     $(".mm-fullscreen-bg").addClass("active");
   });
   $("button.close-filter-sidebar").on('click', function() {
+    if (this.hasAttribute('data-collection-filter-close') && window.matchMedia('(max-width: 767px)').matches) return;
     $(".filter-sidebar").removeClass("active");
     $(".mm-fullscreen-bg").removeClass("active");
   });
